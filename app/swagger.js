@@ -1,0 +1,25 @@
+import swaggerUI from 'swagger-ui-koa';
+import swaggerJSDoc from 'swagger-jsdoc';
+import mount from 'koa-mount';
+import convert from 'koa-convert';
+
+const options = {
+    swaggerDefinition: {
+        title: 'Docs API',
+        version: '1.0.0'
+    },
+    apis: []
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 20
+ * @description Swagger 설정
+ * @param {*}   app 
+ */
+const swaggerSetting = (app) => {
+    app.use(swaggerUI.serve);
+    app.use(convert(mount('/swagger', swaggerUI.setup(swaggerJSDoc(options)))));
+};
+
+export default swaggerSetting;
