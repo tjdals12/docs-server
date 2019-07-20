@@ -6,7 +6,7 @@ const configs = {
     base: {
         env,
         name: process.env.APP_NAME || 'docs-backend',
-        host: process.env.APP_HOST || '0.0.0.1',
+        host: process.env.APP_HOST || '127.0.0.1',
         port: process.env.APP_PORT || 4000,
         dbUri: process.env.DB_URI,
         dbUser: process.env.DB_USER,
