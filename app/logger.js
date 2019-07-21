@@ -13,7 +13,6 @@ import moment from 'moment';
  */
 const loggerSetting = (app) => {
     if (enabled) {
-        console.log(level);
         level === 'all' &&
             app.use(morgan('combined',
                 {
