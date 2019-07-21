@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import DEFINE from 'models/common';
 
 /**
@@ -12,7 +12,7 @@ const DeleteYnSchema = new Schema({
         default: DEFINE.COMMON.DEFAULT_NO
     },
     deleteDt: {
-        type: Date,
+        type: String,
         default: DEFINE.COMMON.MAX_END_DT
     },
     reason: {
@@ -21,4 +21,4 @@ const DeleteYnSchema = new Schema({
     }
 }, { _id: false, id: false });
 
-export default DeleteYnSchema;
+export default model('DeleteYn', DeleteYnSchema);

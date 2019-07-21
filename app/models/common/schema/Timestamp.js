@@ -9,20 +9,20 @@ import DEFINE from 'models/common';
 const TimestampSchema = new Schema({
     regId: {
         type: String,
-        default: DEFINE.SYSTEM
+        default: DEFINE.COMMON.SYSTEM
     },
     regDt: {
-        type: Date,
-        default: new Date()
+        type: String,
+        default: DEFINE.dateNow()
     },
     updId: {
         type: String,
-        default: DEFINE.SYSTEM
+        default: DEFINE.COMMON.SYSTEM
     },
     updDt: {
         type: String,
-        default: new Date()
+        default: DEFINE.dateNow()
     }
-});
+}, { _id: false, id: false });
 
 export default TimestampSchema;

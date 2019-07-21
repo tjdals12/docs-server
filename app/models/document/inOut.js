@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 
@@ -22,4 +22,4 @@ const InOutSchema = new Schema({
 
 InOutSchema.set('toJSON', { getters: true });
 
-export default InOutSchema;
+export default model('InOut', InOutSchema);

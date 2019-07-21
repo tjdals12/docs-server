@@ -20,13 +20,10 @@ const DocumentSchema = new Schema({
     },
     documentNumber: String,
     documentTitle: String,
-    documentInOut: {
-        type: [InOut],
-        default: InOut
-    },
+    documentInOut: [InOut.schema],
     documentGb: String,
     documentStatus: {
-        type: [Status],
+        type: [Status.schema],
         default: Status
     },
     documentRev: String,
@@ -36,25 +33,29 @@ const DocumentSchema = new Schema({
     },
     memo: String,
     holdYn: {
-        type: [HoldYn],
+        type: [HoldYn.schema],
         default: HoldYn
     },
     deleteYn: {
-        type: deleteYn,
+        type: deleteYn.schema,
         default: deleteYn
     },
     delayGb: {
         type: String,
         default: DEFINE.DELAY_GB.LAZY,
-        get: DEFINE.delayGbConverter
+        get: DEFINE.deleyGbConverter
     },
-    chaningDocument: [Schema.Types.ObjectId],
+    chaningDocument: {
+        type: [Schema.Types.ObjectId],
+        default: []
+    },
     timestamp: {
         type: Timestamp,
         default: Timestamp
     }
 });
 
+DocumentSchema.set('toObject', { getters: true });
 DocumentSchema.set('toJSON', { getters: true });
 
 export default model('Document', DocumentSchema);

@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import DEFINE from 'models/common';
 
 /**
@@ -12,11 +12,11 @@ const HoldYnSchema = new Schema({
         default: DEFINE.COMMON.DEFAULT_NO
     },
     effStaDt: {
-        type: Date,
-        default: new Date()
+        type: String,
+        default: DEFINE.dateNow()
     },
     effEndDt: {
-        type: Date,
+        type: String,
         default: DEFINE.COMMON.MAX_END_DT
     },
     reason: {
@@ -25,4 +25,4 @@ const HoldYnSchema = new Schema({
     }
 }, { _id: false, id: false });
 
-export default HoldYnSchema;
+export default model('HoldYn', HoldYnSchema);

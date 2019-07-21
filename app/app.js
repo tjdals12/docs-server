@@ -5,6 +5,7 @@ import cors from 'koa2-cors';
 import helmet from 'koa-helmet';
 import swaggerSetting from 'swagger';
 import loggerSetting from 'logger';
+import router from 'routes';
 
 const app = new Koa();
 
@@ -24,5 +25,7 @@ app.use(cors({
 app.use(helmet());
 loggerSetting(app);
 swaggerSetting(app);
+app.use(router.routes());
+app.use(router.allowedMethods());
 
 export default app;

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 /**
  * @author      minz-logger
  * @date        2019. 07. 21
@@ -9,14 +11,14 @@ const DEFINE = {
         DEFAULT_YES: 'YES',
         DEFAULT_NO: 'NO',
         DEFAULT_REASON: '이력없음.',
-        MAX_END_DT: new Date('9999-12-31 23:59:59'),
+        MAX_END_DT: '9999-12-31 23:59:59',
         NONE: '-'
     },
     PART: {
         COMMON: '00'
     },
 
-    partConverter: (code) => {
+    partConverter: function (code) {
         switch (code) {
         case DEFINE.PART.COMMON:
             return '공통';
@@ -40,7 +42,7 @@ const DEFINE = {
         TO_VENDOR_RE: '92'
     },
 
-    inOutGbConverter: (code) => {
+    inOutGbConverter: function (code) {
         switch (code) {
         case DEFINE.IN_OUT_GB.FROM_VENDOR:
             return '업체로부터 접수';
@@ -103,7 +105,7 @@ const DEFINE = {
         CODE_94: '94'
     },
 
-    statusConverter: (code) => {
+    statusConverter: function (code) {
         switch (code) {
         case DEFINE.STATUS_CD.CODE_01:
             return '접수';
@@ -158,7 +160,7 @@ const DEFINE = {
         REJECT: '03'
     },
 
-    resultCodeConverter: (code) => {
+    resultCodeConverter: function (code) {
         switch (code) {
         case DEFINE.RESULT_CD.APPROVED:
             return 'Approved';
@@ -178,7 +180,7 @@ const DEFINE = {
         NONE: '04'
     },
 
-    replyCodeConverter: (code) => {
+    replyCodeConverter: function (code) {
         switch (code) {
         case DEFINE.REPLY_CD.ALL:
             return '전체';
@@ -194,7 +196,7 @@ const DEFINE = {
         DELAY: '04'
     },
 
-    deleyGbConverter: (code) => {
+    deleyGbConverter: function (code) {
         switch (code) {
         case DEFINE.DELAY_GB.LAZY:
             return '여유';
@@ -205,7 +207,40 @@ const DEFINE = {
         case DEFINE.DELAY_GB.DELAY:
             return '지연';
         }
-    }
+    },
+
+    dateNow: () => {
+        return moment().format('YYYY-MM-DD H:mm:ss');
+    },
+
+    VENDOR_GB: {
+        CONTRACTOR: '01',
+        MANAGEMENT: '02'
+    },
+
+    vendorGbConverter: function (code) {
+        switch (code) {
+        case DEFINE.VENDOR_GB.CONTRACTOR:
+            return '계약';
+        case DEFINE.VENDOR_GB.MANAGEMENT:
+            return '관리';
+        }
+    },
+
+    COUNTRY_CD: {
+        DOMESTIC: '01',
+        FOREIGN: '02'
+    },
+
+    countryCodeConverter: function (code) {
+        switch (code) {
+        case DEFINE.COUNTRY_CD.DOMESTIC:
+            return '국내';
+
+        case DEFINE.COUNTRY_CD.FOREIGN:
+            return '해외';
+        }
+    },
 };
 
 export default DEFINE;

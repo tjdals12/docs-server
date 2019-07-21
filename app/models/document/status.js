@@ -1,5 +1,5 @@
-import { Schema } from 'mongoose';
-import { Timestamp } from 'models/schema';
+import { Schema, model } from 'mongoose';
+import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 
 /**
@@ -27,4 +27,4 @@ const StatusSchema = new Schema({
 
 StatusSchema.set('toJSON', { getters: true });
 
-export default StatusSchema;
+export default model('Status', StatusSchema);
