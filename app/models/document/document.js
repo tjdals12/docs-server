@@ -58,4 +58,54 @@ const DocumentSchema = new Schema({
 DocumentSchema.set('toObject', { getters: true });
 DocumentSchema.set('toJSON', { getters: true });
 
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 21
+ * @description 문서 추가
+ * @param       {Object} param
+ */
+DocumentSchema.statics.saveDocument = function (param) {
+    let {
+        vendor,
+        part,
+        documentNumber,
+        documentTitle,
+        documentGb,
+        documentRev,
+        officialNumber,
+        memo
+    } = param;
+
+    const documentInOut = new InOut({ officialNumber });
+    const document = new this({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo });
+
+    document.save();
+
+    return document;
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 21
+ * @description 문서 삭제
+ * @param       {String} id
+ * @param       {String} reason
+ */
+DocumentSchema.statics.deleteDocument = function (id, reason) {
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                deleteYn: {
+                    yn: DEFINE.COMMON.DEFAULT_YES,
+                    deleteDt: DEFINE.dateNow(),
+                    reason: reason
+                }
+            }
+        },
+        {
+            new: true
+        });
+};
+
 export default model('Document', DocumentSchema);

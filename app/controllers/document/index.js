@@ -200,4 +200,38 @@ document.get('/', documentCtrl.list);
  */
 document.post('/', documentCtrl.add);
 
+/**
+ * @swagger
+ * /api/documents:
+ *  delete:
+ *      tags:
+ *          - Document
+ *      summary: 문서 삭제
+ *      description: 문서 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json  
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: delete parameter
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  id:
+ *                      type: string
+ *                      format: ObjectId
+ *                  reason:
+ *                      type: string
+ *                      example: 'API 테스트 - 삭제'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.delete('/', documentCtrl.deleteOne);
+
 export default document;

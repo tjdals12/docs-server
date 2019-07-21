@@ -1,5 +1,5 @@
-import Document from 'models/document/document';
-import InOut from 'models/document/inOut';
+import Document from '../../models/document/document';
+import mongoose from 'mongoose';
 import Joi from 'joi';
 
 /**
@@ -9,7 +9,7 @@ import Joi from 'joi';
  */
 export const list = async (ctx) => {
     try {
-        const documents = await Document.find();
+        const documents = await Document.find().sort({ 'timestamp.regDt': -1 });
 
         ctx.body = documents;
     } catch (e) {
@@ -54,10 +54,54 @@ export const add = async (ctx) => {
     }
 
     try {
-        const documentInOut = new InOut({ officialNumber });
-        const document = new Document({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo });
+        const document = await Document.saveDocument({
+            vendor,
+            part,
+            documentNumber,
+            documentTitle,
+            documentGb,
+            documentRev,
+            officialNumber,
+            memo
+        });
 
-        await document.save();
+        ctx.body = document;
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 21
+ * @description 문서 삭제
+ */
+export const deleteOne = async (ctx) => {
+    let { id, reason } = ctx.request.body;
+
+    const { ObjectId } = mongoose.Types;
+
+    if (!ObjectId.isValid(id)) {
+        ctx.status = 400;
+        ctx.body = 'Type Error - id';
+        return;
+    }
+
+    const schema = Joi.object().keys({
+        id: Joi.string().required(),
+        reason: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.status = 400;
+        ctx.body = result.error;
+        return;
+    }
+
+    try {
+        const document = await Document.deleteDocument(id, reason);
 
         ctx.body = document;
     } catch (e) {

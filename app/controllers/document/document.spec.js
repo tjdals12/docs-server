@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 describe('[ Document ]', () => {
     let server;
+    let id;
 
     before((done) => {
         db.connect().then(type => {
@@ -46,6 +47,8 @@ describe('[ Document ]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    id = ctx.body._id;
+
                     expect(ctx.body.documentNumber).to.equal('ABC-DEF-G-001-003');
                     done();
                 });
@@ -61,6 +64,24 @@ describe('[ Document ]', () => {
                     if (err) throw err;
 
                     expect(ctx.body).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('DELETE /documents', () => {
+        it('delete document', (done) => {
+            request(server)
+                .delete('/api/documents')
+                .send({
+                    id: id,
+                    reason: 'mocha 테스트 삭제'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.deleteYn.yn).to.equal('YES');
                     done();
                 });
         });
