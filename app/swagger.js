@@ -8,7 +8,7 @@ const options = {
         title: 'Docs API',
         version: '1.0.0'
     },
-    apis: []
+    apis: ['./app/controllers/*/index.js']
 };
 
 /**

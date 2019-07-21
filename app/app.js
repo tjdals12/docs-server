@@ -1,3 +1,5 @@
+import '@babel/polyfill';
+
 import Koa from 'koa';
 import requestId from 'koa-requestid';
 import bodyParser from 'koa-bodyparser';

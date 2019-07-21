@@ -45,7 +45,7 @@ const DocumentSchema = new Schema({
         default: DEFINE.DELAY_GB.LAZY,
         get: DEFINE.deleyGbConverter
     },
-    chaningDocument: {
+    chainingDocument: {
         type: [Schema.Types.ObjectId],
         default: []
     },

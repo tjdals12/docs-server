@@ -5,6 +5,21 @@ import Joi from 'joi';
 /**
  * @author      minz-logger
  * @date        2019. 07. 21
+ * @description 문서 목록 조회
+ */
+export const list = async (ctx) => {
+    try {
+        const documents = await Document.find();
+
+        ctx.body = documents;
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 21
  * @description 문서 개별 추가
  */
 export const add = async (ctx) => {
