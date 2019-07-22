@@ -1,6 +1,8 @@
 import '@babel/polyfill';
 
 import Koa from 'koa';
+import errorHandler from 'middlewares/errorHandler';
+import responseHandler from 'middlewares/responseHandler';
 import requestId from 'koa-requestid';
 import bodyParser from 'koa-bodyparser';
 import cors from 'koa2-cors';
@@ -11,6 +13,8 @@ import router from 'routes';
 
 const app = new Koa();
 
+app.use(responseHandler());
+app.use(errorHandler());
 app.use(requestId());
 app.use(bodyParser({
     enableTypes: ['json', 'form'],
