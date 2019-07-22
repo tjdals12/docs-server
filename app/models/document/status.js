@@ -14,10 +14,12 @@ const StatusSchema = new Schema({
         get: DEFINE.statusConverter
     },
     resultCode: {
-        type: String
+        type: String,
+        get: DEFINE.resultCodeConverter
     },
     replyCode: {
-        type: String
+        type: String,
+        get: DEFINE.replyCodeConverter
     },
     timestamp: {
         type: Timestamp,

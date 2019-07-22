@@ -52,17 +52,17 @@ const DEFINE = {
             return '내부 검토요청';
         case DEFINE.IN_OUT_GB.TO_INTERNAL_RE:
             return '내부 재검토요청';
-        case DEFINE.FROM_INTERNAL:
+        case DEFINE.IN_OUT_GB.FROM_INTERNAL:
             return '내부 검토완료';
-        case DEFINE.FROM_INTERNAL_RE:
+        case DEFINE.IN_OUT_GB.FROM_INTERNAL_RE:
             return '내부 재검토완료';
-        case DEFINE.TO_CLIENT:
+        case DEFINE.IN_OUT_GB.TO_CLIENT:
             return '사업주 검토요청';
-        case DEFINE.TO_CLIENT_RE:
+        case DEFINE.IN_OUT_GB.TO_CLIENT_RE:
             return '사업주 재검토요청';
-        case DEFINE.FROM_VENDOR:
+        case DEFINE.IN_OUT_GB.TO_VENDOR:
             return '업체로 송부';
-        case DEFINE.FROM_VENDOR_RE:
+        case DEFINE.IN_OUT_GB.TO_VENDOR_RE:
             return '업체로 재송부';
         default:
             return code;

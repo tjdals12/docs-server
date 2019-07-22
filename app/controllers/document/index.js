@@ -234,4 +234,53 @@ document.post('/', documentCtrl.add);
  */
 document.delete('/', documentCtrl.deleteOne);
 
+/**
+ * @swagger
+ * /api/documents:
+ *  patch:
+ *      tags:
+ *          - Document
+ *      summary: 문서 In / Out
+ *      description: 문서 In / Out
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: inOut parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                id:
+ *                    type: string
+ *                    format: ObjectId
+ *                    required: true
+ *                inOutGb:
+ *                    type: string
+ *                    example: '10'
+ *                    required: true
+ *                officialNumber:
+ *                    type: string
+ *                    example: 'ABC-DEF-T-R-001-001'
+ *                status:
+ *                    type: string
+ *                    example: '10'
+ *                    required: true
+ *                resultCode:
+ *                    type: string
+ *                    example: '01'
+ *                replyCode:
+ *                    type: string
+ *                    example: '01'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.patch('/', documentCtrl.inOut);
+
 export default document;

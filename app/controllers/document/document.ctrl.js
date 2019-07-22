@@ -11,9 +11,15 @@ export const list = async (ctx) => {
     try {
         const documents = await Document.find().sort({ 'timestamp.regDt': -1 });
 
-        ctx.body = documents;
+        ctx.res.ok({
+            data: documents,
+            message: 'Success - documentCtrl > list'
+        });
     } catch (e) {
-        console.error(e);
+        ctx.res.internalServerError({
+            data: [],
+            message: 'Error - documentCtrl > list'
+        });
     }
 };
 
@@ -48,8 +54,11 @@ export const add = async (ctx) => {
     const result = Joi.validate(ctx.request.body, scheam);
 
     if (result.error) {
-        ctx.status = 400;
-        ctx.body = result.error;
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentCtrl > fail'
+        });
+
         return;
     }
 
@@ -65,9 +74,15 @@ export const add = async (ctx) => {
             memo
         });
 
-        ctx.body = document;
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > add'
+        });
     } catch (e) {
-        console.error(e);
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - documentCtrl > add'
+        });
     }
 };
 
@@ -82,8 +97,10 @@ export const deleteOne = async (ctx) => {
     const { ObjectId } = mongoose.Types;
 
     if (!ObjectId.isValid(id)) {
-        ctx.status = 400;
-        ctx.body = 'Type Error - id';
+        ctx.res.badRequest({
+            data: { id, reason, result: 'Type error - id' },
+            message: 'Fail - documentCtrl > deleteOne'
+        });
         return;
     }
 
@@ -95,16 +112,75 @@ export const deleteOne = async (ctx) => {
     const result = Joi.validate(ctx.request.body, schema);
 
     if (result.error) {
-        ctx.status = 400;
-        ctx.body = result.error;
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentCtrl > deleteOne'
+        });
+
         return;
     }
 
     try {
         const document = await Document.deleteDocument(id, reason);
 
-        ctx.body = document;
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > deleteOne'
+        });
     } catch (e) {
-        console.error(e);
+        ctx.res.internalServerError({
+            data: { id, reason },
+            message: 'Error - documentCtrl > deleteOne'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 22
+ * @description 문서 In / Out
+ */
+export const inOut = async (ctx) => {
+    const { id, inOutGb, officialNumber, status, resultCode, replyCode } = ctx.request.body;
+
+    const { ObjectId } = mongoose.Types;
+
+    if (!ObjectId.isValid(id)) {
+        ctx.res.badRequest({
+            data: { id, inOutGb, result: 'Type error - id' },
+            message: 'Fail - documentCtrl > inOut'
+        });
+    }
+
+    const schema = Joi.object().schema({
+        id: Joi.string().required(),
+        inOutGb: Joi.string().required(),
+        officialNumber: Joi.string().required(),
+        status: Joi.string().required(),
+        resuleCode: Joi.string(),
+        replyCode: Joi.string()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentCtrl > inOut'
+        });
+    }
+
+    try {
+        const document = await Document.inOutDocument(id, inOutGb, officialNumber, status, resultCode, replyCode);
+
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > inOut'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, inOutGb },
+            message: 'Error - documentCtrl > inOut'
+        });
     }
 };

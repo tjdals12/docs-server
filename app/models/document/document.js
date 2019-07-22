@@ -108,4 +108,33 @@ DocumentSchema.statics.deleteDocument = function (id, reason) {
         });
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 22
+ * @description 문서 In / Out
+ * @param       {String} id
+ * @param       {String} inOutGb
+ * @param       {String} officialNumber
+ * @param       {String} status
+ * @param       {String} resultCode
+ * @param       {String} replyCode
+ */
+DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, status, resultCode, replyCode) {
+    const newInOut = new InOut({ inOutGb, officialNumber });
+    const newStatus = new Status({ status, resultCode, replyCode });
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $push: {
+                documentInOut: newInOut,
+                documentStatus: newStatus
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
 export default model('Document', DocumentSchema);
