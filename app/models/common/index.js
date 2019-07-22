@@ -60,6 +60,10 @@ const DEFINE = {
             return '사업주 검토요청';
         case DEFINE.IN_OUT_GB.TO_CLIENT_RE:
             return '사업주 재검토요청';
+        case DEFINE.IN_OUT_GB.FROM_CLIENT:
+            return '사업주 검토완료';
+        case DEFINE.IN_OUT_GB.FROM_CLIENT_RE:
+            return '사업주 재검토완료';
         case DEFINE.IN_OUT_GB.TO_VENDOR:
             return '업체로 송부';
         case DEFINE.IN_OUT_GB.TO_VENDOR_RE:

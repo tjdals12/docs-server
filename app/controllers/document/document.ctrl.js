@@ -155,8 +155,8 @@ export const inOut = async (ctx) => {
     const schema = Joi.object().schema({
         id: Joi.string().required(),
         inOutGb: Joi.string().required(),
-        officialNumber: Joi.string().required(),
-        status: Joi.string().required(),
+        officialNumber: Joi.string(),
+        status: Joi.string(),
         resuleCode: Joi.string(),
         replyCode: Joi.string()
     });
