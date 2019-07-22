@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import * as commonCtrl from 'controllers/commonCtrl';
 import * as documentCtrl from './document.ctrl';
 
 const document = new Router();
@@ -232,7 +233,7 @@ document.post('/', documentCtrl.add);
  *              schema:
  *                  $ref: '#/definitions/document'
  */
-document.delete('/', documentCtrl.deleteOne);
+document.delete('/', commonCtrl.checkObjectId, documentCtrl.deleteOne);
 
 /**
  * @swagger
@@ -281,6 +282,6 @@ document.delete('/', documentCtrl.deleteOne);
  *              schema:
  *                  $ref: '#/definitions/document'
  */
-document.patch('/', documentCtrl.inOut);
+document.patch('/', commonCtrl.checkObjectId, documentCtrl.inOut);
 
 export default document;

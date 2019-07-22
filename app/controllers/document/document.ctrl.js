@@ -1,5 +1,4 @@
 import Document from '../../models/document/document';
-import mongoose from 'mongoose';
 import Joi from 'joi';
 
 /**
@@ -94,16 +93,6 @@ export const add = async (ctx) => {
 export const deleteOne = async (ctx) => {
     let { id, reason } = ctx.request.body;
 
-    const { ObjectId } = mongoose.Types;
-
-    if (!ObjectId.isValid(id)) {
-        ctx.res.badRequest({
-            data: { id, reason, result: 'Type error - id' },
-            message: 'Fail - documentCtrl > deleteOne'
-        });
-        return;
-    }
-
     const schema = Joi.object().keys({
         id: Joi.string().required(),
         reason: Joi.string().required()
@@ -143,15 +132,6 @@ export const deleteOne = async (ctx) => {
 export const inOut = async (ctx) => {
     const { id, inOutGb, officialNumber, status, resultCode, replyCode } = ctx.request.body;
 
-    const { ObjectId } = mongoose.Types;
-
-    if (!ObjectId.isValid(id)) {
-        ctx.res.badRequest({
-            data: { id, inOutGb, result: 'Type error - id' },
-            message: 'Fail - documentCtrl > inOut'
-        });
-    }
-
     const schema = Joi.object().schema({
         id: Joi.string().required(),
         inOutGb: Joi.string().required(),
@@ -168,6 +148,8 @@ export const inOut = async (ctx) => {
             data: result.error,
             message: 'Fail - documentCtrl > inOut'
         });
+
+        return;
     }
 
     try {
