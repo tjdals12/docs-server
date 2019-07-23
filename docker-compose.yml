@@ -1,13 +1,5 @@
 version: '3'
 services:
-  app:
-    container_name: docs-backend
-    restart: always
-    build: .
-    ports:
-      - 80:4000
-    links:
-      - mongo
   mongo:
     container_name: mongo
     image: mongo
@@ -16,3 +8,11 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=docs
       - MONGO_INITDB_ROOT_PASSWORD=1205360
+  app:
+    container_name: docs-backend
+    restart: always
+    build: .
+    ports:
+      - 80:4000
+    links:
+      - mongo
