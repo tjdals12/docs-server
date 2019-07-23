@@ -86,6 +86,45 @@ DocumentSchema.statics.saveDocument = function (param) {
 
 /**
  * @author      minz-logger
+ * @date        2019. 07. 23
+ * @description 문서 수정
+ * @param       {Object} param
+ */
+DocumentSchema.statics.editDocument = function (param) {
+    let {
+        id,
+        vendor,
+        part,
+        documentNumber,
+        documentTitle,
+        documentGb,
+        documentRev,
+        officialNumber,
+        memo
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                vendor,
+                part,
+                documentNumber,
+                documentTitle,
+                documentGb,
+                documentRev,
+                officialNumber,
+                memo
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 21
  * @description 문서 삭제
  * @param       {String} id

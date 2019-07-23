@@ -24,29 +24,6 @@ export const list = async (ctx) => {
 
 /**
  * @author      minz-logger
- * @date        2019. 07. 23
- * @description 문서 개별 조회
- */
-export const one = async (ctx) => {
-    let { id } = ctx.params;
-
-    try {
-        const document = await Document.findById(id);
-
-        ctx.res.ok({
-            data: document,
-            message: 'Success - documentCtrl > one'
-        });
-    } catch (e) {
-        ctx.res.internalServerError({
-            data: ctx.param,
-            message: 'Error - documentCtrl > one'
-        });
-    }
-};
-
-/**
- * @author      minz-logger
  * @date        2019. 07. 21
  * @description 문서 개별 추가
  */
@@ -104,6 +81,84 @@ export const add = async (ctx) => {
         ctx.res.internalServerError({
             data: ctx.request.body,
             message: 'Error - documentCtrl > add'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 23
+ * @description 문서 개별 조회
+ */
+export const one = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const document = await Document.findById(id);
+
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > one'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.param,
+            message: 'Error - documentCtrl > one'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 23
+ * @description 문서 수정
+ */
+export const edit = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        vendor,
+        part,
+        documentNumber,
+        documentTitle,
+        documentGb,
+        documentRev,
+        officialNumber,
+        memo
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        vendor: Joi.string().required(),
+        part: Joi.string().required(),
+        documentNumber: Joi.string().required(),
+        documentTitle: Joi.string().required(),
+        documentGb: Joi.string().required(),
+        documentRev: Joi.string().required(),
+        officialNumber: Joi.string().required(),
+        memo: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: ctx.request.body,
+            message: 'Fail - documentCtrl > edit'
+        });
+
+        return;
+    }
+
+    try {
+        const document = await Document.editDocument({ id, vendor, part, documentNumber, documentTitle, documentGb, documentRev, officialNumber, memo });
+
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > edit'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - documentCtrl > edit'
         });
     }
 };

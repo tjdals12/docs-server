@@ -230,6 +230,64 @@ document.get('/:id', documentCtrl.one);
 
 /**
  * @swagger
+ * /api/documents/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Document
+ *      summary: 문서 수정
+ *      description: 문서 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366ffdb984ac07b72e9126
+ *          - in: body
+ *            name: body
+ *            description: edit parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  vendor:
+ *                      type: string
+ *                      example: 5d366ffdb984ac07b72e9126
+ *                  part:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  documentNumber:
+ *                      type: string
+ *                      example: '00'
+ *                  documentTitle:
+ *                      type: string
+ *                      example: VP-ABC-R-001-001
+ *                  documentGb:
+ *                      type: string
+ *                      example: Drawing
+ *                  documentRev:
+ *                      type: string
+ *                      example: '01'
+ *                  officialNumber:
+ *                      type: string
+ *                      example: Rev.A
+ *                  memo:
+ *                      type: string
+ *                      example: ABC-DEF-T-R-001-001
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.patch('/:id/edit', commonCtrl.checkObjectId, documentCtrl.edit);
+
+/**
+ * @swagger
  * /api/documents/{id}/delete:
  *  patch:
  *      tags:

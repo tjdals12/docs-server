@@ -69,8 +69,7 @@ describe('[ Document ]', () => {
         });
     });
 
-
-    describe('GET /document/:id', () => {
+    describe('GET /documents/:id', () => {
         it('get document', (done) => {
             request(server)
                 .get(`/api/documents/${id}`)
@@ -79,6 +78,30 @@ describe('[ Document ]', () => {
                     if (err) throw err;
 
                     expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /documents/:id/edit', () => {
+        it('edit document', (done) => {
+            request(server)
+                .patch(`/api/documents/${id}/edit`)
+                .send({
+                    vendor: '5d33ef877cceb91244d16fdd',
+                    part: '99',
+                    documentNumber: 'ABC-DEF-G-001-003',
+                    documentTitle: 'Drawing',
+                    documentGb: '01',
+                    documentRev: '01',
+                    officialNumber: 'ABC-DEF-T-G-001-001',
+                    memo: '최초 접수'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.documentTitle).to.equal('Drawing');
                     done();
                 });
         });
