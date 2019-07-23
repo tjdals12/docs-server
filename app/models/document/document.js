@@ -137,4 +137,48 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
     );
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 23
+ * @description 문서 보류
+ * @param       {String} id
+ * @param       {String} yn
+ * @param       {String} reason
+ */
+DocumentSchema.statics.holdDocument = async function (id, yn, reason) {
+    const newHoldYn = new HoldYn({ yn, reason });
+
+    await this.findOneAndUpdate(
+        {
+            $and: [
+                { _id: id },
+                {
+                    holdYn: {
+                        $elemMatch: {
+                            effEndDt: DEFINE.COMMON.MAX_END_DT
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            $set: {
+                'holdYn.$.effEndDt': DEFINE.dateNow()
+            }
+        }
+    );
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $push: {
+                holdYn: newHoldYn
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
 export default model('Document', DocumentSchema);

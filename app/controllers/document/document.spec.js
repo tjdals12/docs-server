@@ -69,12 +69,26 @@ describe('[ Document ]', () => {
         });
     });
 
-    describe('DELETE /documents', () => {
+
+    describe('GET /document/:id', () => {
+        it('get document', (done) => {
+            request(server)
+                .get(`/api/documents/${id}`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /documents/:id/delete', () => {
         it('delete document', (done) => {
             request(server)
-                .delete('/api/documents')
+                .patch(`/api/documents/${id}/delete`)
                 .send({
-                    id: id,
                     reason: 'mocha 테스트 삭제'
                 })
                 .expect(200)
@@ -87,12 +101,11 @@ describe('[ Document ]', () => {
         });
     });
 
-    describe('PATCH /documents', () => {
+    describe('PATCH /documents/:id/inout', () => {
         it('In/Out document - 내부 검토요청', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '10',
                     status: '10'
                 })
@@ -107,9 +120,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 내부 검토완료', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '20',
                     status: '11',
                     resultCode: '01'
@@ -125,9 +137,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 사업주 검토요청', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '30',
                     officialNumber: 'ABC-DEF-T-R-001-001',
                     status: '20',
@@ -144,9 +155,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 사업주 검토완료', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '40',
                     officialNumber: 'DEF-ABC-T-R-001-001',
                     status: '21',
@@ -163,9 +173,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 내부 재검토요청', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '12',
                     status: '30'
                 })
@@ -180,9 +189,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 내부 재검토완료', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '22',
                     status: '31',
                     resultCode: '01'
@@ -198,9 +206,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 사업주 재검토요청', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '32',
                     officialNumber: 'ABC-DEF-T-R-001-002',
                     status: '40',
@@ -217,9 +224,8 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 사업주 재검토완료', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '42',
                     officialNumber: 'DEF-ABC-T-R-001-002',
                     status: '41',
@@ -236,14 +242,47 @@ describe('[ Document ]', () => {
 
         it('In/Out document - 업체 회신', (done) => {
             request(server)
-                .patch('/api/documents')
+                .patch(`/api/documents/${id}/inout`)
                 .send({
-                    id: id,
                     inOutGb: '90',
                     officialNumber: 'ABC-GEF-T-R-001-001',
                     status: '90',
                     resultCode: '01',
                     replyCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /api/documets/:id/hold', () => {
+        it('hold document - 보류', (done) => {
+            request(server)
+                .patch(`/api/documents/${id}/hold`)
+                .send({
+                    yn: 'YES',
+                    reason: 'API 테스트 - 보류'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+
+        it('hold document - 보류 취소', (done) => {
+            request(server)
+                .patch(`/api/documents/${id}/hold`)
+                .send({
+                    yn: 'NO',
+                    reason: 'API 테스트 - 보류 취소'
                 })
                 .expect(200)
                 .end((err, ctx) => {

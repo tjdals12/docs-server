@@ -191,7 +191,7 @@ document.get('/', documentCtrl.list);
  *                      example: ABC-DEF-T-R-001-001
  *                  memo:
  *                      type: string
- *                      example: 최소 접수
+ *                      example: 최초 접수
  *      responses:
  *          200:
  *              description: Successful operation
@@ -203,8 +203,35 @@ document.post('/', documentCtrl.add);
 
 /**
  * @swagger
- * /api/documents:
- *  delete:
+ * /api/documents/{id}:
+ *  get:
+ *      tags:
+ *          - Document
+ *      summary: 문서 개별 조회
+ *      description: 문서 개별 조회
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            descrpition: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366060bf3208038ea06f13
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.get('/:id', documentCtrl.one);
+
+/**
+ * @swagger
+ * /api/documents/{id}/delete:
+ *  patch:
  *      tags:
  *          - Document
  *      summary: 문서 삭제
@@ -214,6 +241,12 @@ document.post('/', documentCtrl.add);
  *      produces:
  *          - application/json  
  *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366ffdb984ac07b72e9126
  *          - in: body
  *            name: body
  *            description: delete parameter
@@ -221,9 +254,6 @@ document.post('/', documentCtrl.add);
  *            schema:
  *              type: object
  *              properties:
- *                  id:
- *                      type: string
- *                      format: ObjectId
  *                  reason:
  *                      type: string
  *                      example: 'API 테스트 - 삭제'
@@ -233,11 +263,11 @@ document.post('/', documentCtrl.add);
  *              schema:
  *                  $ref: '#/definitions/document'
  */
-document.delete('/', commonCtrl.checkObjectId, documentCtrl.deleteOne);
+document.patch('/:id/delete', commonCtrl.checkObjectId, documentCtrl.deleteOne);
 
 /**
  * @swagger
- * /api/documents:
+ * /api/documents/{id}/inout:
  *  patch:
  *      tags:
  *          - Document
@@ -248,6 +278,12 @@ document.delete('/', commonCtrl.checkObjectId, documentCtrl.deleteOne);
  *      produces:
  *          - application/json
  *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366facb82dc107a4699999
  *          - in: body
  *            name: body
  *            description: inOut parameters
@@ -255,10 +291,6 @@ document.delete('/', commonCtrl.checkObjectId, documentCtrl.deleteOne);
  *            schema:
  *              type: object
  *              properties:
- *                id:
- *                    type: string
- *                    format: ObjectId
- *                    required: true
  *                inOutGb:
  *                    type: string
  *                    example: '10'
@@ -282,6 +314,46 @@ document.delete('/', commonCtrl.checkObjectId, documentCtrl.deleteOne);
  *              schema:
  *                  $ref: '#/definitions/document'
  */
-document.patch('/', commonCtrl.checkObjectId, documentCtrl.inOut);
+document.patch('/:id/inout', commonCtrl.checkObjectId, documentCtrl.inOut);
+
+/**
+ * @swagger
+ * /api/documents/{id}/hold:
+ *  patch:
+ *      tags:
+ *          - Document
+ *      summary: 문서 보류
+ *      description: 문서 보류
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366060bf3208038ea06f13
+ *          - in: body
+ *            name: body
+ *            description: hold parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  yn:
+ *                      type: string
+ *                      example: YES
+ *                  reason: 
+ *                      type: string
+ *                      example: 'API 테스트 - 보류'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.patch('/:id/hold', commonCtrl.checkObjectId, documentCtrl.hold);
 
 export default document;
