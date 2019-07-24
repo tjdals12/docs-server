@@ -13,13 +13,13 @@ const configs = {
         dbPass: process.env.DB_PASS
     },
     production: {
-
+        dbUri: 'mongodb://mongo:27017/admin',
     },
     development: {
-
+        dbUri: 'mongodb://127.0.0.1:27017/admin'
     },
     test: {
-
+        dbUri: 'mongodb://127.0.0.1:27017/admin'
     }
 };
 
