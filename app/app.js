@@ -26,7 +26,7 @@ app.use(cors({
     origin: '*',
     allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD'],
     allowHeaders: ['Content-Type', 'Authorization'],
-    exposeHeaders: ['Content-Length', 'Date', 'X-Request-Id']
+    exposeHeaders: ['Content-Length', 'Date', 'X-Request-Id', 'Last-Page']
 }));
 app.use(helmet());
 loggerSetting(app);
