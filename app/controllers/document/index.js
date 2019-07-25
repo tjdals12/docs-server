@@ -136,8 +136,16 @@ const document = new Router();
  *             - Document
  *         summary: 문서 목록 조회
  *         description: 문서 목록 조회
+ *         consumes:
+ *             - application/json
  *         produces:
  *             - application/json
+ *         parameters:
+ *             - in: query
+ *               name: page
+ *               description: page parameter
+ *               type: string
+ *               example: 1
  *         responses:
  *             200:
  *                 description: Successful operation

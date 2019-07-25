@@ -33,7 +33,7 @@ const VendorSchema = new Schema({
     },
     effStaDt: {
         type: String,
-        default: DEFINE.dateNow()
+        default: DEFINE.dateNow
     },
     trackingTransmittal: [Schema.Types.ObjectId],
     timestamp: {

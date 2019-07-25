@@ -13,7 +13,7 @@ const TimestampSchema = new Schema({
     },
     regDt: {
         type: String,
-        default: DEFINE.dateNow()
+        default: DEFINE.dateNow
     },
     updId: {
         type: String,
@@ -21,7 +21,7 @@ const TimestampSchema = new Schema({
     },
     updDt: {
         type: String,
-        default: DEFINE.dateNow()
+        default: DEFINE.dateNow
     }
 }, { _id: false, id: false });
 
