@@ -7,8 +7,23 @@ import Joi from 'joi';
  * @description 문서 목록 조회
  */
 export const list = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Page can\'t be less than 1'
+        });
+
+        return;
+    }
+
     try {
-        const documents = await Document.find().sort({ 'timestamp.regDt': -1 });
+        const documents = await Document
+            .find()
+            .skip(((page - 1) * 12))
+            .limit(12)
+            .sort({ 'timestamp.regDt': -1 });
 
         ctx.res.ok({
             data: documents,
