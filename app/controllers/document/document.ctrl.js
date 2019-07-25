@@ -21,9 +21,13 @@ export const list = async (ctx) => {
     try {
         const documents = await Document
             .find()
-            .skip(((page - 1) * 12))
-            .limit(12)
+            .skip(((page - 1) * 10))
+            .limit(10)
             .sort({ 'timestamp.regDt': -1 });
+
+        const count = await Document.countDocuments();
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
 
         ctx.res.ok({
             data: documents,
