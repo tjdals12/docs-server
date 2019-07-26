@@ -267,25 +267,25 @@ document.get('/:id', documentCtrl.one);
  *                      example: 5d366ffdb984ac07b72e9126
  *                  part:
  *                      type: string
- *                      example: 5d33ef877cceb91244d16fdd
+ *                      example: '00'
  *                  documentNumber:
  *                      type: string
- *                      example: '00'
+ *                      example: VP-ABC-R-001-001
  *                  documentTitle:
  *                      type: string
- *                      example: VP-ABC-R-001-001
+ *                      example: Drawing
  *                  documentGb:
  *                      type: string
- *                      example: Drawing
- *                  documentRev:
- *                      type: string
  *                      example: '01'
+ *                  documentRev: 
+ *                      type: string
+ *                      example: 'Rev.A'
  *                  officialNumber:
  *                      type: string
- *                      example: Rev.A
+ *                      example: ABC-DEF-T-R-001-001
  *                  memo:
  *                      type: string
- *                      example: ABC-DEF-T-R-001-001
+ *                      example: 'API 테스트 - 수정'
  *      responses:
  *          200:
  *              description: Successful operation
