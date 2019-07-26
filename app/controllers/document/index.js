@@ -320,6 +320,9 @@ document.patch('/:id/edit', commonCtrl.checkObjectId, documentCtrl.edit);
  *            schema:
  *              type: object
  *              properties:
+ *                  yn:
+ *                      type: string
+ *                      example: YES
  *                  reason:
  *                      type: string
  *                      example: 'API 테스트 - 삭제'

@@ -112,6 +112,7 @@ describe('[ Document ]', () => {
             request(server)
                 .patch(`/api/documents/${id}/delete`)
                 .send({
+                    yn: 'YES',
                     reason: 'mocha 테스트 삭제'
                 })
                 .expect(200)

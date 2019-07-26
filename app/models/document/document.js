@@ -130,13 +130,13 @@ DocumentSchema.statics.editDocument = function (param) {
  * @param       {String} id
  * @param       {String} reason
  */
-DocumentSchema.statics.deleteDocument = function (id, reason) {
+DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
     return this.findOneAndUpdate(
         { _id: id },
         {
             $set: {
                 deleteYn: {
-                    yn: DEFINE.COMMON.DEFAULT_YES,
+                    yn: yn,
                     deleteDt: DEFINE.dateNow(),
                     reason: reason
                 }

@@ -189,9 +189,10 @@ export const edit = async (ctx) => {
  */
 export const deleteOne = async (ctx) => {
     let { id } = ctx.params;
-    let { reason } = ctx.request.body;
+    let { yn, reason } = ctx.request.body;
 
     const schema = Joi.object().keys({
+        yn: Joi.string().required(),
         reason: Joi.string().required()
     });
 
@@ -207,7 +208,7 @@ export const deleteOne = async (ctx) => {
     }
 
     try {
-        const document = await Document.deleteDocument(id, reason);
+        const document = await Document.deleteDocument(id, yn, reason);
 
         ctx.res.ok({
             data: document,
