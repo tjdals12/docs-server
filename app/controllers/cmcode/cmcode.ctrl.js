@@ -46,6 +46,38 @@ export const one = async (ctx) => {
 };
 
 /**
+ * @author minz-logger
+ * @date 2019. 07. 29
+ * @description 상위 공통코드 조회 by cdMajor
+ */
+export const oneByMajor = async (ctx) => {
+    let { major } = ctx.params;
+
+    if (!major) {
+        ctx.res.badRequest({
+            data: major,
+            message: 'Fail - cmcodeCtrl > oneByMajor'
+        });
+
+        return;
+    }
+
+    try {
+        const cmcode = await Cmcode.findOne({ cdMajor: major }).sort({ 'cdMinors.cdMinor': 1 });
+
+        ctx.res.ok({
+            data: cmcode,
+            message: 'Success - cmcodeCtrl > oneByMajor'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: major,
+            message: 'Error - cmcodeCtrl > oneByMajor'
+        });
+    }
+};
+
+/**
  * @author      minz-logger
  * @date        2019. 07. 29
  * @description 하위 공통코드 조회

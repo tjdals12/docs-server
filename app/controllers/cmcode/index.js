@@ -51,6 +51,60 @@ cmcode.get('/', cmcodeCtrl.list);
 
 /**
  * @swagger
+ * /api/cmcodes/{id}:
+ *  get:
+ *      tags:
+ *          - Cmcode
+ *      summary: 상위 공통코드 조회
+ *      description: 상위 공통코드 조회
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: cmcode id
+ *            required: true
+ *            type: string
+ *            example: 5d3e4a41709a5107893bfe4c
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/cmcode'
+ */
+cmcode.get('/:id', commonCtrl.checkObjectId, cmcodeCtrl.one);
+
+/**
+ * @swagger
+ * /api/cmcodes/{major}/minors:
+ *  get:
+ *      tags: 
+ *          - Cmcode
+ *      summary: 상위 공통코드 조회 by cdMajor
+ *      description: 상위 공통코드 조회 by cdMajor
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: major
+ *            description: cmcode cdMajor
+ *            required: true
+ *            type: string
+ *            example: '0001'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/cmcode'
+ */
+cmcode.get('/:major/minors', cmcodeCtrl.oneByMajor);
+
+/**
+ * @swagger
  * /api/cmcodes/{id}/{minor}:
  *  get:
  *      tags:
@@ -117,33 +171,6 @@ cmcode.get('/:id/:minor', commonCtrl.checkObjectId, cmcodeCtrl.listWithMinor);
  *                     $ref: '#/definitions/cmcode'
  */
 cmcode.post('/', cmcodeCtrl.add);
-
-/**
- * @swagger
- * /api/cmcodes/{id}:
- *  get:
- *      tags:
- *          - Cmcode
- *      summary: 상위 공통코드 조회
- *      description: 상위 공통코드 조회
- *      consumes:
- *          - application/json
- *      produces:
- *          - application/json
- *      parameters:
- *          - in: path
- *            name: id
- *            description: cmcode id
- *            required: true
- *            type: string
- *            example: 5d3e4a41709a5107893bfe4c
- *      responses:
- *          200:
- *              description: Successful operation
- *              schema:
- *                  $ref: '#/definitions/cmcode'
- */
-cmcode.get('/:id', commonCtrl.checkObjectId, cmcodeCtrl.one);
 
 /**
  * @swagger

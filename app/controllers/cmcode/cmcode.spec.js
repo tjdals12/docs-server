@@ -114,6 +114,20 @@ describe('  [ CMCODE ]', () => {
         });
     });
 
+    describe('GET /cmcodes/:id/minors', () => {
+        it('get cmcode by cdMajor', (done) => {
+            request(server)
+                .get(`/api/cmcodes/${major}/minors`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.cdMajor).to.equal(major);
+                    done();
+                });
+        });
+    });
+
     describe('PATCH /cmcodes/:id/edit', () => {
         it('edit cmcode', (done) => {
             request(server)
