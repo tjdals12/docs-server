@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import * as commonCtrl from 'controllers/commonCtrl';
+import * as commonCtrl from 'controllers/common.ctrl';
 import * as documentCtrl from './document.ctrl';
 
 const document = new Router();
@@ -143,7 +143,7 @@ const document = new Router();
  *         parameters:
  *             - in: query
  *               name: page
- *               description: page parameter
+ *               description: document parameter
  *               type: string
  *               example: 1
  *         responses:

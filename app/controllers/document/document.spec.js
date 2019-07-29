@@ -9,10 +9,10 @@ describe('[ Document ]', () => {
 
     before((done) => {
         db.connect().then(type => {
-            console.log(`Conneted ${type}`);
+            console.log(`Connected ${type}`);
 
             server = app.listen(4000, () => {
-                console.log('listening on port');
+                console.log('listening on port 4000');
                 done();
             });
         });
@@ -29,7 +29,7 @@ describe('[ Document ]', () => {
             });
     });
 
-    describe('POST /documents/add', () => {
+    describe('POST /documents', () => {
         it('add document', (done) => {
             request(server)
                 .post('/api/documents')

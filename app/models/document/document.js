@@ -114,7 +114,8 @@ DocumentSchema.statics.editDocument = function (param) {
                 documentGb,
                 documentRev,
                 officialNumber,
-                memo
+                memo,
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
@@ -139,7 +140,8 @@ DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
                     yn: yn,
                     deleteDt: DEFINE.dateNow(),
                     reason: reason
-                }
+                },
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
@@ -168,6 +170,9 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
             $push: {
                 documentInOut: newInOut,
                 documentStatus: newStatus
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
@@ -212,6 +217,9 @@ DocumentSchema.statics.holdDocument = async function (id, yn, reason) {
         {
             $push: {
                 holdYn: newHoldYn
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
