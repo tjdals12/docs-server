@@ -1,13 +1,14 @@
 import { Schema, model } from 'mongoose';
+import CdMinor from './cdMinor';
 import Timestamp from 'models/common/schema/Timestamp';
 import DEFINE from 'models/common';
 
 /**
  * @author      minz-logger
  * @date        2019. 07. 20
- * @description 공통코드
+ * @description 공통코드 (상위)
  */
-const Cmcode = new Schema({
+const CmcodeSchema = new Schema({
     effStaDt: {
         type: String,
         default: DEFINE.dateNow
@@ -16,10 +17,12 @@ const Cmcode = new Schema({
         type: String,
         default: DEFINE.COMMON.MAX_END_DT
     },
-    cdMajor: String,
-    cdMinor: String,
+    cdMajor: {
+        type: String,
+        required: true
+    },
     cdFName: String,
-    cdSName: String,
+    cdMinors: [CdMinor.schema],
     timestamp: {
         type: Timestamp,
         default: Timestamp
@@ -29,18 +32,50 @@ const Cmcode = new Schema({
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 추가
+ * @description 하위 공통코드 조회
  * @param       {Object} param
  */
-Cmcode.statics.saveCmcode = function (param) {
+CmcodeSchema.statics.findWithMinor = function (param) {
     let {
-        cdMajor,
-        cdMinor,
-        cdFName,
-        cdSName
+        id,
+        minor
     } = param;
 
-    const cmcode = this({ cdMajor, cdMinor, cdFName, cdSName });
+    return this.findOne(
+        {
+            $and: [
+                { _id: id },
+                {
+                    cdMinors: {
+                        $elemMatch: {
+                            cdMinor: minor
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            _id: true,
+            cdMajor: true,
+            'cdMinors.$.cdMinor': true,
+            timestamp: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 상위 공통코드 생성
+ * @param       {Object} param
+ */
+CmcodeSchema.statics.saveCmcodeMajor = function (param) {
+    let {
+        cdMajor,
+        cdFName
+    } = param;
+
+    const cmcode = this({ cdMajor, cdFName });
 
     cmcode.save();
 
@@ -50,26 +85,25 @@ Cmcode.statics.saveCmcode = function (param) {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 수정
+ * @description 하위 공통코드 추가
  * @param       {Object} param
  */
-Cmcode.statics.editCmcode = function (param) {
+CmcodeSchema.statics.saveCmcodeMinor = function (param) {
     let {
         id,
-        cdMajor,
         cdMinor,
-        cdFName,
         cdSName
     } = param;
+
+    const newCdMinor = new CdMinor({ cdMinor, cdSName });
 
     return this.findOneAndUpdate(
         { _id: id },
         {
+            $push: {
+                cdMinors: newCdMinor
+            },
             $set: {
-                cdMajor,
-                cdMinor,
-                cdFName,
-                cdSName,
                 'timestamp.updDt': DEFINE.dateNow()
             }
         },
@@ -82,10 +116,88 @@ Cmcode.statics.editCmcode = function (param) {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 수정
+ * @description 상위 공통코드 수정
+ * @param       {Object} param
+ */
+CmcodeSchema.statics.editCmcode = function (param) {
+    let {
+        id,
+        cdMajor,
+        cdFName
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                cdMajor,
+                cdFName,
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 하위 공통코드 수정
+ * @param       {Object} param
+ */
+CmcodeSchema.statics.editMinor = function (param) {
+    let {
+        id,
+        minor,
+        cdSName
+    } = param;
+
+    return this.findOneAndUpdate(
+        {
+            $and: [
+                { _id: id },
+                {
+                    cdMinors: {
+                        $elemMatch: {
+                            cdMinor: minor
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            $set: {
+                'cdMinors.$.cdSName': cdSName,
+                'timestamp.$.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true,
+            projection: {
+                _id: true,
+                cdMajor: true,
+                cdFName: true,
+                cdMinors: {
+                    $elemMatch: {
+                        cdMinor: minor
+                    }
+                },
+                timestamp: true
+            },
+
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 상위 공통코드 삭제
  * @param       {String} id
  */
-Cmcode.statics.deleteCmcode = function (id) {
+CmcodeSchema.statics.deleteCmcode = function (id) {
     return this.findOneAndUpdate(
         { _id: id },
         {
@@ -100,4 +212,34 @@ Cmcode.statics.deleteCmcode = function (id) {
     );
 };
 
-export default model('Cmcode', Cmcode);
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 하위 공통코드 삭제
+ * @param       {Object} param
+ */
+CmcodeSchema.statics.deleteCdMinor = function (param) {
+    let {
+        id,
+        minor
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $pull: {
+                cdMinors: {
+                    cdMinor: minor
+                }
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+export default model('Cmcode', CmcodeSchema);

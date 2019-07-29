@@ -6,6 +6,8 @@ import { expect } from 'chai';
 describe('  [ CMCODE ]', () => {
     let server;
     let id;
+    let major;
+    let minor;
 
     before((done) => {
         db.connect().then((type) => {
@@ -35,17 +37,36 @@ describe('  [ CMCODE ]', () => {
                 .post('/api/cmcodes')
                 .send({
                     cdMajor: '0001',
-                    cdMinor: '0001',
-                    cdFName: '공종',
-                    cdSName: '공종'
+                    cdFName: '공종'
                 })
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
 
                     id = ctx.body.data._id;
+                    major = ctx.body.data.cdMajor;
 
                     expect(ctx.body.data.cdFName).to.equal('공종');
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /cmcodes/:id/add', () => {
+        it('add cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${id}/add`)
+                .send({
+                    cdMinor: '0001',
+                    cdSName: '기계'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    minor = '0001';
+
+                    expect(ctx.body.data._id).to.equal(id);
                     done();
                 });
         });
@@ -65,6 +86,20 @@ describe('  [ CMCODE ]', () => {
         });
     });
 
+    describe('GET /cmcodes/:id/:minor', () => {
+        it('get cmcode', (done) => {
+            request(server)
+                .get(`/api/cmcodes/${id}/${minor}`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.cdMajor).to.equal(major);
+                    done();
+                });
+        });
+    });
+
     describe('GET /cmcodes/:id', () => {
         it('get cmcode', (done) => {
             request(server)
@@ -79,26 +114,55 @@ describe('  [ CMCODE ]', () => {
         });
     });
 
-    describe('PATCH /cmcodes/:id', () => {
+    describe('PATCH /cmcodes/:id/edit', () => {
         it('edit cmcode', (done) => {
             request(server)
                 .patch(`/api/cmcodes/${id}/edit`)
                 .send({
-                    cdMajor: '0001',
-                    cdMinor: '0002',
-                    cdFName: '공종',
-                    cdSName: '기계'
+                    cdMajor: '0002',
+                    cdFName: '구분'
                 })
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    expect(ctx.body.data.cdSName).to.equal('기계');
+                    expect(ctx.body.data.cdFName).to.equal('구분');
                     done();
                 });
         });
     });
 
-    describe('PATCH /cmcodes/:id', () => {
+    describe('PATCH /cmcodes/:id/:minor/edit', () => {
+        it('edit cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${id}/${minor}/edit`)
+                .send({
+                    cdSName: '장치'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.cdMinors[0].cdSName).to.equal('장치');
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /cmcodes/:id/:minor/delete', () => {
+        it('delete cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${id}/${minor}/delete`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.cdMinors).have.length(0);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /cmcodes/:id/delete', () => {
         it('delete cmcode', (done) => {
             request(server)
                 .patch(`/api/cmcodes/${id}/delete`)

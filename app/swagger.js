@@ -8,6 +8,8 @@ const options = {
         title: 'Docs API',
         version: '1.0.0'
     },
+    apisSorter: 'method',
+    operationsSorter: 'method',
     apis: ['./app/controllers/*/index.js']
 };
 

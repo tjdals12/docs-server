@@ -10,7 +10,7 @@ export const list = async (ctx) => {
     try {
         const cmcodes = await Cmcode.find().sort({ cdMajor: 1 });
 
-        ctx.res.success({
+        ctx.res.ok({
             data: cmcodes,
             message: 'Success - cmcodeCtrl > list'
         });
@@ -25,21 +25,72 @@ export const list = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 추가
+ * @description 상위 공통코드 조회
+ */
+export const one = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const cmcode = await Cmcode.findById(id);
+
+        ctx.res.ok({
+            data: cmcode,
+            message: 'Success - cmcodeCtrl > one'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: 'Error - cmcodeCtrl > one'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 하위 공통코드 조회
+ */
+export const listWithMinor = async (ctx) => {
+    let { id, minor } = ctx.params;
+
+    if (!minor) {
+        ctx.res.badRequest({
+            data: { id, minor },
+            message: 'Fail - cmcodeCtrl > listWithMinor'
+        });
+
+        return;
+    }
+
+    try {
+        const cmcode = await Cmcode.findWithMinor({ id, minor });
+
+        ctx.res.ok({
+            data: cmcode,
+            message: 'Success - cmcodeCtrl > listWithMinor'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, minor },
+            message: 'Error - cmcodeCtrl > listWithMinor'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 상위 공통코드 생성
  */
 export const add = async (ctx) => {
     let {
         cdMajor,
-        cdMinor,
-        cdFName,
-        cdSName
+        cdFName
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
         cdMajor: Joi.string().required(),
-        cdMinor: Joi.string().required(),
-        cdFName: Joi.string().required(),
-        cdSName: Joi.string().required()
+        cdFName: Joi.string().required()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -54,7 +105,7 @@ export const add = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.saveCmcode({ cdMajor, cdMinor, cdFName, cdSName });
+        const cmcode = await Cmcode.saveCmcodeMajor({ cdMajor, cdFName });
 
         ctx.res.ok({
             data: cmcode,
@@ -71,22 +122,39 @@ export const add = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 개별 조회
+ * @description 하위 공통코드 추가
  */
-export const one = async (ctx) => {
+export const addMinor = async (ctx) => {
     let { id } = ctx.params;
+    let { cdMinor, cdSName } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        cdMinor: Joi.string().required(),
+        cdSName: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - cmcodeCtrl > addMinor'
+        });
+
+        return;
+    }
 
     try {
-        const cmcode = await Cmcode.findById(id);
+        const cmcode = await Cmcode.saveCmcodeMinor({ id, cdMinor, cdSName });
 
-        ctx.res.success({
+        ctx.res.ok({
             data: cmcode,
-            message: 'Success - cmcodeCtrl > one'
+            message: 'Success - cmcodeCtrl > addMinor'
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: id,
-            message: 'Error - cmcodeCtrl > one'
+            data: ctx.request.body,
+            message: 'Error - cmcodeCtrl > addMinor'
         });
     }
 };
@@ -94,22 +162,18 @@ export const one = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 수정
+ * @description 상위 공통코드 수정
  */
 export const editCmcode = async (ctx) => {
     let { id } = ctx.params;
     let {
         cdMajor,
-        cdMinor,
-        cdFName,
-        cdSName
+        cdFName
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
         cdMajor: Joi.string().required(),
-        cdMinor: Joi.string().required(),
-        cdFName: Joi.string().required(),
-        cdSName: Joi.string().required()
+        cdFName: Joi.string().required()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -124,9 +188,9 @@ export const editCmcode = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.editCmcode({ id, cdMajor, cdMinor, cdFName, cdSName });
+        const cmcode = await Cmcode.editCmcode({ id, cdMajor, cdFName });
 
-        ctx.res.success({
+        ctx.res.ok({
             data: cmcode,
             message: 'Success - cmcodeCtrl > edit'
         });
@@ -141,7 +205,57 @@ export const editCmcode = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 07. 29
- * @description 공통코드 삭제
+ * @description 하위 공통코드 수정
+ */
+export const editMinor = async (ctx) => {
+    let { id, minor } = ctx.params;
+    let {
+        cdSName
+    } = ctx.request.body;
+
+    if (!minor) {
+        ctx.res.badRequest({
+            data: {
+                id, minor, cdSName
+            },
+            message: 'Fail - cmcodeCtrl > editMinor'
+        });
+    }
+
+    const schema = Joi.object().keys({
+        cdSName: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - cmcodeCtrl > editMinor'
+        });
+
+        return;
+    }
+
+    try {
+        const cmcode = await Cmcode.editMinor({ id, minor, cdSName });
+
+        ctx.res.ok({
+            data: cmcode,
+            message: 'Succeess - cmcodeCtrl > editMinor'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - cmcodeCtrl > editMinor'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 상위 공통코드 삭제
  */
 export const deleteCmcode = async (ctx) => {
     let { id } = ctx.params;
@@ -149,7 +263,7 @@ export const deleteCmcode = async (ctx) => {
     try {
         const cmcode = await Cmcode.deleteCmcode(id);
 
-        ctx.res.success({
+        ctx.res.ok({
             data: cmcode,
             message: 'Success - cmcodeCtrl > deleteCmcode'
         });
@@ -157,6 +271,38 @@ export const deleteCmcode = async (ctx) => {
         ctx.res.internalServerError({
             data: id,
             message: 'Error - cmcodeCtrl > deleteCmcode'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 07. 29
+ * @description 하위 공통코드 삭제
+ */
+export const deleteCdMinor = async (ctx) => {
+    let { id, minor } = ctx.params;
+
+    if (!minor) {
+        ctx.res.badRequest({
+            data: { id, minor },
+            message: 'Fail - cmcodeCtrl > deleteCdMinor'
+        });
+
+        return;
+    }
+
+    try {
+        const cmcode = await Cmcode.deleteCdMinor({ id, minor });
+
+        ctx.res.ok({
+            data: cmcode,
+            message: 'Success - cmcodeCtrl > deleteCdMinor'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, minor },
+            message: 'Error - cmcodeCtrl > deleteCdMinor'
         });
     }
 };
