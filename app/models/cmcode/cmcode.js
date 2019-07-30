@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import CdMinor from './cdminor';
+import CdMinor from './cdMinor';
 import Timestamp from 'models/common/schema/Timestamp';
 import DEFINE from 'models/common';
 
