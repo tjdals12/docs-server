@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import CdMinor from './cdMinor';
+import CdMinor from './cdminor';
 import Timestamp from 'models/common/schema/Timestamp';
 import DEFINE from 'models/common';
 
@@ -22,7 +22,10 @@ const CmcodeSchema = new Schema({
         required: true
     },
     cdFName: String,
-    cdMinors: [CdMinor.schema],
+    cdMinors: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Cdminor'
+    }],
     timestamp: {
         type: Timestamp,
         default: Timestamp
@@ -41,26 +44,7 @@ CmcodeSchema.statics.findWithMinor = function (param) {
         minor
     } = param;
 
-    return this.findOne(
-        {
-            $and: [
-                { _id: id },
-                {
-                    cdMinors: {
-                        $elemMatch: {
-                            cdMinor: minor
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            _id: true,
-            cdMajor: true,
-            'cdMinors.$.cdMinor': true,
-            timestamp: true
-        }
-    );
+    return this.findOne({ _id: id }).populate({ path: 'cdMinors', match: { cdMinor: minor } });
 };
 
 /**
@@ -95,13 +79,13 @@ CmcodeSchema.statics.saveCmcodeMinor = function (param) {
         cdSName
     } = param;
 
-    const newCdMinor = new CdMinor({ cdMinor, cdSName });
+    const _id = CdMinor.saveCdMinor({ cdMinor, cdSName });
 
     return this.findOneAndUpdate(
         { _id: id },
         {
             $push: {
-                cdMinors: newCdMinor
+                cdMinors: _id
             },
             $set: {
                 'timestamp.updDt': DEFINE.dateNow()
@@ -147,48 +131,17 @@ CmcodeSchema.statics.editCmcode = function (param) {
  * @description 하위 공통코드 수정
  * @param       {Object} param
  */
-CmcodeSchema.statics.editMinor = function (param) {
+CmcodeSchema.statics.editMinor = async function (param) {
     let {
         id,
-        minor,
+        minorId,
+        cdMinor,
         cdSName
     } = param;
 
-    return this.findOneAndUpdate(
-        {
-            $and: [
-                { _id: id },
-                {
-                    cdMinors: {
-                        $elemMatch: {
-                            cdMinor: minor
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            $set: {
-                'cdMinors.$.cdSName': cdSName,
-                'timestamp.$.updDt': DEFINE.dateNow()
-            }
-        },
-        {
-            new: true,
-            projection: {
-                _id: true,
-                cdMajor: true,
-                cdFName: true,
-                cdMinors: {
-                    $elemMatch: {
-                        cdMinor: minor
-                    }
-                },
-                timestamp: true
-            },
+    await CdMinor.editCdMinor({ id: minorId, cdMinor, cdSName });
 
-        }
-    );
+    return this.findOne({ _id: id }).populate({ path: 'cdMinors', match: { _id: minorId } });
 };
 
 /**
@@ -218,28 +171,15 @@ CmcodeSchema.statics.deleteCmcode = function (id) {
  * @description 하위 공통코드 삭제
  * @param       {Object} param
  */
-CmcodeSchema.statics.deleteCdMinor = function (param) {
+CmcodeSchema.statics.deleteCdMinor = async function (param) {
     let {
         id,
-        minor
+        minorId
     } = param;
 
-    return this.findOneAndUpdate(
-        { _id: id },
-        {
-            $pull: {
-                cdMinors: {
-                    cdMinor: minor
-                }
-            },
-            $set: {
-                'timestamp.updDt': DEFINE.dateNow()
-            }
-        },
-        {
-            new: true
-        }
-    );
+    await CdMinor.deleteCdMinor({ id: minorId });
+
+    return this.findOne({ _id: id }).populate({ path: 'cdMinors' });
 };
 
 export default model('Cmcode', CmcodeSchema);

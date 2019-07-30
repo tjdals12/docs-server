@@ -14,14 +14,16 @@ import deleteYn from './deleteYn';
 const DocumentSchema = new Schema({
     vendor: Schema.Types.ObjectId,
     part: {
-        type: String,
-        default: DEFINE.PART.COMMON,
-        get: DEFINE.partConverter
+        type: Schema.Types.ObjectId,
+        ref: 'Cdminor'
     },
     documentNumber: String,
     documentTitle: String,
     documentInOut: [InOut.schema],
-    documentGb: String,
+    documentGb: {
+        type: Schema.Types.ObjectId,
+        ref: 'Cdminor'
+    },
     documentStatus: {
         type: [Status.schema],
         default: Status

@@ -254,7 +254,7 @@ cmcode.patch('/:id/edit', commonCtrl.checkObjectId, cmcodeCtrl.editCmcode);
 
 /**
  * @swagger
- * /api/cmcodes/{id}/{minor}/edit:
+ * /api/cmcodes/{id}/{minorId}/edit:
  *  patch:
  *      tags: 
  *          - Cmcode
@@ -272,18 +272,22 @@ cmcode.patch('/:id/edit', commonCtrl.checkObjectId, cmcodeCtrl.editCmcode);
  *            type: string
  *            example: 5d3eb2b26ac8f9112bfead8a
  *          - in: path
- *            name: minor
- *            description: cmcode cdMinor
+ *            name: minorId
+ *            description: cdMinor id
  *            required: true
  *            type: string
- *            example: '0001'
+ *            example: 5d3e40cf742ebd0594392a15
  *          - in: body
  *            name: body
- *            description: cmcode cdSName
+ *            description: cdSName
  *            required: true
  *            schema:
  *              type: object
  *              properties:
+ *                  cdMinor:
+ *                      type: string
+ *                      required: true
+ *                      example: '0002'
  *                  cdSName:
  *                      type: string
  *                      required: true
@@ -294,7 +298,7 @@ cmcode.patch('/:id/edit', commonCtrl.checkObjectId, cmcodeCtrl.editCmcode);
  *              schema:
  *                  $ref: '#/definitions/cmcode'
  */
-cmcode.patch('/:id/:minor/edit', commonCtrl.checkObjectId, cmcodeCtrl.editMinor);
+cmcode.patch('/:id/:minorId/edit', commonCtrl.checkObjectId, cmcodeCtrl.editMinor);
 
 /**
  * @swagger
@@ -324,7 +328,7 @@ cmcode.patch('/:id/delete', commonCtrl.checkObjectId, cmcodeCtrl.deleteCmcode);
 
 /**
  * @swagger
- * /api/cmcodes/{id}/{minor}/delete:
+ * /api/cmcodes/{id}/{minorId}/delete:
  *  patch:
  *      tags:
  *          - Cmcode
@@ -342,17 +346,17 @@ cmcode.patch('/:id/delete', commonCtrl.checkObjectId, cmcodeCtrl.deleteCmcode);
  *            type: string
  *            example: 5d3e40cf742ebd0594392a15
  *          - in: path
- *            name: minor
- *            description: cmcode cdMinor
+ *            name: minorId
+ *            description: cdMinor id
  *            required: true
  *            type: string
- *            example: '0001'
+ *            example: 5d3e40cf742ebd0594392a15
  *      responses:
  *          200:
  *              description: Successful operation
  *              schema:
  *                  $ref: '#/definitions/cmcode'
  */
-cmcode.patch('/:id/:minor/delete', commonCtrl.checkObjectId, cmcodeCtrl.deleteCdMinor);
+cmcode.patch('/:id/:minorId/delete', commonCtrl.checkObjectId, cmcodeCtrl.deleteCdMinor);
 
 export default cmcode;

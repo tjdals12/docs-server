@@ -1,4 +1,4 @@
-import Cmcode from 'models/cmcode/cmcode';
+import Cmcode from '../../models/cmcode/cmcode';
 import Joi from 'joi';
 
 /**
@@ -8,7 +8,7 @@ import Joi from 'joi';
  */
 export const list = async (ctx) => {
     try {
-        const cmcodes = await Cmcode.find().sort({ cdMajor: 1 });
+        const cmcodes = await Cmcode.find().populate({ path: 'cdMinors' });
 
         ctx.res.ok({
             data: cmcodes,
@@ -31,7 +31,7 @@ export const one = async (ctx) => {
     let { id } = ctx.params;
 
     try {
-        const cmcode = await Cmcode.findById(id);
+        const cmcode = await Cmcode.findById(id).populate({ path: 'cdMinors' });
 
         ctx.res.ok({
             data: cmcode,
@@ -63,7 +63,7 @@ export const oneByMajor = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.findOne({ cdMajor: major }).sort({ 'cdMinors.cdMinor': 1 });
+        const cmcode = await Cmcode.findOne({ cdMajor: major }).populate({ path: 'cdMinors' }).sort({ 'cdMinors.cdMinor': 1 });
 
         ctx.res.ok({
             data: cmcode,
@@ -240,21 +240,25 @@ export const editCmcode = async (ctx) => {
  * @description 하위 공통코드 수정
  */
 export const editMinor = async (ctx) => {
-    let { id, minor } = ctx.params;
+    let { id, minorId } = ctx.params;
     let {
+        cdMinor,
         cdSName
     } = ctx.request.body;
 
-    if (!minor) {
+    if (!minorId) {
         ctx.res.badRequest({
             data: {
-                id, minor, cdSName
+                id, minorId, cdMinor, cdSName
             },
             message: 'Fail - cmcodeCtrl > editMinor'
         });
+
+        return;
     }
 
     const schema = Joi.object().keys({
+        cdMinor: Joi.string().required(),
         cdSName: Joi.string().required()
     });
 
@@ -270,7 +274,7 @@ export const editMinor = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.editMinor({ id, minor, cdSName });
+        const cmcode = await Cmcode.editMinor({ id, minorId, cdMinor, cdSName });
 
         ctx.res.ok({
             data: cmcode,
@@ -313,11 +317,11 @@ export const deleteCmcode = async (ctx) => {
  * @description 하위 공통코드 삭제
  */
 export const deleteCdMinor = async (ctx) => {
-    let { id, minor } = ctx.params;
+    let { id, minorId } = ctx.params;
 
-    if (!minor) {
+    if (!minorId) {
         ctx.res.badRequest({
-            data: { id, minor },
+            data: { id, minorId },
             message: 'Fail - cmcodeCtrl > deleteCdMinor'
         });
 
@@ -325,7 +329,7 @@ export const deleteCdMinor = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.deleteCdMinor({ id, minor });
+        const cmcode = await Cmcode.deleteCdMinor({ id, minorId });
 
         ctx.res.ok({
             data: cmcode,
@@ -333,7 +337,7 @@ export const deleteCdMinor = async (ctx) => {
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: { id, minor },
+            data: { id, minorId },
             message: 'Error - cmcodeCtrl > deleteCdMinor'
         });
     }

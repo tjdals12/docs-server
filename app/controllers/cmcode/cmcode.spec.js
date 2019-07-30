@@ -7,7 +7,7 @@ describe('  [ CMCODE ]', () => {
     let server;
     let id;
     let major;
-    let minor;
+    let minorId;
 
     before((done) => {
         db.connect().then((type) => {
@@ -64,9 +64,9 @@ describe('  [ CMCODE ]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    minor = '0001';
+                    minorId = ctx.body.data.cdMinors[0];
 
-                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.cdMinors).have.length(1);
                     done();
                 });
         });
@@ -89,7 +89,7 @@ describe('  [ CMCODE ]', () => {
     describe('GET /cmcodes/:id/:minor', () => {
         it('get cmcode', (done) => {
             request(server)
-                .get(`/api/cmcodes/${id}/${minor}`)
+                .get(`/api/cmcodes/${id}/${minorId}`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -145,11 +145,12 @@ describe('  [ CMCODE ]', () => {
         });
     });
 
-    describe('PATCH /cmcodes/:id/:minor/edit', () => {
+    describe('PATCH /cmcodes/:id/:minorId/edit', () => {
         it('edit cdMinor', (done) => {
             request(server)
-                .patch(`/api/cmcodes/${id}/${minor}/edit`)
+                .patch(`/api/cmcodes/${id}/${minorId}/edit`)
                 .send({
+                    cdMinor: '0002',
                     cdSName: '장치'
                 })
                 .expect(200)
@@ -165,7 +166,7 @@ describe('  [ CMCODE ]', () => {
     describe('PATCH /cmcodes/:id/:minor/delete', () => {
         it('delete cdMinor', (done) => {
             request(server)
-                .patch(`/api/cmcodes/${id}/${minor}/delete`)
+                .patch(`/api/cmcodes/${id}/${minorId}/delete`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
