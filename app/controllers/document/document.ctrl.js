@@ -21,6 +21,8 @@ export const list = async (ctx) => {
     try {
         const documents = await Document
             .find()
+            .populate({ path: 'part' })
+            .populate({ path: 'documentGb' })
             .skip(((page - 1) * 10))
             .limit(10)
             .sort({ 'timestamp.regDt': -1 });
@@ -113,7 +115,7 @@ export const one = async (ctx) => {
     let { id } = ctx.params;
 
     try {
-        const document = await Document.findById(id);
+        const document = await Document.findById(id).populate({ path: 'part' }).populate({ path: 'documentGb' });
 
         ctx.res.ok({
             data: document,

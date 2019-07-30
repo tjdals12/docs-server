@@ -181,7 +181,7 @@ document.get('/', documentCtrl.list);
  *                      example: 5d33ef877cceb91244d16fdd
  *                  part:
  *                      type: string
- *                      example: '00'
+ *                      example: 5d40020eedf1961ced85a652
  *                  documentNumber:
  *                      type: string
  *                      example: VP-ABC-R-001-001
@@ -190,7 +190,7 @@ document.get('/', documentCtrl.list);
  *                      example: Vendor Print Index & Schedule
  *                  documentGb:
  *                      type: string
- *                      example: '01'
+ *                      example: 5d400221edf1961ced85a654
  *                  documentRev:
  *                      type: string
  *                      example: Rev.A
@@ -267,7 +267,7 @@ document.get('/:id', documentCtrl.one);
  *                      example: 5d366ffdb984ac07b72e9126
  *                  part:
  *                      type: string
- *                      example: '00'
+ *                      example: 5d40020eedf1961ced85a652
  *                  documentNumber:
  *                      type: string
  *                      example: VP-ABC-R-001-001
@@ -276,7 +276,7 @@ document.get('/:id', documentCtrl.one);
  *                      example: Drawing
  *                  documentGb:
  *                      type: string
- *                      example: '01'
+ *                      example: 5d400221edf1961ced85a654
  *                  documentRev: 
  *                      type: string
  *                      example: 'Rev.A'
