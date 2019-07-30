@@ -66,7 +66,7 @@ DocumentSchema.set('toJSON', { getters: true });
  * @description 문서 추가
  * @param       {Object} param
  */
-DocumentSchema.statics.saveDocument = function (param) {
+DocumentSchema.statics.saveDocument = async function (param) {
     let {
         vendor,
         part,
@@ -81,9 +81,9 @@ DocumentSchema.statics.saveDocument = function (param) {
     const documentInOut = new InOut({ officialNumber });
     const document = new this({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo });
 
-    document.save();
+    await document.save();
 
-    return document;
+    return this.findOne({ _id: document._id }).populate({ path: 'part' }).populate({ path: 'documentGb ' });
 };
 
 /**
@@ -123,7 +123,7 @@ DocumentSchema.statics.editDocument = function (param) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -148,7 +148,7 @@ DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
         },
         {
             new: true
-        });
+        }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -180,7 +180,7 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -227,7 +227,7 @@ DocumentSchema.statics.holdDocument = async function (id, yn, reason) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 export default model('Document', DocumentSchema);

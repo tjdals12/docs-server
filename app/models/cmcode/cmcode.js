@@ -76,10 +76,11 @@ CmcodeSchema.statics.saveCmcodeMinor = function (param) {
     let {
         id,
         cdMinor,
-        cdSName
+        cdSName,
+        cdRef1
     } = param;
 
-    const _id = CdMinor.saveCdMinor({ cdMinor, cdSName });
+    const _id = CdMinor.saveCdMinor({ cdMinor, cdSName, cdRef1 });
 
     return this.findOneAndUpdate(
         { _id: id },

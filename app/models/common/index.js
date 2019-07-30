@@ -15,19 +15,6 @@ const DEFINE = {
         NONE: '-'
     },
 
-    PART: {
-        COMMON: '00'
-    },
-
-    partConverter: function (code) {
-        switch (code) {
-        case DEFINE.PART.COMMON:
-            return '공통';
-        default:
-            return code;
-        }
-    },
-
     IN_OUT_GB: {
         FROM_VENDOR: '01',
         FROM_VENDOR_RE: '02',

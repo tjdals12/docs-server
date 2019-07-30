@@ -9,6 +9,7 @@ import Timestamp from 'models/common/schema/Timestamp';
 const CdMinorSchema = new Schema({
     cdMinor: String,
     cdSName: String,
+    cdRef1: Object,
     timestamp: {
         type: Timestamp,
         default: Timestamp
@@ -23,10 +24,11 @@ const CdMinorSchema = new Schema({
 CdMinorSchema.statics.saveCdMinor = function (param) {
     let {
         cdMinor,
-        cdSName
+        cdSName,
+        cdRef1
     } = param;
 
-    const newCdMinor = this({ cdMinor, cdSName });
+    const newCdMinor = this({ cdMinor, cdSName, cdRef1 });
     newCdMinor.save();
 
     return newCdMinor;

@@ -158,11 +158,12 @@ export const add = async (ctx) => {
  */
 export const addMinor = async (ctx) => {
     let { id } = ctx.params;
-    let { cdMinor, cdSName } = ctx.request.body;
+    let { cdMinor, cdSName, cdRef1 } = ctx.request.body;
 
     const schema = Joi.object().keys({
         cdMinor: Joi.string().required(),
-        cdSName: Joi.string().required()
+        cdSName: Joi.string().required(),
+        cdRef1: Joi.alternatives(Joi.string(), Joi.object())
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -177,7 +178,7 @@ export const addMinor = async (ctx) => {
     }
 
     try {
-        const cmcode = await Cmcode.saveCmcodeMinor({ id, cdMinor, cdSName });
+        const cmcode = await Cmcode.saveCmcodeMinor({ id, cdMinor, cdSName, cdRef1 });
 
         ctx.res.ok({
             data: cmcode,

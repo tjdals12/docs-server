@@ -18,9 +18,8 @@ const VendorSchema = new Schema({
     vendorPerson: [Person.schema],
     officialName: String,
     part: {
-        type: String,
-        default: DEFINE.PART.COMMON,
-        get: DEFINE.partConverter
+        type: Schema.Types.ObjectId,
+        ref: 'cdMinor'
     },
     partNumber: {
         type: String,

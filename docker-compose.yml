@@ -5,6 +5,8 @@ services:
     image: mongo
     ports:
       - 27017:27017
+    volumes:
+      - /home/minz/mongodb/data:/data/db
     environment:
       - MONGO_INITDB_ROOT_USERNAME=docs
       - MONGO_INITDB_ROOT_PASSWORD=1205360

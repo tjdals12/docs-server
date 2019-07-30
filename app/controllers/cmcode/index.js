@@ -204,6 +204,12 @@ cmcode.post('/', cmcodeCtrl.add);
  *                  cdSName:
  *                      type: string
  *                      example: '기계'
+ *                  cdRef1:
+ *                      type: object
+ *                      properties:
+ *                          status:
+ *                              type: string
+ *                              example: '01'
  *      responses:
  *          200:
  *              description: Successful operation
