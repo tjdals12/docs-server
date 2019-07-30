@@ -35,10 +35,10 @@ describe('[ Document ]', () => {
                 .post('/api/documents')
                 .send({
                     vendor: '5d33ef877cceb91244d16fdd',
-                    part: '99',
+                    part: '5d33ef877cceb91244d16fde',
                     documentNumber: 'ABC-DEF-G-001-003',
                     documentTitle: 'Inspection Report',
-                    documentGb: '01',
+                    documentGb: '5d33ef877cceb91244d16fdf',
                     documentRev: '01',
                     officialNumber: 'ABC-DEF-T-G-001-001',
                     memo: '최초 접수'
@@ -89,10 +89,10 @@ describe('[ Document ]', () => {
                 .patch(`/api/documents/${id}/edit`)
                 .send({
                     vendor: '5d33ef877cceb91244d16fdd',
-                    part: '99',
+                    part: '5d33ef877cceb91244d16fd1',
                     documentNumber: 'ABC-DEF-G-001-003',
                     documentTitle: 'Drawing',
-                    documentGb: '01',
+                    documentGb: '5d33ef877cceb91244d16fd2',
                     documentRev: '01',
                     officialNumber: 'ABC-DEF-T-G-001-001',
                     memo: '최초 접수'
