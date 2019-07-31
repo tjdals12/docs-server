@@ -269,6 +269,45 @@ export const inOut = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 07. 31
+ * @description 문서 In / Out 삭제
+ */
+export const deleteInOut = async (ctx) => {
+    const { id } = ctx.params;
+    const { targetId } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        targetId: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: { id, targetId },
+            message: 'Fail - documentCtrl > deleteInOut'
+        });
+
+        return;
+    }
+
+    try {
+        const document = await Document.deleteInOutDocument(id, targetId);
+
+        ctx.res.ok({
+            data: document,
+            message: 'Success - documentCtrl > deleteInOut'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: 'Error - documentCtrl > deleteInOut'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 23
  * @description 문서 보류
  */

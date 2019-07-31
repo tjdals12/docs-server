@@ -387,6 +387,42 @@ document.patch('/:id/inout', commonCtrl.checkObjectId, documentCtrl.inOut);
 
 /**
  * @swagger
+ * /api/documents/{id}/inout/delete:
+ *  patch:
+ *      tags:
+ *          - Document
+ *      summary: 문서 In / Out 삭제
+ *      description: 문서 In / Out 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: document id
+ *            required: true
+ *            type: string
+ *            example: 5d366facb82dc107a4699999
+ *          - in: body
+ *            name: body
+ *            description: documentInOut or documentStatus id
+ *            required: string
+ *            schema:
+ *              properties:
+ *                  targetId:
+ *                      type: string
+ *                      example: 5d366facb82dc107a4699999
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.patch('/:id/inout/delete', commonCtrl.checkObjectId, documentCtrl.deleteInOut);
+
+/**
+ * @swagger
  * /api/documents/{id}/hold:
  *  patch:
  *      tags:

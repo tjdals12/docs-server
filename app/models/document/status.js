@@ -25,7 +25,7 @@ const StatusSchema = new Schema({
         type: Timestamp,
         default: Timestamp
     }
-}, { _id: false, id: false });
+});
 
 StatusSchema.set('toJSON', { getters: true });
 

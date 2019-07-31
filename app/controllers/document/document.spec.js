@@ -6,6 +6,8 @@ import { expect } from 'chai';
 describe('[ Document ]', () => {
     let server;
     let id;
+    let inOutId;
+    let statusId;
 
     before((done) => {
         db.connect().then(type => {
@@ -278,7 +280,47 @@ describe('[ Document ]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    let inOut = ctx.body.data.documentInOut;
+                    let status = ctx.body.data.documentStatus;
+
+                    inOutId = inOut[inOut.length - 1]._id;
+                    statusId = status[status.length - 1]._id;
+
                     expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.documentInOut).have.length(10);
+                    expect(ctx.body.data.documentStatus).have.length(10);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /api/documents/:id/inout/delete', () => {
+        it('Delete In/Out document', (done) => {
+            request(server)
+                .patch(`/api/documents/${id}/inout/delete`)
+                .send({
+                    targetId: inOutId
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.documentInOut).have.length(9);
+                    done();
+                });
+        });
+
+        it('Delete Status document', (done) => {
+            request(server)
+                .patch(`/api/documents/${id}/inout/delete`)
+                .send({
+                    targetId: statusId
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.documentStatus).have.length(9);
                     done();
                 });
         });

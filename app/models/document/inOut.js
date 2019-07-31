@@ -18,7 +18,7 @@ const InOutSchema = new Schema({
         type: Timestamp,
         default: Timestamp
     }
-}, { _id: false, id: false });
+});
 
 InOutSchema.set('toJSON', { getters: true });
 

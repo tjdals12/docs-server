@@ -185,6 +185,31 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
 
 /**
  * @author      minz-logger
+ * @date        2019. 07. 31
+ * @description 문서 In / Out 삭제
+ * @param       {String} id
+ */
+DocumentSchema.statics.deleteInOutDocument = function (id, targetId) {
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $pull: {
+                documentInOut: {
+                    _id: targetId
+                },
+                documentStatus: {
+                    _id: targetId
+                }
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 23
  * @description 문서 보류
  * @param       {String} id
