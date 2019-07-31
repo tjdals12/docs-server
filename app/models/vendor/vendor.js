@@ -36,7 +36,7 @@ const VendorSchema = new Schema({
     },
     trackingTransmittal: [Schema.Types.ObjectId],
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });

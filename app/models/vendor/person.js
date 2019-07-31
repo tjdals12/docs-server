@@ -13,7 +13,7 @@ const PersonSchema = new Schema({
     contactNumber: String,
     task: String,
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });

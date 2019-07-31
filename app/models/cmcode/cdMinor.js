@@ -11,7 +11,7 @@ const CdMinorSchema = new Schema({
     cdSName: String,
     cdRef1: Object,
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });

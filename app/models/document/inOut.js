@@ -15,7 +15,7 @@ const InOutSchema = new Schema({
     },
     officialNumber: String,
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });

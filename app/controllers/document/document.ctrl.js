@@ -231,14 +231,15 @@ export const deleteOne = async (ctx) => {
  */
 export const inOut = async (ctx) => {
     const { id } = ctx.params;
-    const { inOutGb, officialNumber, status, resultCode, replyCode } = ctx.request.body;
+    const { inOutGb, officialNumber, status, resultCode, replyCode, date } = ctx.request.body;
 
     const schema = Joi.object().keys({
         inOutGb: Joi.string().required(),
         officialNumber: Joi.string(),
         status: Joi.string(),
         resultCode: Joi.string(),
-        replyCode: Joi.string()
+        replyCode: Joi.string(),
+        date: Joi.string()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -253,7 +254,7 @@ export const inOut = async (ctx) => {
     }
 
     try {
-        const document = await Document.inOutDocument(id, inOutGb, officialNumber, status, resultCode, replyCode);
+        const document = await Document.inOutDocument(id, inOutGb, officialNumber, status, resultCode, replyCode, date);
 
         ctx.res.ok({
             data: document,

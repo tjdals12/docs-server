@@ -22,7 +22,7 @@ const StatusSchema = new Schema({
         get: DEFINE.replyCodeConverter
     },
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });

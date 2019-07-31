@@ -52,7 +52,7 @@ const DocumentSchema = new Schema({
         default: []
     },
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });
@@ -162,9 +162,10 @@ DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
  * @param       {String} resultCode
  * @param       {String} replyCode
  */
-DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, status, resultCode, replyCode) {
-    const newInOut = new InOut({ inOutGb, officialNumber });
-    const newStatus = new Status({ status, resultCode, replyCode });
+DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, status, resultCode, replyCode, date) {
+    const timestamp = new Timestamp({ regDt: date });
+    const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
+    const newStatus = new Status({ status, resultCode, replyCode, timestamp });
 
     return this.findOneAndUpdate(
         { _id: id },
@@ -200,6 +201,9 @@ DocumentSchema.statics.deleteInOutDocument = function (id, targetId) {
                 documentStatus: {
                     _id: targetId
                 }
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
@@ -234,7 +238,8 @@ DocumentSchema.statics.holdDocument = async function (id, yn, reason) {
         },
         {
             $set: {
-                'holdYn.$.effEndDt': DEFINE.dateNow()
+                'holdYn.$.effEndDt': DEFINE.dateNow(),
+                'timestamp.updDt': DEFINE.dateNow()
             }
         }
     );

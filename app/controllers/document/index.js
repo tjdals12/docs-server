@@ -377,6 +377,10 @@ document.patch('/:id/delete', commonCtrl.checkObjectId, documentCtrl.deleteOne);
  *                replyCode:
  *                    type: string
  *                    example: '01'
+ *                date:
+ *                    type: string
+ *                    formate: date-time
+ *                    example: '2018-12-05 14:34:12'
  *      responses:
  *          200:
  *              description: Successful operation

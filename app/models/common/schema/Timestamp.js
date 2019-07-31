@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import DEFINE from 'models/common';
 
 /**
@@ -25,4 +25,4 @@ const TimestampSchema = new Schema({
     }
 }, { _id: false, id: false });
 
-export default TimestampSchema;
+export default model('Timestamp', TimestampSchema);

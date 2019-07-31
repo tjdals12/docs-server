@@ -27,7 +27,7 @@ const CmcodeSchema = new Schema({
         ref: 'Cdminor'
     }],
     timestamp: {
-        type: Timestamp,
+        type: Timestamp.schema,
         default: Timestamp
     }
 });
