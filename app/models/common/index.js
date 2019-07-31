@@ -27,7 +27,8 @@ const DEFINE = {
         FROM_CLIENT: '40',
         FROM_CLIENT_RE: '42',
         TO_VENDOR: '90',
-        TO_VENDOR_RE: '92'
+        TO_VENDOR_RE: '92',
+        NONE: '94'
     },
 
     inOutGbConverter: function (code) {
@@ -56,6 +57,8 @@ const DEFINE = {
             return '업체로 송부';
         case DEFINE.IN_OUT_GB.TO_VENDOR_RE:
             return '업체로 재송부';
+        case DEFINE.IN_OUT_GB.NONE:
+            return '회신 필요없음';
         default:
             return code;
         }
@@ -148,7 +151,7 @@ const DEFINE = {
 
     RESULT_CD: {
         APPROVED: '01',
-        WITH_COMMEN: '02',
+        WITH_COMMENT: '02',
         REJECT: '03'
     },
 
@@ -157,7 +160,7 @@ const DEFINE = {
         case DEFINE.RESULT_CD.APPROVED:
             return 'Approved';
 
-        case DEFINE.RESULT_CD.WITH_COMMEN:
+        case DEFINE.RESULT_CD.WITH_COMMENT:
             return 'Approved with Comment';
 
         case DEFINE.RESULT_CD.REJECT:
@@ -178,6 +181,10 @@ const DEFINE = {
             return '전체';
         case DEFINE.REPLY_CD.PARTIAL:
             return '부분';
+        case DEFINE.REPLY_CD.NON_OFFICIAL:
+            return '비공식';
+        case DEFINE.REPLY_CD.NONE:
+            return '회신 필요없음';
         }
     },
 
