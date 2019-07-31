@@ -205,7 +205,7 @@ DocumentSchema.statics.deleteInOutDocument = function (id, targetId) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
