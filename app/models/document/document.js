@@ -153,6 +153,25 @@ DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 01
+ * @description 문서 일괄 삭제
+ * @param       {Array} ids
+ */
+DocumentSchema.statics.deleteDocuments = function (ids) {
+    return this.updateMany(
+        { _id: { $in: ids } },
+        {
+            deleteYn: {
+                yn: 'YES',
+                deleteDt: DEFINE.dateNow(),
+                reason: '일괄 삭제'
+            }
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 22
  * @description 문서 In / Out
  * @param       {String} id

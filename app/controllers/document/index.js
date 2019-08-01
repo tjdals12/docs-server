@@ -336,6 +336,39 @@ document.patch('/:id/delete', commonCtrl.checkObjectId, documentCtrl.deleteOne);
 
 /**
  * @swagger
+ * /api/documents/delete:
+ *  patch:
+ *      tags:
+ *          - Document
+ *      summary: 문서 일괄 삭제
+ *      description: 문서 일괄 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: document ids
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  ids:
+ *                      type: array
+ *                      example: ['5d366ffdb984ac07b72e9126', '5d366ffdb984ac07b72e9126']
+ *                      items:
+ *                          type: string
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.patch('/delete', documentCtrl.deleteMany);
+
+/**
+ * @swagger
  * /api/documents/{id}/inout:
  *  patch:
  *      tags:

@@ -226,6 +226,66 @@ export const deleteOne = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 01
+ * @description 문서 일괄 삭제
+ */
+export const deleteMany = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
+    let { ids } = ctx.request.body;
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Fail - documentCtrl > deleteMany'
+        });
+
+        return;
+    }
+
+    const schema = Joi.object().keys({
+        ids: Joi.array().items(Joi.string()).required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentCtrl > deleteMany'
+        });
+
+        return;
+    }
+
+    try {
+        await Document.deleteDocuments(ids);
+
+        const documents = await Document
+            .find()
+            .populate({ path: 'part' })
+            .populate({ path: 'documentGb' })
+            .skip(((page - 1) * 10))
+            .limit(10)
+            .sort({ 'timestamp.regDt': -1 });
+
+        const count = await Document.countDocuments();
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
+
+        ctx.res.ok({
+            data: documents,
+            message: 'Success - documentCtrl > deleteMany'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ids,
+            message: 'Error - documentCtrl > deleteMany'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 22
  * @description 문서 In / Out
  */

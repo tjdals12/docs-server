@@ -127,6 +127,25 @@ describe('[ Document ]', () => {
         });
     });
 
+    describe('PATCH /documents/delete', () => {
+        it('delete documents', (done) => {
+            request(server)
+                .patch('/api/documents/delete')
+                .send({
+                    ids: [
+                        id
+                    ]
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data[0].deleteYn.reason).to.equal('일괄 삭제');
+                    done();
+                });
+        });
+    });
+
     describe('PATCH /documents/:id/inout', () => {
         it('In/Out document - 내부 검토요청', (done) => {
             request(server)
