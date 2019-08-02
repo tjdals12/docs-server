@@ -5,6 +5,8 @@ import { expect } from 'chai';
 
 describe('[ Document ]', () => {
     let server;
+    let part;
+    let documentGb;
     let id;
     let inOutId;
     let statusId;
@@ -31,17 +33,94 @@ describe('[ Document ]', () => {
             });
     });
 
+    /** 공통코드(공종, 구분) 생성 및 추가 */
+    describe('Cmcode prepagation', () => {
+        let major;
+
+        it('add Part', (done) => {
+            request(server)
+                .post('/api/cmcodes')
+                .send({
+                    cdMajor: '0001',
+                    cdFName: '공종'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    major = ctx.body.data._id;
+
+                    expect(ctx.body.data.cdFName).to.equal('공종');
+                    done();
+                });
+        });
+
+        it('add cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${major}/add`)
+                .send({
+                    cdMinor: '0001',
+                    cdSName: '기계'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    part = ctx.body.data.cdMinors[0];
+
+                    expect(ctx.body.data.cdMinors).have.length(1);
+                    done();
+                });
+        });
+
+        it('add documentGb', (done) => {
+            request(server)
+                .post('/api/cmcodes')
+                .send({
+                    cdMajor: '0002',
+                    cdFName: '구분'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    major = ctx.body.data._id;
+
+                    expect(ctx.body.data.cdFName).to.equal('구분');
+                    done();
+                });
+        });
+
+        it('add cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${major}/add`)
+                .send({
+                    cdMinor: '0001',
+                    cdSName: '공통'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    documentGb = ctx.body.data.cdMinors[0];
+
+                    expect(ctx.body.data.cdMinors).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('POST /documents', () => {
         it('add document', (done) => {
             request(server)
                 .post('/api/documents')
                 .send({
                     vendor: '5d33ef877cceb91244d16fdd',
-                    part: '5d33ef877cceb91244d16fde',
+                    part: part,
                     documentNumber: 'ABC-DEF-G-001-003',
                     documentTitle: 'Inspection Report',
-                    documentGb: '5d33ef877cceb91244d16fdf',
-                    documentRev: '01',
+                    documentGb: documentGb,
+                    documentRev: 'A',
                     officialNumber: 'ABC-DEF-T-G-001-001',
                     memo: '최초 접수'
                 })
@@ -61,6 +140,33 @@ describe('[ Document ]', () => {
         it('get documents', (done) => {
             request(server)
                 .get('/api/documents')
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /documents/search', () => {
+        it('post search documents', (done) => {
+            request(server)
+                .post('/api/documents/search?page=1')
+                .send({
+                    documentGb: '',
+                    documentNumber: 'G-001',
+                    documentTitle: '',
+                    documentRev: 'A',
+                    documentStatus: '01',
+                    deleteYn: 'NO',
+                    holdYn: 'NO',
+                    delayGb: '01',
+                    regDtSta: '2000-01-01',
+                    regDtEnd: '9999-12-31',
+                    level: 0
+                })
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;

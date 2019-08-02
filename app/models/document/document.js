@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 import InOut from './inOut';
@@ -59,6 +59,117 @@ const DocumentSchema = new Schema({
 
 DocumentSchema.set('toObject', { getters: true });
 DocumentSchema.set('toJSON', { getters: true });
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 02
+ * @description 문서 검색
+ * @param       {Object} param
+ */
+DocumentSchema.statics.searchDocuments = async function (param, page) {
+    const {
+        documentGb,
+        documentNumber,
+        documentTitle,
+        documentRev,
+        documentStatus,
+        deleteYn,
+        holdYn,
+        delayGb,
+        regDtSta,
+        regDtEnd,
+        level
+    } = param;
+
+    return this.aggregate([
+        {
+            $lookup: {
+                from: 'cdminors',
+                localField: 'part',
+                foreignField: '_id',
+                as: 'part'
+            }
+        },
+        {
+            $lookup: {
+                from: 'cdminors',
+                localField: 'documentGb',
+                foreignField: '_id',
+                as: 'documentGb'
+            }
+        },
+        { $unwind: '$part' },
+        { $unwind: '$documentGb' },
+        {
+            $project: {
+                vendor: 1,
+                part: '$part',
+                documentNumber: 1,
+                documentTitle: 1,
+                documentInOut: {
+                    $slice: ['$documentInOut', -1]
+                },
+                documentGb: '$documentGb',
+                documentStatus: {
+                    $slice: ['$documentStatus', -1]
+                },
+                documentRev: 1,
+                level: 1,
+                memo: 1,
+                holdYn: 1,
+                deleteYn: 1,
+                delayGb: 1,
+                chainingDocument: 1,
+                timestamp: 1,
+            },
+        },
+        {
+            $match: {
+                $and: [
+                    { documentGb: documentGb === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(documentGb) },
+                    { documentNumber: { $regex: documentNumber + '.*', $options: 'i' } },
+                    { documentTitle: { $regex: documentTitle + '.*', $options: 'i' } },
+                    { documentRev: { $regex: documentRev + '.*', $options: 'i' } },
+                    {
+                        documentStatus: {
+                            $elemMatch: {
+                                status: { $regex: documentStatus + '.*', $options: 'i' }
+                            }
+                        }
+                    },
+                    { 'deleteYn.yn': { $regex: deleteYn + '.*', $options: 'i' } },
+                    {
+                        holdYn: {
+                            $elemMatch: {
+                                $and: [
+                                    { effEndDt: DEFINE.COMMON.MAX_END_DT },
+                                    { yn: { $regex: holdYn + '.*', $options: 'i' } }
+                                ]
+                            }
+                        }
+                    },
+                    { delayGb: { $regex: delayGb + '.*', $options: 'i' } },
+                    {
+                        $and: [
+                            { 'timestamp.regDt': { $gte: new Date(regDtSta) } },
+                            { 'timestamp.regDt': { $lte: new Date(regDtEnd) } }
+                        ]
+                    },
+                    { level: level === -1 ? { $gt: level } : level }
+                ]
+            },
+        },
+        {
+            $skip: (page - 1) * 10
+        },
+        {
+            $limit: 10
+        },
+        {
+            $sort: { 'timestamp.regDt': -1 }
+        }
+    ]);
+};
 
 /**
  * @author      minz-logger

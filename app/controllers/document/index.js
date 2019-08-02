@@ -158,6 +158,66 @@ document.get('/', documentCtrl.list);
 
 /**
  * @swagger
+ * /api/documents/search:
+ *  post:
+ *      tags:
+ *          - Document
+ *      summary: 문서 검색
+ *      description: 문서 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: search parameters
+ *            schema:
+ *              type: object
+ *              properties:
+ *                   documentGb:
+ *                      type: string
+ *                      example: ""
+ *                   documentNumber:
+ *                      type: string
+ *                      example: "R-001"
+ *                   documentTitle:
+ *                      type: string
+ *                      example: "Schedule"
+ *                   documentRev:
+ *                      type: string
+ *                      example: "A"
+ *                   documentStatus:
+ *                      type: string
+ *                      example: "01"
+ *                   deleteYn:
+ *                      type: string
+ *                      example: "NO"
+ *                   holdYn:
+ *                      type: string
+ *                      example: "NO"
+ *                   delayGb:
+ *                      type: string
+ *                      example: "01"
+ *                   regDtSta:
+ *                      type: string
+ *                      example: "2000-01-01"
+ *                   regDtEnd:
+ *                      type: string
+ *                      example: "9999-12-31"
+ *                   level:
+ *                      type: string
+ *                      example: 0
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/document'
+ */
+document.post('/search', documentCtrl.search);
+
+/**
+ * @swagger
  * /api/documents:
  *  post:
  *      tags:

@@ -13,7 +13,8 @@ const HoldYnSchema = new Schema({
     },
     effStaDt: {
         type: String,
-        default: DEFINE.dateNow
+        default: DEFINE.dateNow,
+        get: DEFINE.dateConverter
     },
     effEndDt: {
         type: String,

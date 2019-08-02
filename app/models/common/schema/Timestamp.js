@@ -12,17 +12,22 @@ const TimestampSchema = new Schema({
         default: DEFINE.COMMON.SYSTEM
     },
     regDt: {
-        type: String,
-        default: DEFINE.dateNow
+        type: Date,
+        default: DEFINE.dateNow,
+        get: DEFINE.dateConverter
     },
     updId: {
         type: String,
         default: DEFINE.COMMON.SYSTEM
     },
     updDt: {
-        type: String,
-        default: DEFINE.dateNow
+        type: Date,
+        default: DEFINE.dateNow,
+        get: DEFINE.dateConverter
     }
 }, { _id: false, id: false });
+
+TimestampSchema.set('toObject', { getters: true });
+TimestampSchema.set('toJSON', { getters: true });
 
 export default model('Timestamp', TimestampSchema);

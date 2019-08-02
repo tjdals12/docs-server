@@ -1,5 +1,6 @@
 import Document from '../../models/document/document';
 import Joi from 'joi';
+import mongoose from 'mongoose';
 
 /**
  * @author      minz-logger
@@ -39,6 +40,68 @@ export const list = async (ctx) => {
         ctx.res.internalServerError({
             data: [],
             message: 'Error - documentCtrl > list'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 02
+ * @description 문서 검색
+ */
+export const search = async (ctx) => {
+    const page = parseInt(ctx.query.page || 1, 10);
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Fail - documentCtrl > search'
+        });
+
+        return;
+    }
+
+    const {
+        documentGb,
+        documentNumber,
+        documentTitle,
+        documentRev,
+        documentStatus,
+        deleteYn,
+        holdYn,
+        delayGb,
+        regDtSta,
+        regDtEnd,
+        level
+    } = ctx.request.body;
+
+    const { ObjectId } = mongoose.Types;
+
+    const query = {
+        documentGb: ObjectId.isValid(documentGb) ? documentGb : '',
+        documentNumber: documentNumber ? documentNumber : '',
+        documentTitle: documentTitle ? documentTitle : '',
+        documentRev: documentRev ? documentRev : '',
+        documentStatus: documentStatus ? documentStatus : '',
+        deleteYn: deleteYn ? deleteYn : '',
+        holdYn: holdYn ? holdYn : '',
+        delayGb: delayGb ? delayGb : '',
+        regDtSta: regDtSta ? regDtSta : '2000-01-01',
+        regDtEnd: regDtEnd ? regDtEnd : '9999-12-31',
+        level: level ? level : -1
+    };
+
+    try {
+        const documents = await Document.searchDocuments(query, page);
+
+        ctx.res.ok({
+            data: documents,
+            message: 'Success - documentCtrl > search'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - documentCtrl > search'
         });
     }
 };

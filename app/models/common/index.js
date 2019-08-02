@@ -1,4 +1,5 @@
-import moment from 'moment';
+// import moment from 'moment';
+import moment from 'moment-timezone';
 
 /**
  * @author      minz-logger
@@ -12,7 +13,8 @@ const DEFINE = {
         DEFAULT_NO: 'NO',
         DEFAULT_REASON: '이력없음.',
         MAX_END_DT: '9999-12-31 23:59:59',
-        NONE: '-'
+        NONE: '-',
+        NONE_ID: '000000000000000000000000'
     },
 
     IN_OUT_GB: {
@@ -208,8 +210,12 @@ const DEFINE = {
         }
     },
 
-    dateNow: () => {
-        return moment().format('YYYY-MM-DD H:mm:ss');
+    dateNow: function () {
+        return moment.tz(Date.now(), 'Asia/Seoul');
+    },
+
+    dateConverter: function (date) {
+        return moment(date).format('YYYY-MM-DD H:mm:ss');
     },
 
     VENDOR_GB: {
