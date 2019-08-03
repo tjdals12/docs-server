@@ -32,6 +32,7 @@ const StatusSchema = new Schema({
     }
 });
 
+StatusSchema.set('toObject', { getters: true });
 StatusSchema.set('toJSON', { getters: true });
 
 export default model('Status', StatusSchema);

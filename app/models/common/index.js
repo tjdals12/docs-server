@@ -148,6 +148,8 @@ const DEFINE = {
             return '재회신';
         case DEFINE.STATUS_CD.CODE_94:
             return '회신 필요없음';
+        default:
+            return code;
         }
     },
 
