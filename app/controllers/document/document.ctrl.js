@@ -93,6 +93,9 @@ export const search = async (ctx) => {
 
     try {
         const documents = await Document.searchDocuments(query, page);
+        const countQuery = await Document.searchDocumentsCount(query);
+
+        ctx.set('Last-Page', Math.ceil(countQuery[0].count / 10));
 
         ctx.res.ok({
             data: documents,

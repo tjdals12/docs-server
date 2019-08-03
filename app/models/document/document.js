@@ -173,6 +173,92 @@ DocumentSchema.statics.searchDocuments = async function (param, page) {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 03
+ * @description 문서 검색 카운트
+ */
+DocumentSchema.statics.searchDocumentsCount = function (param) {
+    const {
+        documentGb,
+        documentNumber,
+        documentTitle,
+        documentRev,
+        documentStatus,
+        deleteYn,
+        holdYn,
+        delayGb,
+        regDtSta,
+        regDtEnd,
+        level
+    } = param;
+
+    return this.aggregate([
+        {
+            $project: {
+                vendor: 1,
+                part: 1,
+                documentNumber: 1,
+                documentTitle: 1,
+                documentInOut: {
+                    $slice: ['$documentInOut', -1]
+                },
+                documentGb: 1,
+                documentStatus: {
+                    $slice: ['$documentStatus', -1]
+                },
+                documentRev: 1,
+                level: 1,
+                memo: 1,
+                holdYn: 1,
+                deleteYn: 1,
+                delayGb: 1,
+                chainingDocument: 1,
+                timestamp: 1,
+            },
+        },
+        {
+            $match: {
+                $and: [
+                    { documentGb: documentGb === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(documentGb) },
+                    { documentNumber: { $regex: documentNumber + '.*', $options: 'i' } },
+                    { documentTitle: { $regex: documentTitle + '.*', $options: 'i' } },
+                    { documentRev: { $regex: documentRev + '.*', $options: 'i' } },
+                    {
+                        documentStatus: {
+                            $elemMatch: {
+                                status: { $regex: documentStatus + '.*', $options: 'i' }
+                            }
+                        }
+                    },
+                    { 'deleteYn.yn': { $regex: deleteYn + '.*', $options: 'i' } },
+                    {
+                        holdYn: {
+                            $elemMatch: {
+                                $and: [
+                                    { effEndDt: new Date(DEFINE.COMMON.MAX_END_DT) },
+                                    { yn: { $regex: holdYn + '.*', $options: 'i' } }
+                                ]
+                            }
+                        }
+                    },
+                    { delayGb: { $regex: delayGb + '.*', $options: 'i' } },
+                    {
+                        $and: [
+                            { 'timestamp.regDt': { $gte: new Date(regDtSta) } },
+                            { 'timestamp.regDt': { $lte: new Date(regDtEnd) } }
+                        ]
+                    },
+                    { level: level === -1 ? { $gt: level } : level }
+                ]
+            },
+        },
+        {
+            $count: 'count'
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 07. 21
  * @description 문서 추가
  * @param       {Object} param
