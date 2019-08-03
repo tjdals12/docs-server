@@ -192,7 +192,7 @@ describe('[ Document ]', () => {
                     delayGb: '01',
                     regDtSta: '2000-01-01',
                     regDtEnd: '9999-12-31',
-                    level: '2'
+                    level: 0
                 })
                 .expect(200)
                 .end((err, ctx) => {

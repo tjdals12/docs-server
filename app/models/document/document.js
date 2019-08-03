@@ -120,7 +120,7 @@ DocumentSchema.statics.searchDocuments = async function (param, page) {
                 deleteYn: 1,
                 delayGb: 1,
                 chainingDocument: 1,
-                timestamp: 1,
+                timestamp: 1
             },
         },
         {
@@ -381,7 +381,7 @@ DocumentSchema.statics.deleteDocuments = function (ids) {
 DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, status, resultCode, replyCode, date) {
     const timestamp = new Timestamp({ regDt: date });
     const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
-    const newStatus = new Status({ status, resultCode, replyCode, timestamp });
+    const newStatus = new Status({ status, statusName: status, resultCode, replyCode, timestamp });
 
     return this.findOneAndUpdate(
         { _id: id },

@@ -13,6 +13,11 @@ const StatusSchema = new Schema({
         default: DEFINE.STATUS_CD.CODE_01,
         get: DEFINE.statusConverter
     },
+    statusName: {
+        type: String,
+        default: DEFINE.STATUS_CD.CODE_01,
+        set: DEFINE.statusConverter
+    },
     resultCode: {
         type: String,
         get: DEFINE.resultCodeConverter
