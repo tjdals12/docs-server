@@ -142,7 +142,7 @@ DocumentSchema.statics.searchDocuments = async function (param, page) {
                         holdYn: {
                             $elemMatch: {
                                 $and: [
-                                    { effEndDt: DEFINE.COMMON.MAX_END_DT },
+                                    { effEndDt: new Date(DEFINE.COMMON.MAX_END_DT) },
                                     { yn: { $regex: holdYn + '.*', $options: 'i' } }
                                 ]
                             }

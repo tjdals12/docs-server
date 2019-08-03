@@ -20,6 +20,7 @@ const InOutSchema = new Schema({
     }
 });
 
+InOutSchema.set('toOjbect', { getters: true });
 InOutSchema.set('toJSON', { getters: true });
 
 export default model('InOut', InOutSchema);

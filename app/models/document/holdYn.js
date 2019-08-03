@@ -12,18 +12,21 @@ const HoldYnSchema = new Schema({
         default: DEFINE.COMMON.DEFAULT_NO
     },
     effStaDt: {
-        type: String,
+        type: Date,
         default: DEFINE.dateNow,
         get: DEFINE.dateConverter
     },
     effEndDt: {
-        type: String,
-        default: DEFINE.COMMON.MAX_END_DT
+        type: Date,
+        default: new Date(DEFINE.COMMON.MAX_END_DT),
+        get: DEFINE.dateConverter
     },
     reason: {
         type: String,
         default: DEFINE.COMMON.DEFAULT_REASON
     }
 }, { _id: false, id: false });
+
+HoldYnSchema.set('toJSON', { getters: true });
 
 export default model('HoldYn', HoldYnSchema);
