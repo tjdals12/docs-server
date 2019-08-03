@@ -56,7 +56,6 @@ const DocumentSchema = new Schema({
     }
 });
 
-DocumentSchema.set('toObject', { getters: true });
 DocumentSchema.set('toJSON', { getters: true });
 
 /**
