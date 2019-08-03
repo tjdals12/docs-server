@@ -110,6 +110,33 @@ describe('[ Document ]', () => {
         });
     });
 
+    describe('GET /documents/search', () => {
+        it('post search documents', (done) => {
+            request(server)
+                .post('/api/documents/search?page=1')
+                .send({
+                    documentGb: '',
+                    documentNumber: 'G-001',
+                    documentTitle: '',
+                    documentRev: 'A',
+                    documentStatus: '01',
+                    deleteYn: 'NO',
+                    holdYn: 'NO',
+                    delayGb: '01',
+                    regDtSta: '2000-01-01',
+                    regDtEnd: '9999-12-31',
+                    level: 0
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(0);
+                    done();
+                });
+        });
+    });
+
     describe('POST /documents', () => {
         it('add document', (done) => {
             request(server)
@@ -165,7 +192,7 @@ describe('[ Document ]', () => {
                     delayGb: '01',
                     regDtSta: '2000-01-01',
                     regDtEnd: '9999-12-31',
-                    level: 0
+                    level: '2'
                 })
                 .expect(200)
                 .end((err, ctx) => {

@@ -50,7 +50,7 @@ export const list = async (ctx) => {
  * @description 문서 검색
  */
 export const search = async (ctx) => {
-    const page = parseInt(ctx.query.page || 1, 10);
+    let page = parseInt(ctx.query.page || 1, 10);
 
     if (page < 1) {
         ctx.res.badRequest({
@@ -88,14 +88,14 @@ export const search = async (ctx) => {
         delayGb: delayGb ? delayGb : '',
         regDtSta: regDtSta ? regDtSta : '2000-01-01',
         regDtEnd: regDtEnd ? regDtEnd : '9999-12-31',
-        level: level ? level : -1
+        level: parseInt(level || -1, 10)
     };
 
     try {
         const documents = await Document.searchDocuments(query, page);
         const countQuery = await Document.searchDocumentsCount(query);
 
-        ctx.set('Last-Page', Math.ceil(countQuery[0].count / 10));
+        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 10));
 
         ctx.res.ok({
             data: documents,
