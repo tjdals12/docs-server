@@ -128,7 +128,7 @@ export const add = async (ctx) => {
 
     const scheam = Joi.object().keys({
         vendor: Joi.string().required(),
-        part: Joi.string(),
+        part: Joi.string().required(),
         documentNumber: Joi.string().required(),
         documentTitle: Joi.string().required(),
         documentGb: Joi.string().required(),

@@ -16,7 +16,7 @@ describe('[ Document ]', () => {
             console.log(`Connected ${type}`);
 
             server = app.listen(4000, () => {
-                console.log('listening on port 4000');
+                console.log('Server localhost:4000');
                 done();
             });
         });

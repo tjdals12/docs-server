@@ -1,5 +1,6 @@
 import Cmcode from '../../models/cmcode/cmcode';
 import Joi from 'joi';
+import { Types } from 'mongoose';
 
 /**
  * @author      minz-logger
@@ -247,7 +248,7 @@ export const editMinor = async (ctx) => {
         cdSName
     } = ctx.request.body;
 
-    if (!minorId) {
+    if (!Types.ObjectId.isValid(minorId)) {
         ctx.res.badRequest({
             data: {
                 id, minorId, cdMinor, cdSName
@@ -320,7 +321,7 @@ export const deleteCmcode = async (ctx) => {
 export const deleteCdMinor = async (ctx) => {
     let { id, minorId } = ctx.params;
 
-    if (!minorId) {
+    if (!Types.ObjectId.isValid(minorId)) {
         ctx.res.badRequest({
             data: { id, minorId },
             message: 'Fail - cmcodeCtrl > deleteCdMinor'
