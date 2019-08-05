@@ -101,6 +101,57 @@ vendor.get('/', vendorCtrl.list);
 
 /**
  * @swagger
+ * /api/vendors/search:
+ *  post:
+ *      tags:
+ *          - Vendor
+ *      summary: 업체 검색
+ *      description: 업체 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: search parameters
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  vendorGb:
+ *                      type: string
+ *                      example: '01'
+ *                  countryCd:
+ *                      type: string
+ *                      example: '01'
+ *                  vendorName:
+ *                      type: string
+ *                      example: 성민테크
+ *                  officialName:
+ *                      type: string
+ *                      example: SMT
+ *                  part:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  partNumber:
+ *                      type: string
+ *                      example: R-001
+ *                  effStaDt:
+ *                      type: string
+ *                      example: '2000-01-01'
+ *                  effEndDt:
+ *                      type: string
+ *                      example: '9999-12-31'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendor'
+ */
+vendor.post('/search', vendorCtrl.search);
+
+/**
+ * @swagger
  * /api/vendors/{id}:
  *  get:
  *      tags:

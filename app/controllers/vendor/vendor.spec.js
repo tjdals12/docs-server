@@ -173,6 +173,30 @@ describe('  [VENDOR]', () => {
         });
     });
 
+    describe('POST /vendors/search', () => {
+        it('search vendors', (done) => {
+            request(server)
+                .post('/api/vendors/search')
+                .send({
+                    vendorGb: '01',
+                    countryCd: '01',
+                    part: part1,
+                    partNumber: 'R-001',
+                    vendorName: '성민테크',
+                    officialName: 'SMT',
+                    effStaDt: '2019-05-10',
+                    effEndDt: '2020-05-02',
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('POST /vendors/:id/add', () => {
         it('add person', (done) => {
             request(server)

@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 import Person from './person';
@@ -81,6 +81,147 @@ VendorSchema.statics.saveVendor = async function (param) {
     await vendor.save();
 
     return this.findOne({ _id: vendor._id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 05
+ * @description 업체 검색
+ * @param       {Object} param
+ * @param       {Integer} page
+ */
+VendorSchema.statics.searchVendors = function (param, page) {
+    const {
+        vendorGb,
+        countryCd,
+        vendorName,
+        officialName,
+        part,
+        partNumber,
+        effStaDt,
+        effEndDt
+    } = param;
+
+    return this.aggregate([
+        {
+            $lookup: {
+                from: 'cdminors',
+                localField: 'part',
+                foreignField: '_id',
+                as: 'part'
+            }
+        },
+        {
+            $unwind: '$part'
+        },
+        {
+            $project: {
+                vendorGb: 1,
+                vendorName: 1,
+                vendorPerson: 1,
+                officialName: 1,
+                part: 1,
+                partNumber: 1,
+                countryCd: 1,
+                effStaDt: 1,
+                effEndDt: 1
+            }
+        },
+        {
+            $match: {
+                $and: [
+                    { vendorGb: { $regex: vendorGb + '.*', $options: 'i' } },
+                    { countryCd: { $regex: countryCd + '.*', $options: 'i' } },
+                    { vendorName: { $regex: vendorName + '.*', $options: 'i' } },
+                    { officialName: { $regex: officialName + '.*', $options: 'i' } },
+                    { 'part._id': part === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(part) },
+                    { partNumber: { $regex: partNumber + '.*', $options: 'i' } },
+                    {
+                        $and: [
+                            { effStaDt: { $gte: new Date(effStaDt) } },
+                            { effEndDt: { $lte: new Date(effEndDt) } }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            $skip: (page - 1) * 10
+        },
+        {
+            $limit: 10
+        },
+        {
+            $sort: { 'timestamp.regDt': -1 }
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 05
+ * @description 업체 검색 카운트
+ * @param       {Object} param
+ */
+VendorSchema.statics.searchVendorsCount = function (param) {
+    const {
+        vendorGb,
+        countryCd,
+        vendorName,
+        officialName,
+        part,
+        partNumber,
+        effStaDt,
+        effEndDt
+    } = param;
+
+    return this.aggregate([
+        {
+            $lookup: {
+                from: 'cdminors',
+                localField: 'part',
+                foreignField: '_id',
+                as: 'part'
+            }
+        },
+        {
+            $unwind: '$part'
+        },
+        {
+            $project: {
+                vendorGb: 1,
+                vendorName: 1,
+                vendorPerson: 1,
+                officialName: 1,
+                part: '$part',
+                partNumber: 1,
+                countryCd: 1,
+                effStaDt: 1,
+                effEndDt: 1
+            }
+        },
+        {
+            $match: {
+                $and: [
+                    { vendorGb: { $regex: vendorGb + '.*', $options: 'i' } },
+                    { countryCd: { $regex: countryCd + '.*', $options: 'i' } },
+                    { vendorName: { $regex: vendorName + '.*', $options: 'i' } },
+                    { officialName: { $regex: officialName + '.*', $options: 'i' } },
+                    { part: part === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(part) },
+                    { partNumber: { $regex: partNumber + '.*', $options: 'i' } },
+                    {
+                        $and: [
+                            { effStaDt: { $gte: new Date(effStaDt) } },
+                            { effEndDt: { $lte: new Date(effEndDt) } }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            $count: 'count'
+        }
+    ]);
 };
 
 /**

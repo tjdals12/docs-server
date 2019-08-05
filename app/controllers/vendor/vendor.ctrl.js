@@ -47,6 +47,56 @@ export const list = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 05
+ * @description 업체 검색
+ */
+export const search = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
+
+    const {
+        vendorGb,
+        countryCd,
+        vendorName,
+        officialName,
+        part,
+        partNumber,
+        effStaDt,
+        effEndDt
+    } = ctx.request.body;
+
+    const { ObjectId } = Types;
+
+    const query = {
+        vendorGb: vendorGb ? vendorGb : '',
+        countryCd: countryCd ? countryCd : '',
+        vendorName: vendorName ? vendorName : '',
+        officialName: officialName ? officialName : '',
+        part: ObjectId.isValid(part) ? part : '',
+        partNumber: partNumber ? partNumber : '',
+        effStaDt: effStaDt ? effStaDt : '2000-01-01',
+        effEndDt: effEndDt ? effEndDt : '9999-12-31'
+    };
+
+    try {
+        const vendors = await Vendor.searchVendors(query, page);
+        const countQuery = await Vendor.searchVendorsCount(query);
+
+        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 10));
+
+        ctx.res.ok({
+            data: vendors,
+            message: 'Success - vendorCtrl > search'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - vendorCtrl > search'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 05
  * @description 업체 개별 조회
  */
 export const getVendor = async (ctx) => {

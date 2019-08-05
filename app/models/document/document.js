@@ -63,6 +63,7 @@ DocumentSchema.set('toJSON', { getters: true });
  * @date        2019. 08. 02
  * @description 문서 검색
  * @param       {Object} param
+ * @param       {Integer} page
  */
 DocumentSchema.statics.searchDocuments = async function (param, page) {
     const {
