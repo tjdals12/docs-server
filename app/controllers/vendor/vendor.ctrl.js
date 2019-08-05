@@ -30,7 +30,7 @@ export const list = async (ctx) => {
 
         const count = await Vendor.countDocuments();
 
-        ctx.set('Last-Page', Math.ceil(count / 10));
+        ctx.set('Last-Page', Math.ceil(count / 8));
 
         ctx.res.ok({
             data: vendors,
