@@ -101,6 +101,33 @@ vendor.get('/', vendorCtrl.list);
 
 /**
  * @swagger
+ * /api/vendors/{id}:
+ *  get:
+ *      tags:
+ *          - Vendor
+ *      summary: 업체 개별 조회
+ *      description: 업체 개별 조회
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendor id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendor'
+ */
+vendor.get('/:id', commonCtrl.checkObjectId, vendorCtrl.getVendor);
+
+/**
+ * @swagger
  * /api/vendors:
  *  post:
  *      tags:

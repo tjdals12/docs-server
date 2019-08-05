@@ -22,8 +22,8 @@ export const list = async (ctx) => {
     try {
         const vendors = await Vendor
             .find()
-            .skip((page - 1) * 10).
-            limit(10)
+            .skip((page - 1) * 8)
+            .limit(8)
             .sort({ 'timestamp.regDt': -1 })
             .populate({ path: 'part' })
             .populate({ path: 'vendorPerson' });
@@ -39,6 +39,29 @@ export const list = async (ctx) => {
     } catch (e) {
         ctx.res.internalServerError({
             data: [],
+            message: 'Error - vendorCtrl > list'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 05
+ * @description 업체 개별 조회
+ */
+export const getVendor = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const vendor = await Vendor.findOne({ _id: id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
+
+        ctx.res.ok({
+            data: vendor,
+            message: 'Success - vendorCtrl > list'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
             message: 'Error - vendorCtrl > list'
         });
     }

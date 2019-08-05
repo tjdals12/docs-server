@@ -143,6 +143,22 @@ describe('  [VENDOR]', () => {
         });
     });
 
+    describe('GET /vendors/:id', () => {
+        it('getVendor', (done) => {
+            request(server)
+                .get(`/api/vendors/${id}`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.partNumber).to.equal('R-001');
+                    expect(ctx.body.data.vendorPerson).have.length(3);
+                    done();
+                });
+        });
+    });
+
     describe('GET /vendors', () => {
         it('get vendors', (done) => {
             request(server)
