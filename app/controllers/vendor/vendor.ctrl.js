@@ -24,7 +24,9 @@ export const list = async (ctx) => {
             .find()
             .skip((page - 1) * 10).
             limit(10)
-            .sort({ 'timestamp.regDt': -1 });
+            .sort({ 'timestamp.regDt': -1 })
+            .populate({ path: 'part' })
+            .populate({ path: 'vendorPerson' });
 
         const count = await Vendor.countDocuments();
 

@@ -135,7 +135,7 @@ describe('  [VENDOR]', () => {
 
                     id = ctx.body.data._id;
 
-                    expect(ctx.body.data.part).to.equal(part1);
+                    expect(ctx.body.data.part._id).to.equal(part1);
                     expect(ctx.body.data.partNumber).to.equals('R-001');
                     expect(ctx.body.data.vendorPerson).have.length(3);
                     done();
@@ -172,7 +172,7 @@ describe('  [VENDOR]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    personId = ctx.body.data.vendorPerson[0];
+                    personId = ctx.body.data.vendorPerson[0]._id;
 
                     expect(ctx.body.data.partNumber).to.equal('R-001');
                     expect(ctx.body.data.vendorPerson).have.length(4);
@@ -214,7 +214,7 @@ describe('  [VENDOR]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    expect(ctx.body.data.part).to.equal(part2);
+                    expect(ctx.body.data.part._id).to.equal(part2);
                     expect(ctx.body.data.partNumber).to.equal('S-001');
                     expect(ctx.body.data.vendorName).to.equal('성은테크');
                     expect(ctx.body.data.officialName).to.equal('SUT');

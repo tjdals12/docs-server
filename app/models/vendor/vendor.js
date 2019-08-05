@@ -80,7 +80,7 @@ VendorSchema.statics.saveVendor = async function (param) {
 
     await vendor.save();
 
-    return this.findOne({ _id: vendor._id }).populate({ path: 'vendorPerson' });
+    return this.findOne({ _id: vendor._id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 /**
@@ -119,7 +119,7 @@ VendorSchema.statics.editVendor = function (id, param) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 /**
@@ -129,7 +129,7 @@ VendorSchema.statics.editVendor = function (id, param) {
  * @param       {String} id
  */
 VendorSchema.statics.deleteVendor = async function (id) {
-    await this.findOneAndDelete({ _id: id });
+    await this.findOneAndDelete({ _id: id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 /**
@@ -152,7 +152,7 @@ VendorSchema.statics.addPerson = async function (id, param) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 /**
@@ -173,7 +173,7 @@ VendorSchema.statics.deletePerson = async function (id, personId) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 export default model('Vendor', VendorSchema);
