@@ -15,12 +15,10 @@ const VendorSchema = new Schema({
         get: DEFINE.vendorGbConverter
     },
     vendorName: String,
-    vendorPerson: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Person'
-        }
-    ],
+    vendorPerson: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Person'
+    }],
     officialName: String,
     part: {
         type: Schema.Types.ObjectId,
@@ -37,11 +35,13 @@ const VendorSchema = new Schema({
     },
     effStaDt: {
         type: Date,
-        default: DEFINE.dateNow
+        default: DEFINE.dateNow,
+        get: DEFINE.dateConverter
     },
     effEndDt: {
         type: Date,
-        default: new Date(DEFINE.COMMON.MAX_END_DT)
+        default: new Date(DEFINE.COMMON.MAX_END_DT),
+        get: DEFINE.dateConverter
     },
     trackingTransmittal: [Schema.Types.ObjectId],
     timestamp: {
@@ -146,10 +146,10 @@ VendorSchema.statics.searchVendors = function (param, page) {
             }
         },
         {
-            $skip: (page - 1) * 10
+            $skip: (page - 1) * 8
         },
         {
-            $limit: 10
+            $limit: 8
         },
         {
             $sort: { 'timestamp.regDt': -1 }
