@@ -281,7 +281,7 @@ VendorSchema.statics.deleteVendor = async function (id) {
  * @param       {Object} param
  */
 VendorSchema.statics.addPerson = async function (id, param) {
-    const personId = await Person.savePerson(param);
+    const personId = await Person.savePersons(param);
 
     return this.findOneAndUpdate(
         { _id: id },

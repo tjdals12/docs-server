@@ -22,6 +22,10 @@ export const list = async (ctx) => {
     try {
         const documents = await Document
             .find()
+            .populate({
+                path: 'vendor',
+                populate: { path: 'part vendorPerson' }
+            })
             .populate({ path: 'part' })
             .populate({ path: 'documentGb' })
             .skip(((page - 1) * 10))
@@ -181,7 +185,11 @@ export const one = async (ctx) => {
     let { id } = ctx.params;
 
     try {
-        const document = await Document.findById(id).populate({ path: 'part' }).populate({ path: 'documentGb' });
+        const document = await Document
+            .findById(id)
+            .populate({ path: 'vendor', populate: { path: 'part vendorPerson' } })
+            .populate({ path: 'part' })
+            .populate({ path: 'documentGb' });
 
         ctx.res.ok({
             data: document,

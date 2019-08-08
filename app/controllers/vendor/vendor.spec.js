@@ -173,6 +173,20 @@ describe('  [VENDOR]', () => {
         });
     });
 
+    describe('GET /vendors/forselect', () => {
+        it('get vendors for select', (done) => {
+            request(server)
+                .get('/api/vendors/forselect')
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('POST /vendors/search', () => {
         it('search vendors', (done) => {
             request(server)
@@ -202,11 +216,14 @@ describe('  [VENDOR]', () => {
             request(server)
                 .post(`/api/vendors/${id}/add`)
                 .send({
-                    name: '이성민',
-                    position: '사원',
-                    email: 'lll2slll@naver.com',
-                    contactNumber: '010-4143-3664',
-                    task: '개발'
+                    persons: [{
+                        index: 0,
+                        name: '이성민',
+                        position: '사원',
+                        email: 'lll2slll@naver.com',
+                        contactNumber: '010-4143-3664',
+                        task: '개발'
+                    }]
                 })
                 .expect(200)
                 .end((err, ctx) => {

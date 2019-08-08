@@ -101,6 +101,24 @@ vendor.get('/', vendorCtrl.list);
 
 /**
  * @swagger
+ * /api/vendors/forselect:
+ *  get:
+ *      tags:
+ *          - Vendor
+ *      summary: 업체 목록 조회 (For select)
+ *      description: 업체 목록 조회 (For select)
+ *      produces:
+ *          - application/json
+ *      responses:
+ *          200:    
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendor'
+ */
+vendor.get('/forselect', vendorCtrl.listForSelect);
+
+/**
+ * @swagger
  * /api/vendors/search:
  *  post:
  *      tags:
@@ -204,7 +222,7 @@ vendor.get('/:id', commonCtrl.checkObjectId, vendorCtrl.getVendor);
  *                      example: '01'
  *                  part:
  *                      type: string
- *                      example: '0001'
+ *                      example: 5d33ef877cceb91244d16fdd
  *                  partNumber:
  *                      type: string
  *                      example: R-001
@@ -273,7 +291,7 @@ vendor.post('/', vendorCtrl.create);
  *                      example: '02'
  *                  part:
  *                      type: string
- *                      example: '0002'
+ *                      example: 5d33ef877cceb91244d16fdd
  *                  partNumber:
  *                      type: string
  *                      example: S-001
@@ -348,23 +366,25 @@ vendor.patch('/:id/delete', commonCtrl.checkObjectId, vendorCtrl.deleteVendor);
  *            description: person parameters
  *            required: true
  *            schema:
- *              type: object
- *              properties:
- *                  name:
- *                      type: string
- *                      example: 이성민
- *                  position:
- *                      type: string
- *                      example: 사원
- *                  email:
- *                      type: string
- *                      example: lll2slll@naver.com
- *                  contactNumber:
- *                      type: string
- *                      example: '010-4143-3664'
- *                  task:
- *                      type: string
- *                      example: 개발
+ *              type: array
+ *              items:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: 이성민
+ *                      position:
+ *                          type: string
+ *                          example: 사원
+ *                      email:
+ *                          type: string
+ *                          example: lll2slll@naver.com
+ *                      contactNumber:
+ *                          type: string
+ *                          example: '010-4143-3664'
+ *                      task:
+ *                          type: string
+ *                          example: 개발
  *      responses:
  *          200:
  *              description: Successful operation

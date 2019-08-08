@@ -12,7 +12,10 @@ import deleteYn from './deleteYn';
  * @description 문서
  */
 const DocumentSchema = new Schema({
-    vendor: Schema.Types.ObjectId,
+    vendor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Vendor'
+    },
     part: {
         type: Schema.Types.ObjectId,
         ref: 'Cdminor'
@@ -279,7 +282,11 @@ DocumentSchema.statics.saveDocument = async function (param) {
 
     await document.save();
 
-    return this.findOne({ _id: document._id }).populate({ path: 'part' }).populate({ path: 'documentGb ' });
+    return this
+        .findOne({ _id: document._id })
+        .populate({ path: 'vendor', populate: { path: 'part vendorPerson' } })
+        .populate({ path: 'part' })
+        .populate({ path: 'documentGb ' });
 };
 
 /**
@@ -319,7 +326,7 @@ DocumentSchema.statics.editDocument = function (param) {
         {
             new: true
         }
-    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
+    ).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -344,7 +351,7 @@ DocumentSchema.statics.deleteDocument = function (id, yn, reason) {
         },
         {
             new: true
-        }).populate({ path: 'part' }).populate({ path: 'documentGb' });
+        }).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -396,7 +403,7 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
         {
             new: true
         }
-    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
+    ).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -424,7 +431,7 @@ DocumentSchema.statics.deleteInOutDocument = function (id, targetId) {
         {
             new: true
         }
-    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
+    ).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 /**
@@ -472,7 +479,7 @@ DocumentSchema.statics.holdDocument = async function (id, yn, reason) {
         {
             new: true
         }
-    ).populate({ path: 'part' }).populate({ path: 'documentGb' });
+    ).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
 };
 
 export default model('Document', DocumentSchema);

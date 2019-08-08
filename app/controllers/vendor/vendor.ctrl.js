@@ -46,6 +46,30 @@ export const list = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 06
+ * @description 업체 목록 조회 (For select)
+ */
+export const listForSelect = async (ctx) => {
+    try {
+        const vendors = await Vendor
+            .find({}, { _id: 1, vendorName: 1, part: 1, partNumber: 1 })
+            .sort({ 'partNumber': 1 })
+            .populate({ path: 'part' });
+
+        ctx.res.ok({
+            data: vendors,
+            message: 'Success - vendorCtrl > listOnlyName'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: [],
+            message: 'Error - vendorCtrl > listOnlyName'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 05
  * @description 업체 검색
  */
@@ -80,7 +104,7 @@ export const search = async (ctx) => {
         const vendors = await Vendor.searchVendors(query, page);
         const countQuery = await Vendor.searchVendorsCount(query);
 
-        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 10));
+        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 8));
 
         ctx.res.ok({
             data: vendors,
@@ -278,19 +302,18 @@ export const deleteVendor = async (ctx) => {
 export const addPerson = async (ctx) => {
     let { id } = ctx.params;
     let {
-        name,
-        position,
-        email,
-        contactNumber,
-        task
+        persons
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
-        name: Joi.string().required(),
-        position: Joi.string().required(),
-        email: Joi.string().required(),
-        contactNumber: Joi.string().required(),
-        task: Joi.string().required()
+        persons: Joi.array().items(Joi.object().keys({
+            index: Joi.number(),
+            name: Joi.string().required(),
+            position: Joi.string().required(),
+            task: Joi.string().required(),
+            email: Joi.string().required(),
+            contactNumber: Joi.string().required()
+        }))
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -298,14 +321,14 @@ export const addPerson = async (ctx) => {
     if (result.error) {
         ctx.res.badRequest({
             data: result.error,
-            message: 'Fail - vendorCtrl > addPerson'
+            message: 'Fail -  vendorCtrl >  addPerson'
         });
 
         return;
     }
 
     try {
-        const vendor = await Vendor.addPerson(id, { name, position, email, contactNumber, task });
+        const vendor = await Vendor.addPerson(id, persons);
 
         ctx.res.ok({
             data: vendor,
