@@ -32,7 +32,7 @@ describe('  [VENDOR]', () => {
             });
     });
 
-    describe('Cmcode prepagation', () => {
+    describe('Cmcode preparation', () => {
         let major;
 
         it('add Part', (done) => {

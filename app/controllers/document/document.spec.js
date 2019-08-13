@@ -34,7 +34,7 @@ describe('[ Document ]', () => {
     });
 
     /** 공통코드(공종, 구분) 생성 및 추가 */
-    describe('Cmcode prepagation', () => {
+    describe('Cmcode preparation', () => {
         let major;
 
         it('add Part', (done) => {
