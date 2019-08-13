@@ -49,4 +49,29 @@ DocumentInfoSchema.statics.saveDocumentInfos = async function (param) {
     return ids;
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서 정보 삭제
+ * @param       {String} id
+ * @param       {String} reason
+ */
+DocumentInfoSchema.statics.deleteDocumentInfo = function (id, reason) {
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                removeYn: {
+                    yn: DEFINE.COMMON.DEFAULT_YES,
+                    deleteDt: DEFINE.dateNow(),
+                    reason: reason
+                },
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'trackingDocument' });
+};
+
 export default model('DocumentInfo', DocumentInfoSchema);

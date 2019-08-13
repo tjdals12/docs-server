@@ -175,4 +175,105 @@ documentIndex.post('/', documentIndexCtrl.create);
  */
 documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
 
+/**
+ * @swagger
+ * /api/documentindex/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 수정
+ *      description: 문서목록 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *          - in: body
+ *            name: body
+ *            description: documentindex parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  vendor:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  list:
+ *                      type: array
+ *                      example: [ '5d33ef877cceb91244d16fdd' ]
+ *                      items:
+ *                          type: string
+ *      responses:
+ *          schema:
+ *              '#/definitions/documentIndex'
+ */
+documentIndex.patch('/:id/edit', commonCtrl.checkObjectId, documentIndexCtrl.editDocumentIndex);
+
+/**
+ * @swagger
+ * /api/documentindex/{id}/delete:
+ *  patch:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 삭제
+ *      description: 문서목록 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json  
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/documentIndex'
+ */
+documentIndex.patch('/:id/delete', commonCtrl.checkObjectId, documentIndexCtrl.deleteDocumentIndex);
+
+/**
+ * @swagger
+ * /api/documentinfo/{id}/documentinfo/delete:
+ *  patch:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서정보 삭제
+ *      description: 문서정보 삭제
+ *      produces:
+ *          - application/json
+ *      consumes:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentIndex id
+ *            required: true
+ *            type: string
+ *          - in: body
+ *            name: body
+ *            description: documentInfo id
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  targetId:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/documentIndex'
+ */
+documentIndex.patch('/:id/documentinfo/delete', commonCtrl.checkObjectId, documentIndexCtrl.deleteDocumentInfo);
+
 export default documentIndex;

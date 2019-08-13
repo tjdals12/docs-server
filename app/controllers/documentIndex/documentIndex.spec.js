@@ -6,7 +6,9 @@ import { expect } from 'chai';
 describe('  [Document Index]', () => {
     let server;
     let vendorId;
+    let editVendorId;
     let id;
+    let documentInfoId;
 
     before((done) => {
         db.connect().then((type) => {
@@ -120,6 +122,56 @@ describe('  [Document Index]', () => {
                     done();
                 });
         });
+
+        it('add vendor for edit', (done) => {
+            request(server)
+                .post('/api/vendors')
+                .send({
+                    vendorGb: '01',
+                    countryCd: '01',
+                    part: part,
+                    partNumber: 'R-001',
+                    vendorName: '성민테크',
+                    officialName: 'SMT',
+                    effStaDt: '2019-07-10',
+                    effEndDt: '2020-04-02',
+                    persons: [
+                        {
+                            name: '이성민',
+                            position: '사원',
+                            email: 'lll2slll@naver.com',
+                            contactNumber: '010-4143-3664',
+                            task: '개발'
+                        },
+                        {
+                            name: '김준철',
+                            position: '대리',
+                            email: 'jsteel@naver.com',
+                            contactNumber: '010-4421-5238',
+                            task: '개발'
+                        },
+
+                        {
+                            name: '박희영',
+                            position: '사원',
+                            email: 'phzer0o@naver.com',
+                            contactNumber: '010-2361-1642',
+                            task: '개발'
+                        }
+                    ]
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    editVendorId = ctx.body.data._id;
+
+                    expect(ctx.body.data.part._id).to.equal(part);
+                    expect(ctx.body.data.partNumber).to.equals('R-001');
+                    expect(ctx.body.data.vendorPerson).have.length(3);
+                    done();
+                });
+        });
     });
 
     describe('POST /documentindex/readexcel', () => {
@@ -167,6 +219,7 @@ describe('  [Document Index]', () => {
                     if (err) throw err;
 
                     id = ctx.body.data._id;
+                    documentInfoId = ctx.body.data.list[0]._id;
 
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-002');
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
@@ -208,6 +261,63 @@ describe('  [Document Index]', () => {
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
                     expect(ctx.body.data.list).have.length(3);
                     expect(ctx.body.data.list[0].documentNumber).to.equal('VP-NCC-R-001-001');
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /documentindex/:id/documentinfo/delete', () => {
+        it('delete documentInfo', (done) => {
+            request(server)
+                .patch(`/api/documentindex/${id}/documentinfo/delete`)
+                .send({
+                    targetId: documentInfoId,
+                    reason: 'API 테스트 - 삭제'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.vendor.partNumber).to.equal('R-002');
+                    expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
+                    expect(ctx.body.data.list).have.length(3);
+                    expect(ctx.body.data.list[0].documentNumber).to.equal('VP-NCC-R-001-001');
+                    expect(ctx.body.data.list[0].removeYn.yn).to.equal('YES');
+                    expect(ctx.body.data.list[0].removeYn.reason).to.equal('API 테스트 - 삭제');
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /documentIndex/:id/edit', () => {
+        it('edit documentIndex', (done) => {
+            request(server)
+                .patch(`/api/documentindex/${id}/edit`)
+                .send({
+                    vendor: editVendorId,
+                    list: []
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.vendor.partNumber).to.equal('R-001');
+                    expect(ctx.body.data.vendor.vendorName).to.equal('성민테크');
+                    expect(ctx.body.data.list).have.length(0);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /documentindex/:id/delete', () => {
+        it('delete documentIndex', (done) => {
+            request(server)
+                .patch(`/api/documentindex/${id}/delete`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(0);
                     done();
                 });
         });

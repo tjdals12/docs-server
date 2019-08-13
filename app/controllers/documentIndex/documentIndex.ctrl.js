@@ -35,7 +35,7 @@ export const list = async (ctx) => {
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: ctx.request.body,
+            data: [],
             message: 'Error - documentIndexCtrl > list'
         });
     }
@@ -137,6 +137,133 @@ export const one = async (ctx) => {
         ctx.res.internalServerError({
             data: id,
             message: 'Error - documentIndexCtrl > one'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서목록 수정
+ */
+export const editDocumentIndex = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        vendor,
+        list
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        vendor: Joi.string().required(),
+        list: Joi.array().items(Joi.string()).required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentIndexCtrl > editDocumentIndex'
+        });
+
+        return;
+    }
+
+    try {
+        const documentIndex = await DocumentIndex.editDocumentIndex({ id, vendor, list });
+
+        ctx.res.ok({
+            data: documentIndex,
+            message: 'Success - documentIndexCtrl > editDocumentIndex'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - documentIndexCtrl > editDocumentIndex'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서목록 삭제
+ */
+export const deleteDocumentIndex = async (ctx) => {
+    let { id } = ctx.params;
+    let page = parseInt(ctx.query.page || 1, 10);
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Fail - documentIndexCtrl > deleteDocumentIndex'
+        });
+
+        return;
+    }
+
+    try {
+        await DocumentIndex.findOneAndDelete({ _id: id });
+
+        const documentIndexes = await DocumentIndex
+            .find()
+            .populate({ path: 'vendor' })
+            .populate({ path: 'list' })
+            .skip((page - 1) * 10)
+            .limit(10)
+            .sort({ 'timestamp.regDt': -1 });
+
+        ctx.res.ok({
+            data: documentIndexes,
+            message: 'Success - documentIndexCtrl > deleteDocumentIndex'
+        })
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: 'Error - documentIndexCtrl > deleteDocumentIndex'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서정보 삭제
+ */
+export const deleteDocumentInfo = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        targetId,
+        reason
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        targetId: Joi.string().required(),
+        reason: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - documentIndexCtrl > deleteDocumentInfo'
+        });
+
+        return;
+    }
+
+    try {
+        const documentIndex = await DocumentIndex.deleteDocumentInfo(id, targetId, reason);
+
+        ctx.res.ok({
+            data: documentIndex,
+            message: 'Success - documentIndexCtrl > deleteDocumentInfo'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - documentIndexCtrl > deleteDocumentInfo'
         });
     }
 };

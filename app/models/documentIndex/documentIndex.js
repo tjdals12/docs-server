@@ -1,6 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DocumentInfo from './documentInfo';
+import DEFINE from 'models/common';
 
 /**
  * @author      minz-logger
@@ -40,6 +41,50 @@ DocumentIndexSchema.statics.saveDocumentIndex = async function (param) {
     await documentIndex.save();
 
     return this.findOne({ _id: documentIndex._id }).populate({ path: 'list vendor' });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서목록 수정
+ * @param       {String} id
+ * @param       {String} vendor
+ * @param       {Array} list
+ */
+DocumentIndexSchema.statics.editDocumentIndex = function (param) {
+    let {
+        id,
+        vendor,
+        list
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                vendor: vendor,
+                list: list,
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'trackingDocument' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 13
+ * @description 문서정보 삭제
+ * @param       {String} id
+ * @param       {String} targetId
+ * @param       {String} reason
+ */
+DocumentIndexSchema.statics.deleteDocumentInfo = async function (id, targetId, reason) {
+    await DocumentInfo.deleteDocumentInfo(targetId, reason);
+
+    return this.findOne({ _id: id }).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'trackingDocument' } });
 };
 
 export default model('DocumentIndex', DocumentIndexSchema);
