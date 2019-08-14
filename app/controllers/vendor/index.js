@@ -232,6 +232,9 @@ vendor.get('/:id', commonCtrl.checkObjectId, vendorCtrl.getVendor);
  *                  officialName:
  *                      type: string
  *                      example: SMT
+ *                  itemName:
+ *                      type: string
+ *                      example: Centrifugal Water Pump (CWP)
  *                  effStaDt:
  *                      type: string
  *                      example: 2019-08-03
@@ -301,6 +304,9 @@ vendor.post('/', vendorCtrl.create);
  *                  officialName:
  *                      type: string
  *                      example: SUT
+ *                  itemName:
+ *                      type: string
+ *                      example: Boiler Feed Water Pump
  *                  effStaDt:
  *                      type: string
  *                      example: 2019-08-20

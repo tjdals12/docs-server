@@ -216,6 +216,24 @@ const DEFINE = {
         return moment.tz(Date.now(), 'Asia/Seoul');
     },
 
+    datePeriod: function (start, end) {
+        const startDt = moment(start, 'YYYY-MM-DD');
+        const endDt = moment(end, 'YYYY-MM-DD');
+        const today = this.dateNow();
+
+        const total = endDt.diff(startDt, 'days');
+        const untilNow = today.diff(startDt, 'days');
+        const leftMonth = endDt.diff(today, 'months');
+        const percent = Math.round((untilNow / total) * 100);
+
+        return {
+            total,
+            untilNow,
+            leftMonth,
+            percent
+        };
+    },
+
     dateConverter: function (date) {
         return moment(date).format('YYYY-MM-DD H:mm:ss');
     },

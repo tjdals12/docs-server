@@ -23,11 +23,15 @@ export const list = async (ctx) => {
     try {
         const documentIndexes = await DocumentIndex
             .find()
-            .populate({ path: 'vendor' })
+            .populate({ path: 'vendor', populate: { path: 'part' } })
             .populate({ path: 'list' })
             .skip((page - 1) * 10)
             .limit(10)
             .sort({ 'timestamp.regDt': -1 });
+
+        const count = await DocumentIndex.countDocuments();
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
 
         ctx.res.ok({
             data: documentIndexes,

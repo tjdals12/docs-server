@@ -28,6 +28,7 @@ const VendorSchema = new Schema({
         type: String,
         unique: true
     },
+    itemName: String,
     countryCd: {
         type: String,
         default: DEFINE.COUNTRY_CD.DOMESTIC,
@@ -50,7 +51,16 @@ const VendorSchema = new Schema({
     }
 });
 
-VendorSchema.set('toJSON', { getters: true });
+VendorSchema.set('toJSON', { getters: true, virtuals: true });
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 14
+ * @description 필드 추가 - 계약일수, 경과일수, 남은 달, 계약경과율
+ */
+VendorSchema.virtual('period').get(function () {
+    return DEFINE.datePeriod(this.effStaDt, this.effEndDt);
+});
 
 /**
  * @author      minz-logger
@@ -66,6 +76,7 @@ VendorSchema.statics.saveVendor = async function (param) {
         partNumber,
         vendorName,
         officialName,
+        itemName,
         effStaDt,
         effEndDt,
         persons
@@ -76,7 +87,7 @@ VendorSchema.statics.saveVendor = async function (param) {
     if (persons.length > 0)
         ids = await Person.savePersons(persons);
 
-    const vendor = new this({ vendorGb, countryCd, part, partNumber, vendorName, officialName, effStaDt, effEndDt, vendorPerson: ids });
+    const vendor = new this({ vendorGb, countryCd, part, partNumber, vendorName, officialName, itemName, effStaDt, effEndDt, vendorPerson: ids });
 
     await vendor.save();
 
@@ -239,6 +250,7 @@ VendorSchema.statics.editVendor = function (id, param) {
         partNumber,
         vendorName,
         officialName,
+        itemName,
         effStaDt,
         effEndDt
     } = param;
@@ -253,6 +265,7 @@ VendorSchema.statics.editVendor = function (id, param) {
                 partNumber,
                 vendorName,
                 officialName,
+                itemName,
                 effStaDt: new Date(effStaDt),
                 effEndDt: new Date(effEndDt)
             }

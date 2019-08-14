@@ -154,6 +154,7 @@ export const create = async (ctx) => {
         partNumber,
         vendorName,
         officialName,
+        itemName,
         effStaDt,
         effEndDt,
         persons
@@ -166,6 +167,7 @@ export const create = async (ctx) => {
         partNumber: Joi.string().required(),
         vendorName: Joi.string().required(),
         officialName: Joi.string().required(),
+        itemName: Joi.string().required(),
         effStaDt: Joi.string().required(),
         effEndDt: Joi.string().required(),
         persons: Joi.array().items(Joi.object())
@@ -190,6 +192,7 @@ export const create = async (ctx) => {
             partNumber,
             vendorName,
             officialName,
+            itemName,
             effStaDt,
             effEndDt,
             persons
@@ -210,7 +213,7 @@ export const create = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 04
- * @description 업체 수정
+ * @description 업체 정
  */
 export const editVendor = async (ctx) => {
     let { id } = ctx.params;
@@ -221,6 +224,7 @@ export const editVendor = async (ctx) => {
         partNumber,
         vendorName,
         officialName,
+        itemName,
         effStaDt,
         effEndDt
     } = ctx.request.body;
@@ -232,6 +236,7 @@ export const editVendor = async (ctx) => {
         partNumber: Joi.string().required(),
         vendorName: Joi.string().required(),
         officialName: Joi.string().required(),
+        itemName: Joi.string().required(),
         effStaDt: Joi.string().required(),
         effEndDt: Joi.string().required()
     });
@@ -255,6 +260,7 @@ export const editVendor = async (ctx) => {
             partNumber,
             vendorName,
             officialName,
+            itemName,
             effStaDt,
             effEndDt
         });

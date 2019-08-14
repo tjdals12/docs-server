@@ -102,6 +102,7 @@ describe('  [VENDOR]', () => {
                     partNumber: 'R-001',
                     vendorName: '성민테크',
                     officialName: 'SMT',
+                    itemName: 'Centrifugal Pump',
                     effStaDt: '2019-07-10',
                     effEndDt: '2020-04-02',
                     persons: [
@@ -138,6 +139,7 @@ describe('  [VENDOR]', () => {
                     expect(ctx.body.data.part._id).to.equal(part1);
                     expect(ctx.body.data.partNumber).to.equals('R-001');
                     expect(ctx.body.data.vendorPerson).have.length(3);
+                    expect(ctx.body.data.itemName).to.equal('Centrifugal Pump');
                     done();
                 });
         });
@@ -264,6 +266,7 @@ describe('  [VENDOR]', () => {
                     partNumber: 'S-001',
                     vendorName: '성은테크',
                     officialName: 'SUT',
+                    itemName: 'Boiler Feed Water Pump',
                     effStaDt: '2019-08-20',
                     effEndDt: '2020-02-21',
                 })
@@ -275,6 +278,7 @@ describe('  [VENDOR]', () => {
                     expect(ctx.body.data.partNumber).to.equal('S-001');
                     expect(ctx.body.data.vendorName).to.equal('성은테크');
                     expect(ctx.body.data.officialName).to.equal('SUT');
+                    expect(ctx.body.data.itemName).to.equal('Boiler Feed Water Pump');
                     done();
                 });
         });

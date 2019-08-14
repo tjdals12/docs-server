@@ -83,6 +83,7 @@ describe('  [Document Index]', () => {
                     partNumber: 'R-002',
                     vendorName: '주연테크',
                     officialName: 'JYR',
+                    itemName: 'Chemical Injection Pump',
                     effStaDt: '2019-07-10',
                     effEndDt: '2020-04-02',
                     persons: [
@@ -119,6 +120,7 @@ describe('  [Document Index]', () => {
                     expect(ctx.body.data.part._id).to.equal(part);
                     expect(ctx.body.data.partNumber).to.equals('R-002');
                     expect(ctx.body.data.vendorPerson).have.length(3);
+                    expect(ctx.body.data.itemName).to.equal('Chemical Injection Pump');
                     done();
                 });
         });
@@ -133,6 +135,7 @@ describe('  [Document Index]', () => {
                     partNumber: 'R-001',
                     vendorName: '성민테크',
                     officialName: 'SMT',
+                    itemName: 'Centrifugal Water Pump',
                     effStaDt: '2019-07-10',
                     effEndDt: '2020-04-02',
                     persons: [
@@ -169,6 +172,7 @@ describe('  [Document Index]', () => {
                     expect(ctx.body.data.part._id).to.equal(part);
                     expect(ctx.body.data.partNumber).to.equals('R-001');
                     expect(ctx.body.data.vendorPerson).have.length(3);
+                    expect(ctx.body.data.itemName).to.equal('Centrifugal Water Pump');
                     done();
                 });
         });
