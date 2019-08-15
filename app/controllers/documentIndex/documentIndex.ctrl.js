@@ -159,7 +159,7 @@ export const editDocumentIndex = async (ctx) => {
 
     const schema = Joi.object().keys({
         vendor: Joi.string().required(),
-        list: Joi.array().items(Joi.string()).required()
+        list: Joi.array().items(Joi.object()).required()
     });
 
     const result = Joi.validate(ctx.request.body, schema);

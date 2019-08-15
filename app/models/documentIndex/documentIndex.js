@@ -51,19 +51,21 @@ DocumentIndexSchema.statics.saveDocumentIndex = async function (param) {
  * @param       {String} vendor
  * @param       {Array} list
  */
-DocumentIndexSchema.statics.editDocumentIndex = function (param) {
+DocumentIndexSchema.statics.editDocumentIndex = async function (param) {
     let {
         id,
         vendor,
         list
     } = param;
 
+    let documentInfos = await DocumentInfo.saveDocumentInfos(list);
+
     return this.findOneAndUpdate(
         { _id: id },
         {
             $set: {
                 vendor: vendor,
-                list: list,
+                list: documentInfos,
                 'timestamp.updDt': DEFINE.dateNow()
             }
         },

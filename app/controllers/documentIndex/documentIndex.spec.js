@@ -299,7 +299,11 @@ describe('  [Document Index]', () => {
                 .patch(`/api/documentindex/${id}/edit`)
                 .send({
                     vendor: editVendorId,
-                    list: []
+                    list: [{
+                        documentNumber: 'VP-NCC-R-001-001',
+                        documentTitle: 'Vendor Print Index & Schedule',
+                        plan: '2019-08-23'
+                    }]
                 })
                 .expect(200)
                 .end((err, ctx) => {
@@ -307,7 +311,7 @@ describe('  [Document Index]', () => {
 
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-001');
                     expect(ctx.body.data.vendor.vendorName).to.equal('성민테크');
-                    expect(ctx.body.data.list).have.length(0);
+                    expect(ctx.body.data.list).have.length(1);
                     done();
                 });
         });
