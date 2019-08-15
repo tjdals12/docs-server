@@ -209,8 +209,9 @@ documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
  *                      items:
  *                          type: string
  *      responses:
+ *          description: Successful operation
  *          schema:
- *              '#/definitions/documentIndex'
+ *              $ref: '#/definitions/documentIndex'
  */
 documentIndex.patch('/:id/edit', commonCtrl.checkObjectId, documentIndexCtrl.editDocumentIndex);
 

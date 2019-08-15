@@ -40,8 +40,8 @@ DocumentInfoSchema.statics.saveDocumentInfos = async function (param) {
     let ids = [];
 
     for (let i = 0; i < param.length; i++) {
-        const { number, title, plan } = param[i];
-        const documentInfo = new this({ documentNumber: number, documentTitle: title, plan: new Date(plan) });
+        const { documentNumber, documentTitle, plan } = param[i];
+        const documentInfo = new this({ documentNumber, documentTitle, plan: new Date(plan) });
         await documentInfo.save();
         ids.push(documentInfo._id);
     }

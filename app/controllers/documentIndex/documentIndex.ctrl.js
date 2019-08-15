@@ -53,7 +53,7 @@ export const list = async (ctx) => {
 export const readExcel = async (ctx) => {
     try {
         const workbook = XLSX.readFile(ctx.req.file.path);
-        const excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        const excelData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: ['documentNumber', 'documentTitle', 'plan'] });
 
         const result = excelData.map((row) => {
             return {
@@ -211,16 +211,20 @@ export const deleteDocumentIndex = async (ctx) => {
 
         const documentIndexes = await DocumentIndex
             .find()
-            .populate({ path: 'vendor' })
+            .populate({ path: 'vendor', populate: { path: 'part' } })
             .populate({ path: 'list' })
             .skip((page - 1) * 10)
             .limit(10)
             .sort({ 'timestamp.regDt': -1 });
 
+        const count = await DocumentIndex.countDocuments();
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
+
         ctx.res.ok({
             data: documentIndexes,
             message: 'Success - documentIndexCtrl > deleteDocumentIndex'
-        })
+        });
     } catch (e) {
         ctx.res.internalServerError({
             data: id,

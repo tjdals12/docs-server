@@ -202,18 +202,18 @@ describe('  [Document Index]', () => {
                     vendor: vendorId,
                     list: [
                         {
-                            number: 'VP-NCC-R-001-001',
-                            title: 'Vendor Print Index & Schedule',
+                            documentNumber: 'VP-NCC-R-001-001',
+                            documentTitle: 'Vendor Print Index & Schedule',
                             plan: '2019-09-23'
                         },
                         {
-                            number: 'VP-NCC-R-001-002',
-                            title: 'Sub-Vendor List',
+                            documentNumber: 'VP-NCC-R-001-002',
+                            documentTitle: 'Sub-Vendor List',
                             plan: '2019-09-23'
                         },
                         {
-                            number: 'VP-NCC-R-001-003',
-                            title: 'Overall Schedule',
+                            documentNumber: 'VP-NCC-R-001-003',
+                            documentTitle: 'Overall Schedule',
                             plan: '2019-09-23'
                         }
                     ]
