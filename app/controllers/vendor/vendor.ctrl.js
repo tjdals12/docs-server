@@ -213,7 +213,7 @@ export const create = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 04
- * @description 업체 정
+ * @description 업체 수정
  */
 export const editVendor = async (ctx) => {
     let { id } = ctx.params;

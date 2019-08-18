@@ -64,38 +64,6 @@ VendorSchema.virtual('period').get(function () {
 
 /**
  * @author      minz-logger
- * @date        2019. 08. 04
- * @description 업체 추가
- * @param       {Object} param
- */
-VendorSchema.statics.saveVendor = async function (param) {
-    let {
-        vendorGb,
-        countryCd,
-        part,
-        partNumber,
-        vendorName,
-        officialName,
-        itemName,
-        effStaDt,
-        effEndDt,
-        persons
-    } = param;
-
-    let ids = [];
-
-    if (persons.length > 0)
-        ids = await Person.savePersons(persons);
-
-    const vendor = new this({ vendorGb, countryCd, part, partNumber, vendorName, officialName, itemName, effStaDt, effEndDt, vendorPerson: ids });
-
-    await vendor.save();
-
-    return this.findOne({ _id: vendor._id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
-};
-
-/**
- * @author      minz-logger
  * @date        2019. 08. 05
  * @description 업체 검색
  * @param       {Object} param
@@ -233,6 +201,38 @@ VendorSchema.statics.searchVendorsCount = function (param) {
             $count: 'count'
         }
     ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 04
+ * @description 업체 추가
+ * @param       {Object} param
+ */
+VendorSchema.statics.saveVendor = async function (param) {
+    let {
+        vendorGb,
+        countryCd,
+        part,
+        partNumber,
+        vendorName,
+        officialName,
+        itemName,
+        effStaDt,
+        effEndDt,
+        persons
+    } = param;
+
+    let ids = [];
+
+    if (persons.length > 0)
+        ids = await Person.savePersons(persons);
+
+    const vendor = new this({ vendorGb, countryCd, part, partNumber, vendorName, officialName, itemName, effStaDt, effEndDt, vendorPerson: ids });
+
+    await vendor.save();
+
+    return this.findOne({ _id: vendor._id }).populate({ path: 'part' }).populate({ path: 'vendorPerson' });
 };
 
 /**

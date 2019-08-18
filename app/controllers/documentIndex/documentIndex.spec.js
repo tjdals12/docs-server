@@ -8,7 +8,8 @@ describe('  [Document Index]', () => {
     let vendorId;
     let editVendorId;
     let id;
-    let documentInfoId;
+    let documentInfoId1;
+    let documentInfoId2;
 
     before((done) => {
         db.connect().then((type) => {
@@ -223,7 +224,8 @@ describe('  [Document Index]', () => {
                     if (err) throw err;
 
                     id = ctx.body.data._id;
-                    documentInfoId = ctx.body.data.list[0]._id;
+                    documentInfoId1 = ctx.body.data.list[0]._id;
+                    documentInfoId2 = ctx.body.data.list[1]._id;
 
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-002');
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
@@ -234,10 +236,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('GET /documentIndex', () => {
+    describe('GET /documentindex', () => {
         it('get documentIndexes', (done) => {
             request(server)
-                .get('/api/documentIndex?page=1')
+                .get('/api/documentindex?page=1')
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -253,6 +255,73 @@ describe('  [Document Index]', () => {
         });
     });
 
+    describe('GET /documentindex/forselect', () => {
+        it('add documentIndexes for select', (done) => {
+            request(server)
+                .get('/api/documentindex/forselect')
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).instanceOf(Array);
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('POST /documentindex/search', () => {
+        it('search documentIndexes', (done) => {
+            request(server)
+                .post('/api/documentindex/search?page=1')
+                .send({
+                    part: '',
+                    partNumber: 'R-002',
+                    officialName: 'JYR',
+                    vendorName: '테크'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data[0].vendor.partNumber).to.equal('R-002');
+                    expect(ctx.body.data[0].vendor.officialName).to.equal('JYR');
+                    expect(ctx.body.data[0].vendor.vendorName).to.include('테크');
+                    done();
+                });
+        });
+    });
+
+    describe('POST /documentindex/:id/add', () => {
+        it('add documentInfos', (done) => {
+            request(server)
+                .patch(`/api/documentindex/${id}/add`)
+                .send({
+                    list: [
+                        {
+                            documentNumber: 'VP-NCC-R-001-004',
+                            documentTitle: 'Inspection Test & Plan',
+                            plan: '2019-09-11'
+                        },
+                        {
+                            documentNumber: 'VP-NCC-R-001-005',
+                            documentTitle: 'Inspection Test & Procedure',
+                            plan: '2019-09-11'
+                        }
+                    ]
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.list).have.length(5);
+                    expect(ctx.body.data.list[3].documentNumber).to.equal('VP-NCC-R-001-004');
+                    expect(ctx.body.data.list[4].documentNumber).to.equal('VP-NCC-R-001-005');
+                    done();
+                });
+        });
+    });
+
     describe('GET /documentindex/:id', () => {
         it('get documentIndex', (done) => {
             request(server)
@@ -263,7 +332,7 @@ describe('  [Document Index]', () => {
 
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-002');
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
-                    expect(ctx.body.data.list).have.length(3);
+                    expect(ctx.body.data.list).have.length(5);
                     expect(ctx.body.data.list[0].documentNumber).to.equal('VP-NCC-R-001-001');
                     done();
                 });
@@ -275,7 +344,7 @@ describe('  [Document Index]', () => {
             request(server)
                 .patch(`/api/documentindex/${id}/documentinfo/delete`)
                 .send({
-                    targetId: documentInfoId,
+                    targetId: documentInfoId1,
                     reason: 'API 테스트 - 삭제'
                 })
                 .expect(200)
@@ -284,7 +353,7 @@ describe('  [Document Index]', () => {
 
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-002');
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
-                    expect(ctx.body.data.list).have.length(3);
+                    expect(ctx.body.data.list).have.length(5);
                     expect(ctx.body.data.list[0].documentNumber).to.equal('VP-NCC-R-001-001');
                     expect(ctx.body.data.list[0].removeYn.yn).to.equal('YES');
                     expect(ctx.body.data.list[0].removeYn.reason).to.equal('API 테스트 - 삭제');
@@ -299,19 +368,40 @@ describe('  [Document Index]', () => {
                 .patch(`/api/documentindex/${id}/edit`)
                 .send({
                     vendor: editVendorId,
-                    list: [{
-                        documentNumber: 'VP-NCC-R-001-001',
-                        documentTitle: 'Vendor Print Index & Schedule',
-                        plan: '2019-08-23'
-                    }]
+                    list: [
+                        {
+                            _id: documentInfoId1,
+                            documentNumber: 'VP-NCC-R-001-001',
+                            documentTitle: 'VPIS',
+                            plan: '2019-08-23'
+                        },
+                        {
+                            documentNumber: 'VP-NCC-R-001-006',
+                            documentTitle: 'Welding Procedure',
+                            plan: '2019-09-23'
+                        }
+                    ],
+                    deleteList: [
+                        {
+                            _id: documentInfoId2,
+                            documentNumber: 'VP-NCC-R-001-002',
+                            documentTitle: 'Sub-Vendor List',
+                            plan: '2019-09-23'
+                        }
+                    ]
                 })
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    let edited = ctx.body.data.list.filter(document => document._id === documentInfoId1);
+                    let deleted = ctx.body.data.list.filter(document => document._id === documentInfoId2);
+
                     expect(ctx.body.data.vendor.partNumber).to.equal('R-001');
                     expect(ctx.body.data.vendor.vendorName).to.equal('성민테크');
-                    expect(ctx.body.data.list).have.length(1);
+                    expect(edited[0].documentTitle).to.equal('VPIS');
+                    expect(deleted[0].removeYn.yn).to.equal('YES');
+                    expect(ctx.body.data.list).have.length(6);
                     done();
                 });
         });

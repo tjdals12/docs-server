@@ -16,10 +16,10 @@ const DocumentInfoSchema = new Schema({
         default: new Date(DEFINE.COMMON.MAX_END_DT),
         get: DEFINE.dateConverter
     },
-    trackingDocument: {
+    trackingDocument: [{
         type: Schema.Types.ObjectId,
         ref: 'Document'
-    },
+    }],
     removeYn: {
         type: removeYn.schema,
         default: removeYn
@@ -47,6 +47,71 @@ DocumentInfoSchema.statics.saveDocumentInfos = async function (param) {
     }
 
     return ids;
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 16
+ * @description 문서 정보 수정
+ * @param       {Object} param
+ */
+DocumentInfoSchema.statics.updateDocumentInfos = async function (param) {
+    let ids = [];
+
+    for (let i = 0; i < param.length; i++) {
+        const { _id, documentNumber, documentTitle, plan } = param[i];
+
+        if (!_id) {
+            const documentInfo = new this({ documentNumber, documentTitle, plan });
+            await documentInfo.save();
+
+            ids.push(documentInfo._id);
+        } else {
+            await this.findByIdAndUpdate(
+                _id,
+                {
+                    $set: {
+                        documentNumber,
+                        documentTitle,
+                        plan,
+                        removeYn: {
+                            yn: DEFINE.COMMON.DEFAULT_NO,
+                            deleteDt: new Date(DEFINE.COMMON.MAX_END_DT),
+                            reason: DEFINE.COMMON.DEFAULT_REASON
+                        },
+                        'timestamp.updDt': DEFINE.dateNow()
+                    }
+                }
+            );
+        }
+    }
+
+    return ids;
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 16
+ * @description 문서 정보 삭제
+ * @param       {Object} param
+ */
+DocumentInfoSchema.statics.deleteDocumentInfos = async function (param) {
+    for (let i = 0; i < param.length; i++) {
+        const { _id, reason = '인덱스 수정' } = param[i];
+
+        await this.findOneAndUpdate(
+            { _id: _id },
+            {
+                $set: {
+                    removeYn: {
+                        yn: DEFINE.COMMON.DEFAULT_YES,
+                        deleteDt: DEFINE.dateNow(),
+                        reason
+                    }
+                }
+            }
+        );
+    }
 };
 
 /**

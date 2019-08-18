@@ -143,7 +143,7 @@ const document = new Router();
  *         parameters:
  *             - in: query
  *               name: page
- *               description: document parameter
+ *               description: page number
  *               type: string
  *               example: 1
  *         responses:
@@ -169,6 +169,11 @@ document.get('/', documentCtrl.list);
  *      produces:
  *          - application/json
  *      parameters:
+ *          - in: query
+ *            name: page
+ *            description: page number
+ *            type: string
+ *            example: 1
  *          - in: body
  *            name: body
  *            description: search parameters

@@ -80,6 +80,70 @@ documentIndex.get('/', documentIndexCtrl.list);
 
 /**
  * @swagger
+ * /api/documentindex/search:
+ *  post:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 검색
+ *      description: 문서목록 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: query
+ *            name: page
+ *            description: page number
+ *            required: true
+ *            type: number
+ *            example: 1
+ *          - in: body
+ *            name: body
+ *            descripition: search parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  part:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  partNumber:
+ *                      type: string
+ *                      example: R-001
+ *                  officialName:
+ *                      type: string
+ *                      example: JWT
+ *                  vendorName: 
+ *                      type: string
+ *                      example: 테크
+ *      responses:
+ *          200:
+ *              descripition: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/documentIndex'
+ */
+documentIndex.post('/search', documentIndexCtrl.search);
+
+/**
+ * @swagger
+ * /api/documentindex/forselect:
+ *  get:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 목록 조회 (For select)
+ *      description: 문서목록 목록 조회 (For select)
+ *      produces:
+ *          - application/json
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/documentIndex'
+ */
+documentIndex.get('/forselect', documentIndexCtrl.listForSelect);
+
+/**
+ * @swagger
  * /api/documentindex/readexcel:
  *  post:
  *      tags:
@@ -148,6 +212,55 @@ documentIndex.post('/readexcel', upload.single('indexes'), documentIndexCtrl.rea
  *                  $ref: '#/definitions/documentIndex'
  */
 documentIndex.post('/', documentIndexCtrl.create);
+
+/**
+ * @swagger
+ * /api/documentindex/{id}/add:
+ *  patch:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 개별 추가
+ *      description: 문서목록 개별 추가
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *          - in: body
+ *            name: body
+ *            description: documentindex parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  list:
+ *                      type: array
+ *                      items:
+ *                          type: object
+ *                          properties:
+ *                              documentNumber:
+ *                                  type: string
+ *                                  example: VP-NCC-R-001-004
+ *                              documentTitle:
+ *                                  type: string
+ *                                  example: Inspection Test & Plan
+ *                              plan:
+ *                                  type: string
+ *                                  format: date 
+ *                                  example: 2019-09-11
+ *      responses:
+ *          200:    
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/documentIndex'
+ */
+documentIndex.patch('/:id/add', commonCtrl.checkObjectId, documentIndexCtrl.addPartial);
 
 /**
  * @swagger
