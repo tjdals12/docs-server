@@ -1,6 +1,7 @@
 import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DocumentInfo from './documentInfo';
+import Document from '../document/document';
 import DEFINE from 'models/common';
 
 /**
@@ -237,6 +238,216 @@ DocumentIndexSchema.statics.deleteDocumentInfo = async function (id, targetId, r
     await DocumentInfo.deleteDocumentInfo(targetId, reason);
 
     return this.findOne({ _id: id }).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'trackingDocument' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 22
+ * @description 문서정보 Overall
+ */
+DocumentIndexSchema.statics.documentIndexOverall = async function (id) {
+    return this.aggregate([
+        {
+            $match: { _id: Types.ObjectId(id) }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $lookup: {
+                from: 'documentinfos',
+                localField: 'list',
+                foreignField: '_id',
+                as: 'list'
+            }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'list.trackingDocument',
+                foreignField: '_id',
+                as: 'list.trackingDocument'
+            }
+        },
+        {
+            $project: {
+                list: 1,
+                vendor: 1,
+                timestamp: 1,
+                eachCount: { $size: '$list.trackingDocument' },
+                firstReceive: {
+                    $size: {
+                        $filter: {
+                            input: '$list.trackingDocument',
+                            as: 'document',
+                            cond: { $eq: ['$$document.documentRev', 'A'] }
+                        }
+                    }
+                },
+                latestDocument: { $arrayElemAt: [{ $slice: ['$list.trackingDocument', -1] }, 0] }
+            }
+        },
+        {
+            $project: {
+                list: 1,
+                vendor: 1,
+                timestamp: 1,
+                eachCount: 1,
+                firstReceive: 1,
+                isDelete: {
+                    $cond: {
+                        if: { $eq: ['$latestDocument.deleteYn.yn', 'YES'] },
+                        then: 1,
+                        else: 0
+                    }
+                },
+                isHold: {
+                    $cond: {
+                        if: { $eq: [{ $arrayElemAt: [{ $slice: ['$latestDocument.holdYn.yn', -1] }, 0] }, 'YES'] },
+                        then: 1,
+                        else: 0
+                    }
+                },
+                isDelay: {
+                    $cond: {
+                        if: { $eq: ['$latestDocument.delayGb', '05'] },
+                        then: 1,
+                        else: 0
+                    }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: '$_id',
+                indexTotal: { $sum: 1 },
+                receiveTotal: { $sum: '$eachCount' },
+                firstTotal: { $sum: '$firstReceive' },
+                deleteTotal: { $sum: '$isDelete' },
+                holdTotal: { $sum: '$isHold' },
+                delayTotal: { $sum: '$isDelay' }
+            }
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 22
+ * @description 문서정보 Status 통계
+ */
+DocumentIndexSchema.statics.statisticsByStatus = function (id) {
+    return this.aggregate([
+        {
+            $match: { _id: Types.ObjectId(id) }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $lookup: {
+                from: 'documentinfos',
+                localField: 'list',
+                foreignField: '_id',
+                as: 'list'
+            }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'list.trackingDocument',
+                foreignField: '_id',
+                as: 'list.trackingDocument'
+            }
+        },
+        {
+            $project: {
+                latestDocument: { $arrayElemAt: [{ $slice: ['$list.trackingDocument', -1] }, 0] }
+            }
+        },
+        {
+            $project: {
+                latestStatus: { $arrayElemAt: [{ $slice: ['$latestDocument.documentStatus', -1] }, 0] }
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    code: '$latestStatus.status',
+                    statusName: '$latestStatus.statusName'
+                },
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                status: { $ifNull: ['$_id.code', '00'] },
+                statusName: { $ifNull: ['$_id.statusName', '접수대기'] },
+                count: '$count'
+            }
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 22
+ * @description 문서정보 추적
+ */
+DocumentIndexSchema.statics.trackingDocument = function (id, page) {
+    return this.aggregate([
+        {
+            $match: { _id: Types.ObjectId(id) }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $lookup: {
+                from: 'documentinfos',
+                localField: 'list',
+                foreignField: '_id',
+                as: 'list'
+            }
+        },
+        {
+            $unwind: '$list'
+        },
+        {
+            $project: {
+                list: {
+                    _id: 1,
+                    plan: 1,
+                    documentNumber: 1,
+                    documentTitle: 1,
+                    trackingDocument: { $slice: ['$list.trackingDocument', ((page - 1) * 5), 5] },
+                    removeYn: 1,
+                    timestamp: 1
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'list.trackingDocument',
+                foreignField: '_id',
+                as: 'list.trackingDocument'
+            }
+        },
+        {
+            $group: {
+                _id: '$_id',
+                documentInfos: { $push: '$list' }
+            }
+        }
+    ]);
 };
 
 export default model('DocumentIndex', DocumentIndexSchema);

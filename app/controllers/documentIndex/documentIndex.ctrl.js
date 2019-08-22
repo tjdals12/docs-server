@@ -3,7 +3,6 @@ import XLSX from 'xlsx';
 import moment from 'moment';
 import Joi from 'joi';
 import { Types } from 'mongoose';
-import DEFINE from '../../models/common';
 
 /**
  * @author      minz-logger
@@ -257,6 +256,35 @@ export const one = async (ctx) => {
         ctx.res.internalServerError({
             data: id,
             message: 'Error - documentIndexCtrl > one'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 22
+ * @description 문서목록 개별 조회 Detail
+ */
+export const oneDetail = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const overall = await DocumentIndex.documentIndexOverall(id);
+        const statisticsByStatus = await DocumentIndex.statisticsByStatus(id);
+        const list = await DocumentIndex.trackingDocument(id, 1);
+
+        ctx.res.ok({
+            data: {
+                overall: overall[0],
+                statisticsByStatus,
+                list: list[0]
+            },
+            message: 'Success - documentIndexCtrl > oneDetail'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: 'Error - documentIndexCtrl > oneDetail'
         });
     }
 };

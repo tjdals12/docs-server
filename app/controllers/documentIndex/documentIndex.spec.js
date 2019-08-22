@@ -339,6 +339,25 @@ describe('  [Document Index]', () => {
         });
     });
 
+    describe('GET /documentindex/:id/detail', () => {
+        it('get documentIndex detail', (done) => {
+            request(server)
+                .get(`/api/documentindex/${id}/detail`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    const indexDetail = ctx.body.data;
+
+                    expect(indexDetail).haveOwnProperty('overall');
+                    expect(indexDetail).haveOwnProperty('statisticsByStatus');
+                    expect(indexDetail).haveOwnProperty('documentInfo');
+
+                    done();
+                });
+        });
+    });
+
     describe('PATCH /documentindex/:id/documentinfo/delete', () => {
         it('delete documentInfo', (done) => {
             request(server)

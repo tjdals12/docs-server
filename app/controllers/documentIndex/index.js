@@ -280,6 +280,7 @@ documentIndex.patch('/:id/add', commonCtrl.checkObjectId, documentIndexCtrl.addP
  *            description: documentindex id
  *            required: true
  *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
  *      responses:
  *          200:
  *              description: Successful operation
@@ -287,6 +288,76 @@ documentIndex.patch('/:id/add', commonCtrl.checkObjectId, documentIndexCtrl.addP
  *                  $ref: '#/definitions/documentIndex'
  */
 documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
+
+/**
+ * @swagger
+ * /api/documentindex/{id}/detail:
+ *  get:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 개별 조회 Detail
+ *      descriptipon: 문서목록 개별 조회 Detaii
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *            example: 5d51826fb1bd6f04d7e8368a
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      overral:
+ *                          type: object
+ *                          properties:
+ *                              _id:
+ *                                  type: string 
+ *                                  example: 5d33ef877cceb91244d16fdd
+ *                              indexTotal: 
+ *                                  type: number
+ *                                  example: 12
+ *                              receiveTotal: 
+ *                                  type: number
+ *                                  example: 4
+ *                              firstTotal: 
+ *                                  type: number
+ *                                  example: 2
+ *                              deleteTotal: 
+ *                                  type: number
+ *                                  example: 0
+ *                              holdTotal:
+ *                                  type: number
+ *                                  example: 0
+ *                              delayTotal:
+ *                                  type: number
+ *                                  example: 0
+ *                      staticsByStatus:
+ *                          type: array
+ *                          items:
+ *                              type: object
+ *                              properties:
+ *                                  status:
+ *                                      type: string
+ *                                      example: '01'
+ *                                  statusName:
+ *                                      type: string
+ *                                      example: 접수
+ *                                  count:
+ *                                      type: number
+ *                                      example: 3
+ *                      list:
+ *                          type: array
+ *                          items:
+ *                              $ref: '#/definitions/documentInfo'
+ */
+documentIndex.get('/:id/detail', commonCtrl.checkObjectId, documentIndexCtrl.oneDetail);
 
 /**
  * @swagger
