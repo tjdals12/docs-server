@@ -351,7 +351,7 @@ describe('  [Document Index]', () => {
 
                     expect(indexDetail).haveOwnProperty('overall');
                     expect(indexDetail).haveOwnProperty('statisticsByStatus');
-                    expect(indexDetail).haveOwnProperty('documentInfo');
+                    expect(indexDetail).haveOwnProperty('list');
 
                     done();
                 });

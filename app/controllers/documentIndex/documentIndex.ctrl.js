@@ -275,9 +275,9 @@ export const oneDetail = async (ctx) => {
 
         ctx.res.ok({
             data: {
-                overall: overall[0],
+                overall: overall[0] ? overall[0] : {},
                 statisticsByStatus,
-                list: list[0]
+                list: list[0] ? list[0].documentInfos : []
             },
             message: 'Success - documentIndexCtrl > oneDetail'
         });

@@ -323,12 +323,24 @@ DocumentIndexSchema.statics.documentIndexOverall = async function (id) {
         {
             $group: {
                 _id: '$_id',
-                indexTotal: { $sum: 1 },
-                receiveTotal: { $sum: '$eachCount' },
-                firstTotal: { $sum: '$firstReceive' },
-                deleteTotal: { $sum: '$isDelete' },
-                holdTotal: { $sum: '$isHold' },
-                delayTotal: { $sum: '$isDelay' }
+                Total: { $sum: 1 },
+                Received: { $sum: '$eachCount' },
+                RevA: { $sum: '$firstReceive' },
+                Delete: { $sum: '$isDelete' },
+                Hold: { $sum: '$isHold' },
+                Delay: { $sum: '$isDelay' }
+            }
+        },
+
+        {
+            $project: {
+                _id: 0,
+                Total: 1,
+                Received: 1,
+                RevA: 1,
+                Delete: 1,
+                Hold: 1,
+                Delay: 1,
             }
         }
     ]);
@@ -388,9 +400,8 @@ DocumentIndexSchema.statics.statisticsByStatus = function (id) {
         {
             $project: {
                 _id: 0,
-                status: { $ifNull: ['$_id.code', '00'] },
                 statusName: { $ifNull: ['$_id.statusName', '접수대기'] },
-                count: '$count'
+                Count: '$count'
             }
         }
     ]);
