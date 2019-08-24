@@ -266,6 +266,25 @@ const DEFINE = {
             return '해외';
         }
     },
+
+    SENDER_RECEIVER_GB: {
+        CLIENT: '01',
+        CONTRACTOR: '02',
+        VENDOR: '03'
+    },
+
+    senderReceiverGbConverter: function (code) {
+        switch (code) {
+        case DEFINE.SENDER_RECEIVER_GB.CLIENT:
+            return 'CLIENT';
+
+        case DEFINE.SENDER_RECEIVER_GB.CONTRACTOR:
+            return 'CONTRACTOR';
+
+        case DEFINE.SENDER_RECEIVER_GB.VENDOR:
+            return 'VENDOR';
+        }
+    }
 };
 
 export default DEFINE;

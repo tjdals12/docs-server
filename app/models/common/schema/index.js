@@ -1,1 +1,2 @@
+export { default as Status } from './status';
 export { default as Timestamp } from './Timestamp';

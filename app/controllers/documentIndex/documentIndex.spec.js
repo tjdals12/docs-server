@@ -179,10 +179,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('POST /documentindex/readexcel', () => {
+    describe('POST /documentindexes/readexcel', () => {
         it('read excel', (done) => {
             request(server)
-                .post('/api/documentindex/readexcel')
+                .post('/api/documentindexes/readexcel')
                 .set('Content-Type', 'mulitpart/form-data')
                 .attach('indexes', 'upload/test.xlsx')
                 .expect(200)
@@ -195,10 +195,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('POST /documentindex', () => {
+    describe('POST /documentindexes', () => {
         it('create document index', (done) => {
             request(server)
-                .post('/api/documentindex')
+                .post('/api/documentindexes')
                 .send({
                     vendor: vendorId,
                     list: [
@@ -236,10 +236,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('GET /documentindex', () => {
+    describe('GET /documentindexes', () => {
         it('get documentIndexes', (done) => {
             request(server)
-                .get('/api/documentindex?page=1')
+                .get('/api/documentindexes?page=1')
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -255,10 +255,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('GET /documentindex/forselect', () => {
+    describe('GET /documentindexes/forselect', () => {
         it('add documentIndexes for select', (done) => {
             request(server)
-                .get('/api/documentindex/forselect')
+                .get('/api/documentindexes/forselect')
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -270,10 +270,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('POST /documentindex/search', () => {
+    describe('POST /documentindexes/search', () => {
         it('search documentIndexes', (done) => {
             request(server)
-                .post('/api/documentindex/search?page=1')
+                .post('/api/documentindexes/search?page=1')
                 .send({
                     part: '',
                     partNumber: 'R-002',
@@ -292,10 +292,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('POST /documentindex/:id/add', () => {
+    describe('POST /documentindexes/:id/add', () => {
         it('add documentInfos', (done) => {
             request(server)
-                .patch(`/api/documentindex/${id}/add`)
+                .patch(`/api/documentindexes/${id}/add`)
                 .send({
                     list: [
                         {
@@ -322,10 +322,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('GET /documentindex/:id', () => {
+    describe('GET /documentindexes/:id', () => {
         it('get documentIndex', (done) => {
             request(server)
-                .get(`/api/documentindex/${id}`)
+                .get(`/api/documentindexes/${id}`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -339,10 +339,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('GET /documentindex/:id/detail', () => {
+    describe('GET /documentindexes/:id/detail', () => {
         it('get documentIndex detail', (done) => {
             request(server)
-                .get(`/api/documentindex/${id}/detail`)
+                .get(`/api/documentindexes/${id}/detail`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
@@ -358,10 +358,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('PATCH /documentindex/:id/documentinfo/delete', () => {
+    describe('PATCH /documentindexes/:id/documentinfo/delete', () => {
         it('delete documentInfo', (done) => {
             request(server)
-                .patch(`/api/documentindex/${id}/documentinfo/delete`)
+                .patch(`/api/documentindexes/${id}/documentinfo/delete`)
                 .send({
                     targetId: documentInfoId1,
                     reason: 'API 테스트 - 삭제'
@@ -381,10 +381,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('PATCH /documentIndex/:id/edit', () => {
+    describe('PATCH /documentindexes/:id/edit', () => {
         it('edit documentIndex', (done) => {
             request(server)
-                .patch(`/api/documentindex/${id}/edit`)
+                .patch(`/api/documentindexes/${id}/edit`)
                 .send({
                     vendor: editVendorId,
                     list: [
@@ -426,10 +426,10 @@ describe('  [Document Index]', () => {
         });
     });
 
-    describe('PATCH /documentindex/:id/delete', () => {
+    describe('PATCH /documentindexes/:id/delete', () => {
         it('delete documentIndex', (done) => {
             request(server)
-                .patch(`/api/documentindex/${id}/delete`)
+                .patch(`/api/documentindexes/${id}/delete`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;

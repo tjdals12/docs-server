@@ -58,11 +58,13 @@ const documentIndex = new Router();
  *                  reason:
  *                      type: string
  *                      default: 이력없음.
+ *          timestamp:
+ *              $ref: '#/definitions/timestamp'
  */
 
 /**
  * @swagger
- * /api/documentindex:
+ * /api/documentindexes:
  *  get:
  *      tags:
  *          - Document Index
@@ -80,7 +82,7 @@ documentIndex.get('/', documentIndexCtrl.list);
 
 /**
  * @swagger
- * /api/documentindex/search:
+ * /api/documentindexes/search:
  *  post:
  *      tags:
  *          - Document Index
@@ -126,7 +128,7 @@ documentIndex.post('/search', documentIndexCtrl.search);
 
 /**
  * @swagger
- * /api/documentindex/forselect:
+ * /api/documentindexes/forselect:
  *  get:
  *      tags:
  *          - Document Index
@@ -144,7 +146,7 @@ documentIndex.get('/forselect', documentIndexCtrl.listForSelect);
 
 /**
  * @swagger
- * /api/documentindex/readexcel:
+ * /api/documentindexes/readexcel:
  *  post:
  *      tags:
  *          - Document Index
@@ -179,7 +181,7 @@ documentIndex.post('/readexcel', upload.single('indexes'), documentIndexCtrl.rea
 
 /**
  * @swagger
- * /api/documentindex:
+ * /api/documentindexes:
  *  post:
  *      tags:
  *          - Document Index
@@ -215,7 +217,7 @@ documentIndex.post('/', documentIndexCtrl.create);
 
 /**
  * @swagger
- * /api/documentindex/{id}/add:
+ * /api/documentindexes/{id}/add:
  *  patch:
  *      tags:
  *          - Document Index
@@ -264,7 +266,7 @@ documentIndex.patch('/:id/add', commonCtrl.checkObjectId, documentIndexCtrl.addP
 
 /**
  * @swagger
- * /api/documentindex/{id}:
+ * /api/documentindexes/{id}:
  *  get:
  *      tags:
  *          - Document Index
@@ -291,7 +293,7 @@ documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
 
 /**
  * @swagger
- * /api/documentindex/{id}/detail:
+ * /api/documentindexes/{id}/detail:
  *  get:
  *      tags:
  *          - Document Index
@@ -361,7 +363,7 @@ documentIndex.get('/:id/detail', commonCtrl.checkObjectId, documentIndexCtrl.one
 
 /**
  * @swagger
- * /api/documentindex/{id}/edit:
+ * /api/documentindexes/{id}/edit:
  *  patch:
  *      tags:
  *          - Document Index
@@ -401,7 +403,7 @@ documentIndex.patch('/:id/edit', commonCtrl.checkObjectId, documentIndexCtrl.edi
 
 /**
  * @swagger
- * /api/documentindex/{id}/delete:
+ * /api/documentindexes/{id}/delete:
  *  patch:
  *      tags:
  *          - Document Index

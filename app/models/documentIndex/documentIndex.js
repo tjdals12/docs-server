@@ -1,7 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DocumentInfo from './documentInfo';
-import Document from '../document/document';
 import DEFINE from 'models/common';
 
 /**

@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { Timestamp } from 'models/common/schema';
+import Timestamp from './Timestamp';
 import DEFINE from 'models/common';
 
 /**

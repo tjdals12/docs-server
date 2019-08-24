@@ -1,8 +1,7 @@
 import { Schema, model, Types } from 'mongoose';
-import { Timestamp } from 'models/common/schema';
+import { Timestamp, Status } from 'models/common/schema';
 import DEFINE from 'models/common';
 import InOut from './inOut';
-import Status from './status';
 import HoldYn from './holdYn';
 import deleteYn from './deleteYn';
 
