@@ -9,8 +9,16 @@ import removeYn from './removeYn';
  * @description 문서 정보
  */
 const DocumentInfoSchema = new Schema({
+    vendor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Vendor'
+    },
     documentNumber: String,
     documentTitle: String,
+    documentGb: {
+        type: Schema.Types.ObjectId,
+        ref: 'Cdminor'
+    },
     plan: {
         type: Date,
         default: new Date(DEFINE.COMMON.MAX_END_DT),
@@ -36,12 +44,13 @@ const DocumentInfoSchema = new Schema({
  * @description 문서 정보 추가
  * @param       {Array}
  */
-DocumentInfoSchema.statics.saveDocumentInfos = async function (param) {
+DocumentInfoSchema.statics.saveDocumentInfos = async function (id, param) {
     let ids = [];
 
     for (let i = 0; i < param.length; i++) {
-        const { documentNumber, documentTitle, plan } = param[i];
-        const documentInfo = new this({ documentNumber, documentTitle, plan: new Date(plan) });
+
+        const { documentNumber, documentTitle, documentGb, plan } = param[i];
+        const documentInfo = new this({ vendor: id, documentNumber, documentTitle, documentGb, plan: new Date(plan) });
         await documentInfo.save();
         ids.push(documentInfo._id);
     }
@@ -59,10 +68,10 @@ DocumentInfoSchema.statics.updateDocumentInfos = async function (param) {
     let ids = [];
 
     for (let i = 0; i < param.length; i++) {
-        const { _id, documentNumber, documentTitle, plan } = param[i];
+        const { _id, documentNumber, documentTitle, documentGb, plan } = param[i];
 
         if (!_id) {
-            const documentInfo = new this({ documentNumber, documentTitle, plan });
+            const documentInfo = new this({ documentNumber, documentTitle, documentGb, plan });
             await documentInfo.save();
 
             ids.push(documentInfo._id);
@@ -73,6 +82,7 @@ DocumentInfoSchema.statics.updateDocumentInfos = async function (param) {
                     $set: {
                         documentNumber,
                         documentTitle,
+                        documentGb,
                         plan,
                         removeYn: {
                             yn: DEFINE.COMMON.DEFAULT_NO,

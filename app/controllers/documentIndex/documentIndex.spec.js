@@ -6,6 +6,7 @@ import { expect } from 'chai';
 describe('  [Document Index]', () => {
     let server;
     let vendorId;
+    let documentGb;
     let editVendorId;
     let id;
     let documentInfoId1;
@@ -68,6 +69,42 @@ describe('  [Document Index]', () => {
                     if (err) throw err;
 
                     part = ctx.body.data.cdMinors[0];
+
+                    expect(ctx.body.data.cdMinors).have.length(1);
+                    done();
+                });
+        });
+
+        it('add documentGb', (done) => {
+            request(server)
+                .post('/api/cmcodes')
+                .send({
+                    cdMajor: '0002',
+                    cdFName: '구분'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    major = ctx.body.data._id;
+
+                    expect(ctx.body.data.cdFName).to.equal('구분');
+                    done();
+                });
+        });
+
+        it('add cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${major}/add`)
+                .send({
+                    cdMinor: '0001',
+                    cdSName: '공통'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    documentGb = ctx.body.data.cdMinors[0];
 
                     expect(ctx.body.data.cdMinors).have.length(1);
                     done();
@@ -205,16 +242,19 @@ describe('  [Document Index]', () => {
                         {
                             documentNumber: 'VP-NCC-R-001-001',
                             documentTitle: 'Vendor Print Index & Schedule',
+                            documentGb: documentGb,
                             plan: '2019-09-23'
                         },
                         {
                             documentNumber: 'VP-NCC-R-001-002',
                             documentTitle: 'Sub-Vendor List',
+                            documentGb: documentGb,
                             plan: '2019-09-23'
                         },
                         {
                             documentNumber: 'VP-NCC-R-001-003',
                             documentTitle: 'Overall Schedule',
+                            documentGb: documentGb,
                             plan: '2019-09-23'
                         }
                     ]
@@ -231,6 +271,7 @@ describe('  [Document Index]', () => {
                     expect(ctx.body.data.vendor.vendorName).to.equal('주연테크');
                     expect(ctx.body.data.list).have.length(3);
                     expect(ctx.body.data.list[0].documentNumber).to.equal('VP-NCC-R-001-001');
+                    expect(ctx.body.data.list[0].documentGb.cdSName).to.equal('공통');
                     done();
                 });
         });

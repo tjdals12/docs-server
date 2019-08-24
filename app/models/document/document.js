@@ -4,6 +4,7 @@ import DEFINE from 'models/common';
 import InOut from './inOut';
 import HoldYn from './holdYn';
 import deleteYn from './deleteYn';
+import DocumentInfo from 'models/documentIndex/documentInfo';
 
 /**
  * @author      minz-logger
@@ -286,6 +287,56 @@ DocumentSchema.statics.saveDocument = async function (param) {
         .populate({ path: 'vendor', populate: { path: 'part vendorPerson' } })
         .populate({ path: 'part' })
         .populate({ path: 'documentGb ' });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 24
+ * @description 문서 추가
+ * @param       {Array} param
+ */
+DocumentSchema.statics.saveDocuments = async function (param) {
+    let ids = [];
+
+    while (param.length > 0) {
+        let {
+            vendor,
+            part,
+            documentNumber,
+            documentTitle,
+            documentRev,
+            officialNumber,
+            memo
+        } = param.pop();
+
+        const { documentGb } = await DocumentInfo.findOne({
+            $and: [
+                { vendor: vendor },
+                { documentNumber: documentNumber }
+            ]
+        });
+
+        const documentInOut = new InOut({ officialNumber });
+        const document = new this({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo });
+
+        await document.save();
+        await DocumentInfo.findOneAndUpdate(
+            {
+                $and: [
+                    { vendor: vendor },
+                    { documentNumber: documentNumber }
+                ]
+            },
+            {
+                $push: {
+                    trackingDocument: document._id
+                }
+            });
+
+        ids.push(document._id);
+    }
+
+    return ids;
 };
 
 /**

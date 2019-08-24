@@ -177,6 +177,7 @@ document.get('/', documentCtrl.list);
  *          - in: body
  *            name: body
  *            description: search parameters
+ *            required: true
  *            schema:
  *              type: object
  *              properties:

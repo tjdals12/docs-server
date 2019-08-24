@@ -154,12 +154,12 @@ DocumentIndexSchema.statics.saveDocumentIndex = async function (param) {
         list
     } = param;
 
-    let documentInfos = await DocumentInfo.saveDocumentInfos(list);
+    let documentInfos = await DocumentInfo.saveDocumentInfos(vendor, list);
 
     const documentIndex = new this({ vendor, list: documentInfos });
     await documentIndex.save();
 
-    return this.findOne({ _id: documentIndex._id }).populate({ path: 'list vendor' });
+    return this.findOne({ _id: documentIndex._id }).populate({ path: 'list', populate: { path: 'documentGb' } }).populate({ path: 'vendor' });
 };
 
 /**
@@ -174,7 +174,9 @@ DocumentIndexSchema.statics.addPartial = async function (param) {
         list
     } = param;
 
-    let documentInfos = await DocumentInfo.saveDocumentInfos(list);
+    let { vendor } = await this.findOne({ _id: id });
+
+    let documentInfos = await DocumentInfo.saveDocumentInfos(vendor, list);
 
     return this.findOneAndUpdate(
         { _id: id },
@@ -186,7 +188,7 @@ DocumentIndexSchema.statics.addPartial = async function (param) {
         {
             new: true
         }
-    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'list' });
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'list', populate: { path: 'documentGb' } });
 };
 
 /**
@@ -222,7 +224,7 @@ DocumentIndexSchema.statics.editDocumentIndex = async function (param) {
         {
             new: true
         }
-    ).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'trackingDocument' } });
+    ).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'documentGb trackingDocument' } });
 };
 
 /**
@@ -236,7 +238,7 @@ DocumentIndexSchema.statics.editDocumentIndex = async function (param) {
 DocumentIndexSchema.statics.deleteDocumentInfo = async function (id, targetId, reason) {
     await DocumentInfo.deleteDocumentInfo(targetId, reason);
 
-    return this.findOne({ _id: id }).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'trackingDocument' } });
+    return this.findOne({ _id: id }).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'documentGb trackingDocument' } });
 };
 
 /**

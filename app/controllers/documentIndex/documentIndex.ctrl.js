@@ -25,7 +25,7 @@ export const list = async (ctx) => {
         const documentIndexes = await DocumentIndex
             .find()
             .populate({ path: 'vendor', populate: { path: 'part' } })
-            .populate({ path: 'list' })
+            .populate({ path: 'list', populate: { path: 'documentGb' } })
             .skip((page - 1) * 10)
             .limit(10)
             .sort({ 'timestamp.regDt': -1 });
@@ -163,7 +163,12 @@ export const create = async (ctx) => {
 
     const schema = Joi.object().keys({
         vendor: Joi.string().required(),
-        list: Joi.array().items(Joi.object()).required()
+        list: Joi.array().items(Joi.object().keys({
+            documentNumber: Joi.string().required(),
+            documentTitle: Joi.string().required(),
+            documentGb: Joi.string().required(),
+            plan: Joi.string().required()
+        })).required()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -237,7 +242,7 @@ export const addPartial = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 13
- * @description 문서목록 개별 조회
+ * @description 문서목록 회
  */
 export const one = async (ctx) => {
     let { id } = ctx.params;
@@ -246,7 +251,7 @@ export const one = async (ctx) => {
         const documentIndex = await DocumentIndex
             .findById(id)
             .populate({ path: 'vendor', populate: { path: 'part' } })
-            .populate({ path: 'list', populate: { path: 'trackingDocument' } });
+            .populate({ path: 'list', populate: { path: 'documentGb trackingDocument' } });
 
         ctx.res.ok({
             data: documentIndex,

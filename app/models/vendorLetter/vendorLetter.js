@@ -1,5 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Timestamp, Status } from 'models/common/schema';
+import Vendor from 'models/vendor/vendor';
+import Document from 'models/document/document';
 import DEFINE from 'models/common';
 
 /**
@@ -48,5 +50,47 @@ const VendorLetterSchema = new Schema({
 });
 
 VendorLetterSchema.set('toJSON', { getters: true });
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 24
+ * @description 업체 공식 문서 접수
+ * @param       {Object} param
+ */
+VendorLetterSchema.statics.receiveVendorLetter = async function (param) {
+    let {
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        receiveDocuments,
+        receiveDate,
+        targetDate
+    } = param;
+
+    vendor = await Vendor.findOne({ _id: vendor });
+
+    receiveDocuments = receiveDocuments.map(document => {
+        return {
+            vendor: vendor._id,
+            part: vendor.part,
+            ...document,
+            officialNumber,
+            memo: `${officialNumber}로 접수`
+        };
+    });
+
+    const documents = await Document.saveDocuments(receiveDocuments);
+    const vendorLetter = new this({ vendor, senderGb, sender, receiverGb, receiver, officialNumber, documents, receiveDate, targetDate });
+
+    await vendorLetter.save();
+
+    return this
+        .findOne({ _id: vendorLetter._id })
+        .populate({ path: 'vendor', populate: { path: 'part' } })
+        .populate({ path: 'documents', populate: { path: 'part documentGb' } });
+};
 
 export default model('VendorLetter', VendorLetterSchema);
