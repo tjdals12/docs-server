@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import * as commonCtrl from 'controllers/common.ctrl';
 import * as vendorLetterCtrl from './vendorLetter.ctrl';
 
 const vendorLetter = new Router();
@@ -83,7 +84,34 @@ vendorLetter.get('/', vendorLetterCtrl.list);
 
 /**
  * @swagger
- * /api/vendorletters/receive:
+ * /api/vendorletters/{id}:
+ *  get:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 엽체 공식 문서 조회
+ *      description: 업체 공식 문서 조회
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.get('/:id', commonCtrl.checkObjectId, vendorLetterCtrl.one);
+
+/**
+ * @swagger
+ * /api/vendorletters:
  *  post:
  *      tags:
  *          - Vendor Letter
@@ -145,6 +173,51 @@ vendorLetter.get('/', vendorLetterCtrl.list);
  *              schema:
  *                  $ref: '#/definitions/vendorLetter'
  */
-vendorLetter.post('/receive', vendorLetterCtrl.receive);
+vendorLetter.post('/', vendorLetterCtrl.receive);
+
+/**
+ * @swagger
+ * /api/vendorletters/{id}/add:
+ *  patch:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서에 문서 추가
+ *      description: 업체 공식 문서에 문서 추가
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: id
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d6207c5b1ec7c03a95f5f8d
+ *          - in: body
+ *            name: body
+ *            description: document parameters
+ *            required: true
+ *            schema:
+ *              type: array
+ *              items:
+ *                  type: object
+ *                  properties:
+ *                      documentNumber:
+ *                          type: string
+ *                          example: VP-NCC-R-002-002
+ *                      documentTitle:
+ *                          type: string
+ *                          example: Sub-Vendor List
+ *                      documentRev:
+ *                          type: string
+ *                          example: A
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.patch('/:id/add', commonCtrl.checkObjectId, vendorLetterCtrl.addPartial);
 
 export default vendorLetter;

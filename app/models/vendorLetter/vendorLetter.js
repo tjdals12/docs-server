@@ -3,6 +3,7 @@ import { Timestamp, Status } from 'models/common/schema';
 import Vendor from 'models/vendor/vendor';
 import Document from 'models/document/document';
 import DEFINE from 'models/common';
+import cancelYn from './cancelYn';
 
 /**
  * @author      minz-logger
@@ -42,6 +43,10 @@ const VendorLetterSchema = new Schema({
     letterStatus: {
         type: [Status.Schema],
         default: Status
+    },
+    cancelYn: {
+        type: cancelYn.schema,
+        default: cancelYn
     },
     timestamp: {
         type: Timestamp.schema,
@@ -91,6 +96,44 @@ VendorLetterSchema.statics.receiveVendorLetter = async function (param) {
         .findOne({ _id: vendorLetter._id })
         .populate({ path: 'vendor', populate: { path: 'part' } })
         .populate({ path: 'documents', populate: { path: 'part documentGb' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 25
+ * @descriptipn 업체 공식 문서에 문서 추가
+ */
+VendorLetterSchema.statics.addDocumentInVendorLetter = async function (param) {
+    let {
+        id,
+        receiveDocuments
+    } = param;
+
+    const vendorLetter = await this.findOne({ _id: id }, { vendor: 1, officialNumber: 1 }).populate({ path: 'vendor' });
+
+    receiveDocuments = receiveDocuments.map(document => {
+        return {
+            vendor: vendorLetter.vendor._id,
+            part: vendorLetter.vendor.part,
+            ...document,
+            officialNumber: vendorLetter.officialNumber,
+            memo: `${vendorLetter.officialNumber}로 접수`
+        };
+    });
+
+    const documents = await Document.saveDocuments(receiveDocuments);
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $push: {
+                documents: documents
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
 };
 
 export default model('VendorLetter', VendorLetterSchema);

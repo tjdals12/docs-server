@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 describe('  [Vendor Letter]', () => {
     let server;
+    let id;
     let vendorId;
     let documentInfoId;
 
@@ -202,10 +203,10 @@ describe('  [Vendor Letter]', () => {
         });
     });
 
-    describe('POST /vendorletters/receive', () => {
+    describe('POST /vendorletters', () => {
         it('recevie vendor letter', (done) => {
             request(server)
-                .post('/api/vendorletters/receive')
+                .post('/api/vendorletters')
                 .send({
                     vendor: vendorId,
                     senderGb: '03',
@@ -227,6 +228,8 @@ describe('  [Vendor Letter]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    id = ctx.body.data._id;
+
                     expect(ctx.body.data.officialNumber).to.equal('ABC-HENC-T-R-001-001');
                     expect(ctx.body.data.documents).have.length(1);
                     done();
@@ -243,6 +246,47 @@ describe('  [Vendor Letter]', () => {
                     if (err) throw err;
 
                     expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('GET /vendorletters/:id', () => {
+        it('get vendorletter', (done) => {
+            request(server)
+                .get(`/api/vendorletters/${id}`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /vendorletters/:id/add', () => {
+        it('add document in vendorletter', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/add`)
+                .send({
+                    receiveDocuments: [
+                        {
+                            documentNumber: 'VP-NCC-R-001-002',
+                            documentTitle: 'Sub-Vendor List',
+                            documentRev: 'A'
+                        }
+                    ]
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.documents).have.length(2);
+                    expect(ctx.body.data.documents[1].documentNumber).to.equal('VP-NCC-R-001-002');
+                    expect(ctx.body.data.documents[1].documentTitle).to.equal('Sub-Vendor List');
+                    expect(ctx.body.data.documents[1].documentRev).to.equal('A');
                     done();
                 });
         });

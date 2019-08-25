@@ -32,6 +32,32 @@ export const list = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 25
+ * @description 업체 공식 문서 조회
+ */
+export const one = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const vendorLetter = await VendorLetter
+            .findOne({ _id: id })
+            .populate({ path: 'vendor', populate: 'part' })
+            .populate({ path: 'documents', populate: { path: 'part documentGb' } });
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Success - vendorLetterCtrl > one'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: 'Error - vendorLetterCtrl > one'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 24
  * @description 업체 공식 문서 접수
  */
@@ -101,6 +127,50 @@ export const receive = async (ctx) => {
         ctx.res.internalServerError({
             data: ctx.request.body,
             message: 'Error - vendorLetterCtrl > receive'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 25
+ * @description 업체 공식 문서에 문서 추가
+ */
+export const addPartial = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        receiveDocuments
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        receiveDocuments: Joi.array().items(Joi.object().keys({
+            documentNumber: Joi.string().required(),
+            documentTitle: Joi.string().required(),
+            documentRev: Joi.string().required()
+        })).required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - vendorLetterCtrl > addPartial'
+        });
+        return;
+    }
+
+    try {
+        const vendorLetter = await VendorLetter.addDocumentInVendorLetter({ id, receiveDocuments });
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Success - vendorLetterCtrl > addPartial'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, receiveDocuments },
+            message: 'Error - vendorLetterCtrl > addPartial'
         });
     }
 };
