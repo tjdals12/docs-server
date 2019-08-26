@@ -133,6 +133,83 @@ export const receive = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 26
+ * @description 업체 공식 문서 수정
+ */
+export const edit = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        deleteDocuments,
+        receiveDate,
+        targetDate
+    } = ctx.request.body;
+
+    const { ObjectId } = Types;
+
+    if (!ObjectId.isValid(vendor)) {
+        ctx.res.badRequest({
+            data: { vendor: vendor },
+            message: 'Fail - vendorLetterCtlr > edit'
+        });
+        return;
+    }
+
+    const schema = Joi.object().keys({
+        vendor: Joi.string().required(),
+        senderGb: Joi.string().required(),
+        sender: Joi.string().required(),
+        receiverGb: Joi.string().required(),
+        receiver: Joi.string().required(),
+        officialNumber: Joi.string().required(),
+        deleteDocuments: Joi.array().items(Joi.string()).required(),
+        receiveDate: Joi.string().required(),
+        targetDate: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - vendorLetterCtrl > edit'
+        });
+        return;
+    }
+
+    try {
+        const vendorLetter = await VendorLetter.editVendorLetter({
+            id,
+            vendor,
+            senderGb,
+            sender,
+            receiverGb,
+            receiver,
+            officialNumber,
+            deleteDocuments,
+            receiveDate,
+            targetDate
+        });
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Success - vendorLetterCtrl > edit'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: 'Error - vendorLetterCtrl > edit'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 25
  * @description 업체 공식 문서에 문서 추가
  */
@@ -171,6 +248,46 @@ export const addPartial = async (ctx) => {
         ctx.res.internalServerError({
             data: { id, receiveDocuments },
             message: 'Error - vendorLetterCtrl > addPartial'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 26
+ * @description 업체 공식 문서 삭제
+ */
+export const deleteVendorLetter = async (ctx) => {
+    let { id } = ctx.params;
+    let { reason } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        yn: Joi.string().required(),
+        reason: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - vendorLetterCtrl > deleteVendorLetter'
+        });
+
+        return;
+    }
+
+    try {
+        const vendorLetter = await VendorLetter.deleteVendorLetter({ id, reason });
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Success - vendorLetterCtrl > deleteVendorLetter'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, reason },
+            message: 'Error - vendorLetterCtrl > deleteVendorLetter'
         });
     }
 };

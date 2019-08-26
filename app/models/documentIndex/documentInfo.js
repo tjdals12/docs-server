@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
-import removeYn from './removeYn';
+import removeYn from 'models/documentIndex/removeYn';
 
 /**
  * @author      minz-logger

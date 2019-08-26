@@ -177,6 +177,69 @@ vendorLetter.post('/', vendorLetterCtrl.receive);
 
 /**
  * @swagger
+ * /api/vendorletters/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 수정
+ *      description: 업체 공식 문서 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d6207c5b1ec7c03a95f5f8d
+ *          - in: body
+ *            name: body
+ *            description: edit parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  vendor:
+ *                      type: string
+ *                      example: 5d6207c5b1ec7c03a95f5f8d
+ *                  senderGb:
+ *                      type: string
+ *                      example: '03'
+ *                  sender:
+ *                      type: string
+ *                      example: 박성훈 사원
+ *                  receiverGb:
+ *                      type: string
+ *                      example: '01'
+ *                  receiver:
+ *                      type: string
+ *                      example: 김주연 사원
+ *                  officialNumber:
+ *                      type: string
+ *                      example: ABC-DEF-T-R-002-001
+ *                  deleteDocuments:
+ *                      type: array
+ *                      items:
+ *                          type: string
+ *                          example: 5d6207c5b1ec7c03a95f5f8d
+ *                  receiveDate:
+ *                      type: string
+ *                      example: 2019-06-02
+ *                  targetDate:
+ *                      type: string
+ *                      example: 2019-06-16
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.patch('/:id/edit', commonCtrl.checkObjectId, vendorLetterCtrl.edit);
+
+/**
+ * @swagger
  * /api/vendorletters/{id}/add:
  *  patch:
  *      tags:
@@ -219,5 +282,45 @@ vendorLetter.post('/', vendorLetterCtrl.receive);
  *                  $ref: '#/definitions/vendorLetter'
  */
 vendorLetter.patch('/:id/add', commonCtrl.checkObjectId, vendorLetterCtrl.addPartial);
+
+/**
+ * @swagger
+ * /api/vendorletters/{id}/delete:
+ *  patch:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 삭제
+ *      description: 업체 공식 문서 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d6207c5b1ec7c03a95f5f8d
+ *          - in: body
+ *            name: body
+ *            description: delete parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  yn:
+ *                      type: string
+ *                      example: YES
+ *                  reason:
+ *                      type: string
+ *                      example: 'API 테스트 - 삭제'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.patch('/:id/delete', commonCtrl.checkObjectId, vendorLetterCtrl.deleteVendorLetter);
 
 export default vendorLetter;

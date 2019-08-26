@@ -7,7 +7,9 @@ describe('  [Vendor Letter]', () => {
     let server;
     let id;
     let vendorId;
+    let editVendorId;
     let documentInfoId;
+    let deleteDocumentId;
 
     before((done) => {
         db.connect().then(type => {
@@ -121,6 +123,43 @@ describe('  [Vendor Letter]', () => {
                     expect(ctx.body.data.partNumber).to.equals('R-001');
                     expect(ctx.body.data.vendorPerson).have.length(3);
                     expect(ctx.body.data.itemName).to.equal('Chemical Injection Pump');
+                    done();
+                });
+        });
+
+        it('add vendor for edit', (done) => {
+            request(server)
+                .post('/api/vendors')
+                .send({
+                    vendorGb: '01',
+                    countryCd: '01',
+                    part: part,
+                    partNumber: 'R-002',
+                    vendorName: '주연테크',
+                    officialName: 'JYR',
+                    itemName: 'Centrifugal Pump',
+                    effStaDt: '2019-07-10',
+                    effEndDt: '2020-04-02',
+                    persons: [
+                        {
+                            name: '김준호',
+                            position: '과장',
+                            email: 'hojk55@naver.com',
+                            contactNumber: '010-4143-3664',
+                            task: '개발'
+                        },
+                    ]
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    editVendorId = ctx.body.data._id;
+
+                    expect(ctx.body.data.part._id).to.equal(part);
+                    expect(ctx.body.data.partNumber).to.equals('R-002');
+                    expect(ctx.body.data.vendorPerson).have.length(1);
+                    expect(ctx.body.data.itemName).to.equal('Centrifugal Pump');
                     done();
                 });
         });
@@ -282,11 +321,60 @@ describe('  [Vendor Letter]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    deleteDocumentId = ctx.body.data.documents[1]._id;
+
                     expect(ctx.body.data._id).to.equal(id);
                     expect(ctx.body.data.documents).have.length(2);
                     expect(ctx.body.data.documents[1].documentNumber).to.equal('VP-NCC-R-001-002');
                     expect(ctx.body.data.documents[1].documentTitle).to.equal('Sub-Vendor List');
                     expect(ctx.body.data.documents[1].documentRev).to.equal('A');
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /vendorletters/:id/edit', () => {
+        it('edit vendorletter', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/edit`)
+                .send({
+                    vendor: editVendorId,
+                    senderGb: '02',
+                    sender: '이연호 대리',
+                    receiverGb: '03',
+                    receiver: '박준호 과장',
+                    officialNumber: 'ABC-DEF-T-R-002-002',
+                    deleteDocuments: [
+                        deleteDocumentId
+                    ],
+                    receiveDate: '2019-06-02',
+                    targetDate: '2019-06-14'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.documents).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /vendorletters/:id/edit', () => {
+        it('edit vendorletter', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/delete`)
+                .send({
+                    yn: 'YES',
+                    reason: 'API 테스트 - 삭제'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.cancelYn.yn).to.equal('YES');
+                    expect(ctx.body.data.cancelYn.reason).to.equal('API 테스트 - 삭제');
                     done();
                 });
         });

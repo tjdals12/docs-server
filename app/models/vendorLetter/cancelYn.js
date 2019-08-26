@@ -13,7 +13,7 @@ const CancelYnSchema = new Schema({
     },
     deleteDt: {
         type: Date,
-        default: DEFINE.dateNow(),
+        default: new Date(DEFINE.COMMON.MAX_END_DT),
         get: DEFINE.dateConverter
     },
     reason: {

@@ -2,6 +2,7 @@ import { Schema, model } from 'mongoose';
 import { Timestamp, Status } from 'models/common/schema';
 import Vendor from 'models/vendor/vendor';
 import Document from 'models/document/document';
+import DocumentInfo from 'models/documentIndex/documentInfo';
 import DEFINE from 'models/common';
 import cancelYn from './cancelYn';
 
@@ -100,6 +101,61 @@ VendorLetterSchema.statics.receiveVendorLetter = async function (param) {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 26
+ * @description 업체 공식 문서 수정
+ * @param       {Object} param
+ */
+VendorLetterSchema.statics.editVendorLetter = async function (param) {
+    let {
+        id,
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        deleteDocuments,
+        receiveDate,
+        targetDate
+    } = param;
+
+    await Document.deleteMany({ _id: { $in: deleteDocuments } });
+    for (let i = 0; i < deleteDocuments.length; i++) {
+        await DocumentInfo.findOneAndUpdate(
+            { trackingDocument: deleteDocuments[i] },
+            {
+                $pull: {
+                    trackingDocument: deleteDocuments[i]
+                }
+            }
+        );
+    }
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                vendor,
+                senderGb,
+                sender,
+                receiverGb,
+                receiver,
+                officialNumber,
+                receiveDate,
+                targetDate
+            },
+            $pullAll: {
+                documents: deleteDocuments
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 25
  * @descriptipn 업체 공식 문서에 문서 추가
  */
@@ -128,6 +184,35 @@ VendorLetterSchema.statics.addDocumentInVendorLetter = async function (param) {
         {
             $push: {
                 documents: documents
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 26
+ * @description 업체 공식 문서 삭제
+ * @param       {Object} param
+ */
+VendorLetterSchema.statics.deleteVendorLetter = function (param) {
+    let {
+        id,
+        reason
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                cancelYn: {
+                    yn: DEFINE.COMMON.DEFAULT_YES,
+                    deleteDt: DEFINE.dateNow(),
+                    reason
+                }
             }
         },
         {
