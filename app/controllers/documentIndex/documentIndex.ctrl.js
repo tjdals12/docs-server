@@ -242,7 +242,7 @@ export const addPartial = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 13
- * @description 문서목록 회
+ * @description 문서목록 개별 조회
  */
 export const one = async (ctx) => {
     let { id } = ctx.params;

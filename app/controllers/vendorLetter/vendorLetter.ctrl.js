@@ -13,10 +13,15 @@ export const list = async (ctx) => {
     try {
         const vendorLetters = await VendorLetter
             .find()
+            .populate({ path: 'vendor', populate: { path: 'part' } })
             .populate({ path: 'documents', populate: { path: 'documentGb' } })
             .skip((page - 1) * 10)
             .limit(10)
             .sort({ 'timestamp.regDt': -1 });
+
+        const count = await VendorLetter.countDocuments();
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
 
         ctx.res.ok({
             data: vendorLetters,
@@ -33,7 +38,7 @@ export const list = async (ctx) => {
 /**
  * @author      minz-logger
  * @date        2019. 08. 25
- * @description 업체 공식 문서 조회
+ * @description 업체 공식 문서 개별 조회
  */
 export const one = async (ctx) => {
     let { id } = ctx.params;
@@ -288,6 +293,45 @@ export const deleteVendorLetter = async (ctx) => {
         ctx.res.internalServerError({
             data: { id, reason },
             message: 'Error - vendorLetterCtrl > deleteVendorLetter'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 27
+ * @description 업체 공식 문서 Status 삭제
+ */
+export const deleteStatus = async (ctx) => {
+    let { id } = ctx.params;
+    let { targetId } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        targetId: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - vendorLetterCtrl > deleteStatus'
+        });
+
+        return;
+    }
+
+    try {
+        const vendorLetter = await VendorLetter.deleteStatus(id, targetId);
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Succeess - vendorLetterCtrl > deleteStatus'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, targetId },
+            message: 'Error - vendorLetterCtrl > deleteStatus'
         });
     }
 };

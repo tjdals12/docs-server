@@ -461,6 +461,7 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
  * @date        2019. 07. 31
  * @description 문서 In / Out 삭제
  * @param       {String} id
+ * @param       {String} targetId
  */
 DocumentSchema.statics.deleteInOutDocument = function (id, targetId) {
     return this.findOneAndUpdate(

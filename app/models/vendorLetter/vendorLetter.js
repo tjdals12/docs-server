@@ -42,7 +42,7 @@ const VendorLetterSchema = new Schema({
         get: DEFINE.dateConverter
     },
     letterStatus: {
-        type: [Status.Schema],
+        type: [Status.schema],
         default: Status
     },
     cancelYn: {
@@ -212,6 +212,29 @@ VendorLetterSchema.statics.deleteVendorLetter = function (param) {
                     yn: DEFINE.COMMON.DEFAULT_YES,
                     deleteDt: DEFINE.dateNow(),
                     reason
+                }
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 27
+ * @description 업체 공식 문서 Status 삭제
+ * @param       {String} id
+ * @param       {String} targetId
+ */
+VendorLetterSchema.statics.deleteStatus = function (id, targetId) {
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $pull: {
+                letterStatus: {
+                    _id: targetId
                 }
             }
         },

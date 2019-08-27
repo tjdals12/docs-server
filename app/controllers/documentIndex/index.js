@@ -24,42 +24,6 @@ const documentIndex = new Router();
  *                  format: ObjectId
  *          timestamp:
  *              $ref: '#/definitions/timestamp'
- *  documentInfo:
- *      type: object
- *      required:
- *          - documentNumber
- *          - documentTitle
- *          - plan
- *      properties:
- *          documentNumber:
- *              type: string
- *              example: VP-ABC-DEF-R-001-001
- *          documentTitle:
- *              type: string
- *              example: Vendor Print Index & Schedule
- *          plan:
- *              type: date
- *              format: date-time
- *              default: 9999-12-31 23:59:59
- *          trackingDocument:
- *              type: array
- *              items:
- *                  type: string
- *          removeYn:
- *              type: object
- *              properties:
- *                  yn:
- *                      type: string
- *                      default: N
- *                  deleteDt:
- *                      type: string
- *                      format: date-time
- *                      default: 9999-12-31 23:59:59
- *                  reason:
- *                      type: string
- *                      default: 이력없음.
- *          timestamp:
- *              $ref: '#/definitions/timestamp'
  */
 
 /**

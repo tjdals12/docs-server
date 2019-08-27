@@ -88,8 +88,8 @@ vendorLetter.get('/', vendorLetterCtrl.list);
  *  get:
  *      tags:
  *          - Vendor Letter
- *      summary: 엽체 공식 문서 조회
- *      description: 업체 공식 문서 조회
+ *      summary: 엽체 공식 문서 개별 조회
+ *      description: 업체 공식 문서 개별 조회
  *      consumes:
  *          - application/json
  *      produces:
@@ -322,5 +322,42 @@ vendorLetter.patch('/:id/add', commonCtrl.checkObjectId, vendorLetterCtrl.addPar
  *                  $ref: '#/definitions/vendorLetter'
  */
 vendorLetter.patch('/:id/delete', commonCtrl.checkObjectId, vendorLetterCtrl.deleteVendorLetter);
+
+/**
+ * @swagger
+ * /api/vendorletters/{id}/status/delete:
+ *  patch:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 상태 삭제
+ *      description: 업체 공식 문서 상태 삭제
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d6207c5b1ec7c03a95f5f8d
+ *          - in: body
+ *            name: body
+ *            description: letterStatus id
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  targetId:
+ *                      type: string
+ *                      example: 5d366facb82dc107a4699999
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.patch('/:id/status/delete', commonCtrl.checkObjectId, vendorLetterCtrl.deleteStatus);
 
 export default vendorLetter;

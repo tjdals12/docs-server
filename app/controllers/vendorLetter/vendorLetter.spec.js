@@ -3,12 +3,13 @@ import app from 'app';
 import request from 'supertest';
 import { expect } from 'chai';
 
-describe('  [Vendor Letter]', () => {
+describe('  [ Vendor Letter ]', () => {
     let server;
     let id;
     let vendorId;
     let editVendorId;
     let documentInfoId;
+    let statusId;
     let deleteDocumentId;
 
     before((done) => {
@@ -298,6 +299,8 @@ describe('  [Vendor Letter]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
+                    statusId = ctx.body.data.letterStatus[0]._id;
+
                     expect(ctx.body.data._id).to.equal(id);
                     done();
                 });
@@ -355,6 +358,23 @@ describe('  [Vendor Letter]', () => {
                     if (err) throw err;
 
                     expect(ctx.body.data.documents).have.length(1);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /vendorletters/:id/status/delete', () => {
+        it('delete letterStatus', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/status/delete`)
+                .send({
+                    targetId: statusId
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(0);
                     done();
                 });
         });

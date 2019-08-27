@@ -435,7 +435,7 @@ export const deleteInOut = async (ctx) => {
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: id,
+            data: { id, targetId },
             message: 'Error - documentCtrl > deleteInOut'
         });
     }

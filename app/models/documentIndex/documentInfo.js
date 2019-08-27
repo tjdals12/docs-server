@@ -40,6 +40,62 @@ const DocumentInfoSchema = new Schema({
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 26
+ * @description 문서정보 검색
+ * @param       {Object} param
+ * @param       {String} page
+ */
+DocumentInfoSchema.statics.searchDocumentInfos = async function (param, page) {
+    let {
+        vendor,
+        documentNumber,
+        documentTitle,
+        documentGb
+    } = param;
+
+    return this.find(
+        {
+            $and: [
+                { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : vendor },
+                { documentNumber: { $regex: documentNumber + '.*', $options: 'i' } },
+                { documentTitle: { $regex: documentTitle + '.*', $options: 'i' } },
+                { documentGb: documentGb === '' ? { $ne: DEFINE.COMMON.NONE_ID } : documentGb }
+            ]
+        })
+        .skip((page - 1) * 10)
+        .limit(10)
+        .sort({ 'timestamp.regDt': -1 })
+        .populate({ path: 'vendor', populate: { path: 'part' } })
+        .populate({ path: 'documentGb' });
+};
+
+/**
+ * @author minz-logger
+ * @date 2019. 08. 26
+ * @description 문서정보 검색 카운트
+ */
+DocumentInfoSchema.statics.searchDocumentInfosCount = async function (param) {
+    let {
+        vendor,
+        documentNumber,
+        documentTitle,
+        documentGb
+    } = param;
+
+    return this.countDocuments(
+        {
+            $and: [
+                { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : vendor },
+                { documentNumber: { $regex: documentNumber + '.*', $options: 'i' } },
+                { documentTitle: { $regex: documentTitle + '.*', $options: 'i' } },
+                { documentGb: documentGb === '' ? { $ne: DEFINE.COMMON.NONE_ID } : documentGb }
+            ]
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 12
  * @description 문서 정보 추가
  * @param       {Array}

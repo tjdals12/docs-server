@@ -3,7 +3,7 @@ import app from 'app';
 import request from 'supertest';
 import { expect } from 'chai';
 
-describe('[ Document ]', () => {
+describe('  [ Document ]', () => {
     let server;
     let part;
     let documentGb;

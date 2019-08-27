@@ -3,7 +3,7 @@ import app from 'app';
 import request from 'supertest';
 import { expect } from 'chai';
 
-describe('  [Document Index]', () => {
+describe('  [ Document Index ]', () => {
     let server;
     let vendorId;
     let documentGb;
