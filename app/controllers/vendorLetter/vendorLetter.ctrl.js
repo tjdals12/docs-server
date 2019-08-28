@@ -172,7 +172,7 @@ export const edit = async (ctx) => {
         receiverGb: Joi.string().required(),
         receiver: Joi.string().required(),
         officialNumber: Joi.string().required(),
-        deleteDocuments: Joi.array().items(Joi.string()).required(),
+        deleteDocuments: Joi.array().items(Joi.string()),
         receiveDate: Joi.string().required(),
         targetDate: Joi.string().required()
     });
@@ -264,7 +264,7 @@ export const addPartial = async (ctx) => {
  */
 export const deleteVendorLetter = async (ctx) => {
     let { id } = ctx.params;
-    let { reason } = ctx.request.body;
+    let { yn, reason } = ctx.request.body;
 
     const schema = Joi.object().keys({
         yn: Joi.string().required(),
@@ -283,7 +283,7 @@ export const deleteVendorLetter = async (ctx) => {
     }
 
     try {
-        const vendorLetter = await VendorLetter.deleteVendorLetter({ id, reason });
+        const vendorLetter = await VendorLetter.deleteVendorLetter({ id, yn, reason });
 
         ctx.res.ok({
             data: vendorLetter,

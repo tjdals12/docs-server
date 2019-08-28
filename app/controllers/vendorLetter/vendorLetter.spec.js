@@ -380,8 +380,9 @@ describe('  [ Vendor Letter ]', () => {
         });
     });
 
-    describe('PATCH /vendorletters/:id/edit', () => {
-        it('edit vendorletter', (done) => {
+    // ! documents에 존재하는 Document가 삭제되었는지 확인할 수 없음
+    describe('PATCH /vendorletters/:id/delete', () => {
+        it('delete vendorletter', (done) => {
             request(server)
                 .patch(`/api/vendorletters/${id}/delete`)
                 .send({
@@ -395,6 +396,24 @@ describe('  [ Vendor Letter ]', () => {
                     expect(ctx.body.data._id).to.equal(id);
                     expect(ctx.body.data.cancelYn.yn).to.equal('YES');
                     expect(ctx.body.data.cancelYn.reason).to.equal('API 테스트 - 삭제');
+                    done();
+                });
+        });
+
+        it('recover vendorletter', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/delete`)
+                .send({
+                    yn: 'NO',
+                    reason: 'API 테스트 - 삭제취소'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.cancelYn.yn).to.equal('NO');
+                    expect(ctx.body.data.cancelYn.reason).to.equal('API 테스트 - 삭제취소');
                     done();
                 });
         });

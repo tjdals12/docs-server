@@ -151,7 +151,7 @@ VendorLetterSchema.statics.editVendorLetter = async function (param) {
         {
             new: true
         }
-    );
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
 };
 
 /**
@@ -198,27 +198,42 @@ VendorLetterSchema.statics.addDocumentInVendorLetter = async function (param) {
  * @description 업체 공식 문서 삭제
  * @param       {Object} param
  */
-VendorLetterSchema.statics.deleteVendorLetter = function (param) {
+VendorLetterSchema.statics.deleteVendorLetter = async function (param) {
     let {
         id,
+        yn,
         reason
     } = param;
 
-    return this.findOneAndUpdate(
+    const vendorLetter = await this.findOneAndUpdate(
         { _id: id },
         {
             $set: {
                 cancelYn: {
-                    yn: DEFINE.COMMON.DEFAULT_YES,
+                    yn,
                     deleteDt: DEFINE.dateNow(),
                     reason
-                }
+                },
+                'timestamp.updDt': DEFINE.dateNow()
             }
         },
         {
             new: true
         }
-    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
+    );
+
+    await Document.updateMany(
+        { _id: { $in: vendorLetter.documents } },
+        {
+            deleteYn: {
+                yn,
+                deleteDt: DEFINE.dateNow(),
+                reason
+            }
+        }
+    );
+
+    return this.findOne({ _id: id }).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
 };
 
 /**
