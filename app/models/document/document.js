@@ -437,7 +437,7 @@ DocumentSchema.statics.deleteDocuments = function (ids) {
 DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, status, resultCode, replyCode, date) {
     const timestamp = new Timestamp({ regDt: date });
     const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
-    const newStatus = new Status({ status, statusName: status, resultCode, replyCode, timestamp });
+    const newStatus = new Status({ _id: newInOut._id, status, statusName: status, resultCode, replyCode, timestamp });
 
     return this.findOneAndUpdate(
         { _id: id },
@@ -454,6 +454,35 @@ DocumentSchema.statics.inOutDocument = function (id, inOutGb, officialNumber, st
             new: true
         }
     ).populate({ path: 'vendor', populate: { path: 'part vendorPerson' } }).populate({ path: 'part' }).populate({ path: 'documentGb' });
+};
+
+/**
+ * @author minz-logger
+ * @description 문서 In / Out
+ * @param       {String} id
+ * @param       {String} inOutGb
+ * @param       {String} officialNumber
+ * @param       {String} status
+ * @param       {String} resultCode
+ * @param       {String} replyCode
+ */
+DocumentSchema.statics.inOutDocuments = function (ids, inOutGb, officialNumber, status, resultCode, replyCode, date) {
+    const timestamp = new Timestamp({ regDt: date });
+    const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
+    const newStatus = new Status({ status, statusName: status, resultCode, replyCode, timestamp });
+
+    return this.updateMany(
+        { _id: { $in: ids } },
+        {
+            $push: {
+                documentInOut: newInOut,
+                documentStatus: newStatus
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        }
+    );
 };
 
 /**

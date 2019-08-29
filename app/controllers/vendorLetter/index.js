@@ -84,6 +84,64 @@ vendorLetter.get('/', vendorLetterCtrl.list);
 
 /**
  * @swagger
+ * /api/vendorletters/search:
+ *  post:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 목록 검색
+ *      description: 업체 공식 문서 목록 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: search parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  vendor:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  senderGb:
+ *                      type: string
+ *                      example: '03'
+ *                  sender:
+ *                      type: string
+ *                      example: ''
+ *                  receiverGb:
+ *                      type: string
+ *                      example: '02'
+ *                  receiver:
+ *                      type: string
+ *                      example: ''
+ *                  officialNumber:
+ *                      type: string
+ *                      example: 'ABC-'
+ *                  receiveDate:
+ *                      type: string
+ *                      example: '2010-01-01'
+ *                  targetDate:
+ *                      type: string
+ *                      example: '9999-12-31'
+ *                  letterStatus:
+ *                      type: string
+ *                      example: '01'
+ *                  cancelYn:
+ *                      type: string
+ *                      example: NO
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.post('/search', vendorLetterCtrl.search);
+
+/**
+ * @swagger
  * /api/vendorletters/{id}:
  *  get:
  *      tags:
@@ -325,7 +383,62 @@ vendorLetter.patch('/:id/delete', commonCtrl.checkObjectId, vendorLetterCtrl.del
 
 /**
  * @swagger
- * /api/vendorletters/{id}/status/delete:
+ * /api/vendorletters/{id}/inout:
+ *  patch:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 상태 변경
+ *      description: 업체 공식 문서 상태 변경
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: vendorletter id
+ *            required: true
+ *            type: string
+ *            example: 5d6207c5b1ec7c03a95f5f8d
+ *          - in: body
+ *            name: body
+ *            description: inOut parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                inOutGb:
+ *                    type: string
+ *                    example: '10'
+ *                    required: true
+ *                officialNumber:
+ *                    type: string
+ *                    example: 'ABC-DEF-T-R-001-001'
+ *                status:
+ *                    type: string
+ *                    example: '10'
+ *                    required: true
+ *                resultCode:
+ *                    type: string
+ *                    example: '01'
+ *                replyCode:
+ *                    type: string
+ *                    example: '01'
+ *                date:
+ *                    type: string
+ *                    formate: date-time
+ *                    example: '2018-12-05 14:34:12'
+ *      responses:
+ *          200:   
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/vendorLetter'
+ */
+vendorLetter.patch('/:id/inout', commonCtrl.checkObjectId, vendorLetterCtrl.inOut);
+
+/**
+ * @swagger
+ * /api/vendorletters/{id}/inout/delete:
  *  patch:
  *      tags:
  *          - Vendor Letter
@@ -358,6 +471,6 @@ vendorLetter.patch('/:id/delete', commonCtrl.checkObjectId, vendorLetterCtrl.del
  *              schema:
  *                  $ref: '#/definitions/vendorLetter'
  */
-vendorLetter.patch('/:id/status/delete', commonCtrl.checkObjectId, vendorLetterCtrl.deleteStatus);
+vendorLetter.patch('/:id/inout/delete', commonCtrl.checkObjectId, vendorLetterCtrl.deleteInOut);
 
 export default vendorLetter;

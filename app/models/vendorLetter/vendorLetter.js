@@ -1,7 +1,8 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { Timestamp, Status } from 'models/common/schema';
 import Vendor from 'models/vendor/vendor';
 import Document from 'models/document/document';
+import InOut from 'models/document/inOut';
 import DocumentInfo from 'models/documentIndex/documentInfo';
 import DEFINE from 'models/common';
 import cancelYn from './cancelYn';
@@ -56,6 +57,164 @@ const VendorLetterSchema = new Schema({
 });
 
 VendorLetterSchema.set('toJSON', { getters: true });
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 29
+ * @description 업체 공식 문서 검색
+ * @param       {Object} param
+ * @param       {Integer} page
+ */
+VendorLetterSchema.statics.searchVendorLetter = function (param, page) {
+    let {
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        receiveDate,
+        targetDate,
+        letterStatus,
+        cancelYn
+    } = param;
+
+    return this.aggregate([
+        {
+            $project: {
+                vendor: 1,
+                senderGb: 1,
+                sender: 1,
+                receiverGb: 1,
+                receiver: 1,
+                officialNumber: 1,
+                documents: 1,
+                receiveDate: 1,
+                targetDate: 1,
+                letterStatus: {
+                    $slice: ['$letterStatus', -1]
+                },
+                cancelYn: 1
+            }
+        },
+        {
+            $match: {
+                $and: [
+                    { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(vendor) },
+                    { senderGb: { $regex: senderGb + '.*', $options: 'i' } },
+                    { sender: { $regex: sender + '.*', $options: 'i' } },
+                    { receiverGb: { $regex: receiverGb + '.*', $options: 'i' } },
+                    { receiver: { $regex: receiver + '.*', $options: 'i' } },
+                    { officialNumber: { $regex: officialNumber + '.*', $options: 'i' } },
+                    { receiveDate: { $gte: new Date(receiveDate) } },
+                    { targetDate: { $lte: new Date(targetDate) } },
+                    {
+                        letterStatus: {
+                            $elemMatch: {
+                                status: { $regex: letterStatus + '.*', $options: 'i' }
+                            }
+                        }
+                    },
+                    {
+                        'cancelYn.yn': { $regex: cancelYn + '.*', $options: 'i' }
+                    }
+                ]
+            }
+        },
+        {
+            $lookup: {
+                from: 'vendors',
+                localField: 'vendor',
+                foreignField: '_id',
+                as: 'vendor'
+            }
+        },
+        {
+            $unwind: '$vendor'
+        },
+        {
+            $lookup: {
+                from: 'cdminors',
+                localField: 'vendor.part',
+                foreignField: '_id',
+                as: 'vendor.part',
+            }
+        },
+        {
+            $unwind: '$vendor.part'
+        },
+        {
+            $skip: (page - 1) * 10
+        },
+        {
+            $limit: 10
+        },
+        {
+            $sort: { receiveDate: -1 }
+        }
+    ]);
+};
+
+VendorLetterSchema.statics.searchVendorLetterCount = function (param) {
+    let {
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        receiveDate,
+        targetDate,
+        letterStatus,
+        cancelYn
+    } = param;
+
+    return this.aggregate([
+        {
+            $project: {
+                vendor: 1,
+                senderGb: 1,
+                sender: 1,
+                receiverGb: 1,
+                receiver: 1,
+                officialNumber: 1,
+                receiveDate: 1,
+                targetDate: 1,
+                letterStatus: {
+                    $slice: ['$letterStatus', -1]
+                },
+                cancelYn: 1
+            }
+        },
+        {
+            $match: {
+                $and: [
+                    { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Schema.Types.ObjectId(vendor) },
+                    { senderGb: { $regex: senderGb + '.*', $options: 'i' } },
+                    { sender: { $regex: sender + '.*', $options: 'i' } },
+                    { receiverGb: { $regex: receiverGb + '.*', $options: 'i' } },
+                    { receiver: { $regex: receiver + '.*', $options: 'i' } },
+                    { officialNumber: { $regex: officialNumber + '.*', $options: 'i' } },
+                    { receiveDate: { gte: new Date(receiveDate) } },
+                    { targetDate: { lte: new Date(targetDate) } },
+                    {
+                        letterStatus: {
+                            $elemMatch: {
+                                status: { $regex: letterStatus + '.*', $options: 'i' }
+                            }
+                        }
+                    },
+                    {
+                        'cancelYn.yn': { $regex: cancelYn + '.*', $options: 'i' }
+                    }
+                ]
+            }
+        },
+        {
+            $count: 'count'
+        }
+    ]);
+};
 
 /**
  * @author      minz-logger
@@ -238,12 +397,79 @@ VendorLetterSchema.statics.deleteVendorLetter = async function (param) {
 
 /**
  * @author      minz-logger
+ * @date        2019. 08. 29
+ * @description 업체 공식 문서 상태 변경
+ * @param       {String} id
+ * @param       {String} inOutGb
+ * @param       {String} officialNumber
+ * @param       {String} status
+ * @param       {String} resultCode
+ * @param       {String} replyCode
+ */
+VendorLetterSchema.statics.inOutVendorLetter = async function (id, inOutGb, officialNumber, status, resultCode, replyCode, date) {
+    const timestamp = new Timestamp({ reegDt: date });
+    const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
+    const newStatus = new Status({ _id: newInOut._id, status, statusName: status, resultCode, replyCode, timestamp });
+
+    const vendorLetter = await this.findOne({ _id: id });
+
+    await Document.updateMany(
+        { _id: { $in: vendorLetter.documents } },
+        {
+            $push: {
+                documentInOut: newInOut,
+                documentStatus: newStatus
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        }
+    );
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $push: {
+                letterStatus: newStatus
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'vendor', populate: { path: 'part' } }).populate({ path: 'documents', populate: { path: 'part documentGb' } });
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 08. 27
- * @description 업체 공식 문서 Status 삭제
+ * @description 업체 공식 문서 상태 삭제
  * @param       {String} id
  * @param       {String} targetId
  */
-VendorLetterSchema.statics.deleteStatus = function (id, targetId) {
+VendorLetterSchema.statics.deleteInOut = async function (id, targetId) {
+
+    const vendorLetter = await this.findOne({ _id: id });
+
+    await Document.updateMany(
+        { _id: { $in: vendorLetter.documents } },
+        {
+            $pull: {
+                documentInOut: {
+                    _id: targetId
+                },
+                documentStatus: {
+                    _id: targetId
+                }
+            },
+            $set: {
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        }
+    );
+
     return this.findOneAndUpdate(
         { _id: id },
         {

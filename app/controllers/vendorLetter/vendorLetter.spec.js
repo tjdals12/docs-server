@@ -291,6 +291,31 @@ describe('  [ Vendor Letter ]', () => {
         });
     });
 
+    describe('POST /vendorletters/search', () => {
+        it('search vendorletters', (done) => {
+            request(server)
+                .post('/api/vendorletters/search')
+                .send({
+                    vendor: '',
+                    senderGb: '03',
+                    sender: '대리',
+                    receiverGb: '02',
+                    receiver: '사원',
+                    officialNumber: 'ABC',
+                    receiveDate: '2010-01-01',
+                    targetDate: '9999-12-31',
+                    letterStatus: '01',
+                    cancelYn: 'NO'
+                })
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('GET /vendorletters/:id', () => {
         it('get vendorletter', (done) => {
             request(server)
@@ -363,10 +388,170 @@ describe('  [ Vendor Letter ]', () => {
         });
     });
 
-    describe('PATCH /vendorletters/:id/status/delete', () => {
+    // ! documents에 존재하는 Document의 상태가 변경되었는지 확인할 수 없음
+    describe('PATCH /veendorletters/:id/inout', () => {
+        it('In/Out vendorletter - 내부 검토요청', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '10',
+                    status: '10'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(2);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 내부 검토완료', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '20',
+                    status: '11',
+                    resultCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(3);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 사업주 검토요청', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '30',
+                    officialNumber: 'ABC-DEF-T-R-001-001',
+                    status: '20',
+                    resultCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(4);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 사업주 검토완료', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '40',
+                    officialNumber: 'DEF-ABC-T-R-001-001',
+                    status: '21',
+                    resultCode: '02'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(5);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 내부 재검토요청', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '12',
+                    status: '30'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(6);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 내부 재검토완료', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '22',
+                    status: '31',
+                    resultCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(7);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 사업주 재검토요청', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '32',
+                    officialNumber: 'ABC-DEF-T-R-001-002',
+                    status: '40',
+                    resultCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(8);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 사업주 재검토완료', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '42',
+                    officialNumber: 'DEF-ABC-T-R-001-002',
+                    status: '41',
+                    resultCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(9);
+                    done();
+                });
+        });
+
+        it('In/Out vendorLetter - 업체 회신', (done) => {
+            request(server)
+                .patch(`/api/vendorletters/${id}/inout`)
+                .send({
+                    inOutGb: '90',
+                    officialNumber: 'ABC-GEF-T-R-001-001',
+                    status: '90',
+                    resultCode: '01',
+                    replyCode: '01'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterStatus).have.length(10);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /vendorletters/:id/inout/delete', () => {
         it('delete letterStatus', (done) => {
             request(server)
-                .patch(`/api/vendorletters/${id}/status/delete`)
+                .patch(`/api/vendorletters/${id}/inout/delete`)
                 .send({
                     targetId: statusId
                 })
@@ -374,7 +559,7 @@ describe('  [ Vendor Letter ]', () => {
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    expect(ctx.body.data.letterStatus).have.length(0);
+                    expect(ctx.body.data.letterStatus).have.length(9);
                     done();
                 });
         });

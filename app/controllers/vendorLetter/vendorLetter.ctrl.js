@@ -35,6 +35,62 @@ export const list = async (ctx) => {
     }
 };
 
+export const search = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
+    let {
+        vendor,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        officialNumber,
+        receiveDate,
+        targetDate,
+        letterStatus,
+        cancelYn
+    } = ctx.request.body;
+
+    const { ObjectId } = Types;
+
+    const query = {
+        vendor: ObjectId.isValid(vendor) ? vendor : '',
+        senderGb: senderGb ? senderGb : '',
+        sender: sender ? sender : '',
+        receiverGb: receiverGb ? receiverGb : '',
+        receiver: receiver ? receiver : '',
+        officialNumber: officialNumber ? officialNumber : '',
+        receiveDate: receiveDate ? receiveDate : '2010-01-01',
+        targetDate: targetDate ? targetDate : '9999-12-31',
+        letterStatus: letterStatus ? letterStatus : '',
+        cancelYn: cancelYn ? cancelYn : ''
+    };
+
+    try {
+        let vendorLetters = await VendorLetter.searchVendorLetter(query, page);
+        vendorLetters = vendorLetters.map(vendorLetter => {
+            return {
+                ...vendorLetter,
+                senderGb: vendorLetter.senderGb === '01' ? 'CLIENT' : (vendorLetter.senderGb === '02' ? 'CONTRACTOR' : 'VENDOR'),
+                receiverGb: vendorLetter.receiveGb === '01' ? 'CLIENT' : (vendorLetter.receiverGb === '02' ? 'CONTRACTOR' : 'VENDOR')
+            };
+        });
+
+        const countQuery = await VendorLetter.searchVendorLetterCount(query);
+
+        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 10));
+
+        ctx.res.ok({
+            data: vendorLetters,
+            message: 'Success - vendorLetterCtrl > search'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - vendorLetterCtrl > ${e.message}`
+        });
+    }
+};
+
 /**
  * @author      minz-logger
  * @date        2019. 08. 25
@@ -299,10 +355,54 @@ export const deleteVendorLetter = async (ctx) => {
 
 /**
  * @author      minz-logger
- * @date        2019. 08. 27
- * @description 업체 공식 문서 Status 삭제
+ * @date        2019. 08. 29
+ * @description 업체 공식 문서 상태 변경
  */
-export const deleteStatus = async (ctx) => {
+export const inOut = async (ctx) => {
+    const { id } = ctx.params;
+    const { inOutGb, officialNumber, status, resultCode, replyCode, date } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        inOutGb: Joi.string().required(),
+        officialNumber: Joi.string(),
+        status: Joi.string(),
+        resultCode: Joi.string(),
+        replyCode: Joi.string(),
+        date: Joi.string()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - vendorLetterCtrl > inOut'
+        });
+
+        return;
+    }
+
+    try {
+        const vendorLetter = await VendorLetter.inOutVendorLetter(id, inOutGb, officialNumber, status, resultCode, replyCode, date);
+
+        ctx.res.ok({
+            data: vendorLetter,
+            message: 'Success - vendorLetterCtrl > inOut'
+        })
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: { id, ...ctx.requesst.body },
+            message: `Error - vendorLetterCtrl > ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 27
+ * @description 업체 공식 문서 상태 삭제
+ */
+export const deleteInOut = async (ctx) => {
     let { id } = ctx.params;
     let { targetId } = ctx.request.body;
 
@@ -315,23 +415,23 @@ export const deleteStatus = async (ctx) => {
     if (result.error) {
         ctx.res.badRequest({
             data: result.error,
-            message: 'Fail - vendorLetterCtrl > deleteStatus'
+            message: 'Fail - vendorLetterCtrl > deleteInOut'
         });
 
         return;
     }
 
     try {
-        const vendorLetter = await VendorLetter.deleteStatus(id, targetId);
+        const vendorLetter = await VendorLetter.deleteInOut(id, targetId);
 
         ctx.res.ok({
             data: vendorLetter,
-            message: 'Succeess - vendorLetterCtrl > deleteStatus'
+            message: 'Succeess - vendorLetterCtrl > deleteInOut'
         });
     } catch (e) {
         ctx.res.internalServerError({
             data: { id, targetId },
-            message: 'Error - vendorLetterCtrl > deleteStatus'
+            message: 'Error - vendorLetterCtrl > deleteInOut'
         });
     }
 };
