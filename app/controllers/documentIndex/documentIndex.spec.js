@@ -433,11 +433,13 @@ describe('  [ Document Index ]', () => {
                             _id: documentInfoId1,
                             documentNumber: 'VP-NCC-R-001-001',
                             documentTitle: 'VPIS',
+                            documentGb: documentGb,
                             plan: '2019-08-23'
                         },
                         {
-                            documentNumber: 'VP-NCC-R-001-006',
-                            documentTitle: 'Welding Procedure',
+                            documentNumber: 'VP-NCC-R-001-003',
+                            documentTitle: 'Overall Schedule',
+                            documentGb: documentGb,
                             plan: '2019-09-23'
                         }
                     ],

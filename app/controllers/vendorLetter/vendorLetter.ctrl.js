@@ -35,6 +35,46 @@ export const list = async (ctx) => {
     }
 };
 
+/**
+ * @author minz-logger
+ * @date 2019. 09. 04
+ * @desscription 업체 공식 문서 목록 조회 by vendor
+ */
+export const listByVendor = async (ctx) => {
+    const { vendor } = ctx.params;
+
+    const { ObjectId } = Types;
+
+    if (!ObjectId.isValid(vendor)) {
+        ctx.res.badRequest({
+            data: vendor,
+            message: 'Fail - vendorLetterCtrl > listByVendor'
+        });
+
+        return;
+    }
+
+    try {
+        const vendorLetters = await VendorLetter
+            .find({ vendor: vendor }, { officialNumber: 1 });
+
+        ctx.res.ok({
+            data: vendorLetters,
+            message: 'Success - vendorLetterCtrl > listByVendor'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: [],
+            message: 'Error - vendorLetterCtrl > listByVendor'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 04
+ * @description 업체 공식 문서 검색
+ */
 export const search = async (ctx) => {
     let page = parseInt(ctx.query.page || 1, 10);
     let {
@@ -282,10 +322,11 @@ export const addPartial = async (ctx) => {
 
     const schema = Joi.object().keys({
         receiveDocuments: Joi.array().items(Joi.object().keys({
+            id: Joi.optional(),
             documentNumber: Joi.string().required(),
             documentTitle: Joi.string().required(),
             documentRev: Joi.string().required()
-        })).required()
+        })).min(1).required()
     });
 
     const result = Joi.validate(ctx.request.body, schema);

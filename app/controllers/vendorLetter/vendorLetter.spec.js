@@ -332,6 +332,20 @@ describe('  [ Vendor Letter ]', () => {
         });
     });
 
+    describe('GET /vendorletters/:vendor/letters', () => {
+        it('get vendorletters by vendor', (done) => {
+            request(server)
+                .get(`/api/vendorletters/${vendorId}/letters`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('PATCH /vendorletters/:id/add', () => {
         it('add document in vendorletter', (done) => {
             request(server)

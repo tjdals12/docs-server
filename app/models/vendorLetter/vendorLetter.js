@@ -155,6 +155,12 @@ VendorLetterSchema.statics.searchVendorLetter = function (param, page) {
     ]);
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 29
+ * @description 업체 공식 문서 검색 카운트
+ * @param       {Object} param
+ */
 VendorLetterSchema.statics.searchVendorLetterCount = function (param) {
     let {
         vendor,

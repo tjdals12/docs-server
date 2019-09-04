@@ -312,7 +312,7 @@ export const editDocumentIndex = async (ctx) => {
         list: list.length === 0
             ? Joi.array().items(Joi.object().keys()).required()
             : Joi.array().items(Joi.object().keys({
-                _id: Joi.string().required(),
+                _id: Joi.string().optional(),
                 documentNumber: Joi.string().required(),
                 documentTitle: Joi.string().required(),
                 documentGb: Joi.string().required(),
