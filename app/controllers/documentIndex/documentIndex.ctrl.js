@@ -309,7 +309,15 @@ export const editDocumentIndex = async (ctx) => {
 
     const schema = Joi.object().keys({
         vendor: Joi.string().required(),
-        list: Joi.array().items(Joi.object()).required(),
+        list: list.length === 0
+            ? Joi.array().items(Joi.object().keys()).required()
+            : Joi.array().items(Joi.object().keys({
+                _id: Joi.string().required(),
+                documentNumber: Joi.string().required(),
+                documentTitle: Joi.string().required(),
+                documentGb: Joi.string().required(),
+                plan: Joi.string().required()
+            })).required(),
         deleteList: Joi.array().items(Joi.object()).required()
     });
 
