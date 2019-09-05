@@ -207,7 +207,7 @@ DocumentIndexSchema.statics.editDocumentIndex = async function (param) {
         deleteList
     } = param;
 
-    let documentInfos = await DocumentInfo.updateDocumentInfos(list);
+    let documentInfos = await DocumentInfo.updateDocumentInfos(vendor, list);
     await DocumentInfo.deleteDocumentInfos(deleteList);
 
     return this.findOneAndUpdate(
@@ -225,6 +225,26 @@ DocumentIndexSchema.statics.editDocumentIndex = async function (param) {
             new: true
         }
     ).populate({ path: 'vendor' }).populate({ path: 'list', populate: { path: 'documentGb trackingDocument' } });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 05
+ * @description 문서목록 삭제
+ * @param       {String} id
+ */
+DocumentIndexSchema.statics.deleteDocumentIndex = async function (id) {
+    let documentIndex = await this.findOne({ _id: id });
+
+    await DocumentInfo.deleteMany(
+        {
+            _id: {
+                $in: documentIndex.list
+            }
+        }
+    );
+
+    await this.findOneAndDelete({ _id: id });
 };
 
 /**
@@ -457,6 +477,61 @@ DocumentIndexSchema.statics.trackingDocument = function (id, page) {
             $group: {
                 _id: '$_id',
                 documentInfos: { $push: '$list' }
+            }
+        }
+    ]);
+};
+
+DocumentIndexSchema.statics.trackingTransmittal = function (id) {
+    return this.aggregate([
+        {
+            $match: { _id: Types.ObjectId(id) }
+        },
+        {
+            $lookup: {
+                from: 'vendors',
+                localField: 'vendor',
+                foreignField: '_id',
+                as: 'vendor'
+            }
+        },
+        {
+            $unwind: '$vendor'
+        },
+        {
+            $unwind: '$vendor.trackingTransmittal'
+        },
+        {
+            $project: {
+                transmittals: '$vendor.trackingTransmittal'
+            }
+        },
+        {
+            $lookup: {
+                from: 'vendorletters',
+                localField: 'transmittals',
+                foreignField: '_id',
+                as: 'transmittals'
+            }
+        },
+        {
+            $unwind: '$transmittals'
+        },
+        {
+            $project: {
+                transmittals: {
+                    officialNumber: 1,
+                    documents: { $size: '$transmittals.documents' },
+                    receiveDate: 1,
+                    targetDate: 1,
+                    letterStatus: { $arrayElemAt: [{ $slice: ['$transmittals.letterStatus', -1] }, 0] }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: '$_id',
+                transmittals: { $push: '$transmittals' }
             }
         }
     ]);

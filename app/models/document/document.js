@@ -297,6 +297,8 @@ DocumentSchema.statics.saveDocument = async function (param) {
  */
 DocumentSchema.statics.saveDocuments = async function (param) {
     let ids = [];
+    let fails = [];
+    let targets = [];
 
     while (param.length > 0) {
         let {
@@ -309,22 +311,37 @@ DocumentSchema.statics.saveDocuments = async function (param) {
             memo
         } = param.pop();
 
-        const { documentGb } = await DocumentInfo.findOne({
-            $and: [
-                { vendor: vendor },
-                { documentNumber: documentNumber }
-            ]
-        });
+        let documentGb;
+
+        try {
+            const { documentGb: gb } = await DocumentInfo.findOne({
+                $and: [
+                    { vendor: vendor },
+                    { documentNumber: documentNumber }
+                ]
+            });
+
+            documentGb = gb;
+        } catch (e) {
+            fails.push(documentNumber);
+            continue;
+        }
 
         const documentInOut = new InOut({ officialNumber });
-        const document = new this({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo });
+        targets.push(new this({ vendor, part, documentNumber, documentTitle, documentGb, documentRev, documentInOut, memo }));
+    }
+
+    if (fails.length > 0) throw fails;
+
+    while (targets.length > 0) {
+        const document = targets.pop();
 
         await document.save();
         await DocumentInfo.findOneAndUpdate(
             {
                 $and: [
-                    { vendor: vendor },
-                    { documentNumber: documentNumber }
+                    { vendor: document.vendor },
+                    { documentNumber: document.documentNumber }
                 ]
             },
             {

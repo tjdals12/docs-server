@@ -120,14 +120,14 @@ DocumentInfoSchema.statics.saveDocumentInfos = async function (id, param) {
  * @description 문서 정보 수정
  * @param       {Object} param
  */
-DocumentInfoSchema.statics.updateDocumentInfos = async function (param) {
+DocumentInfoSchema.statics.updateDocumentInfos = async function (id, param) {
     let ids = [];
 
     for (let i = 0; i < param.length; i++) {
         const { _id, documentNumber, documentTitle, documentGb, plan } = param[i];
 
         if (!_id) {
-            const documentInfo = new this({ documentNumber, documentTitle, documentGb, plan });
+            const documentInfo = new this({ vendor: id, documentNumber, documentTitle, documentGb, plan });
             await documentInfo.save();
 
             ids.push(documentInfo._id);

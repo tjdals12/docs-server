@@ -226,7 +226,7 @@ export const receive = async (ctx) => {
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: ctx.request.body,
+            data: e,
             message: `Error - vendorLetterCtrl > ${e.message}`
         });
     }

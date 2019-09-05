@@ -195,7 +195,7 @@ VendorLetterSchema.statics.searchVendorLetterCount = function (param) {
         {
             $match: {
                 $and: [
-                    { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Schema.Types.ObjectId(vendor) },
+                    { vendor: vendor === '' ? { $ne: DEFINE.COMMON.NONE_ID } : Types.ObjectId(vendor) },
                     { senderGb: { $regex: senderGb + '.*', $options: 'i' } },
                     { sender: { $regex: sender + '.*', $options: 'i' } },
                     { receiverGb: { $regex: receiverGb + '.*', $options: 'i' } },
@@ -255,6 +255,15 @@ VendorLetterSchema.statics.receiveVendorLetter = async function (param) {
 
     const documents = await Document.saveDocuments(receiveDocuments);
     const vendorLetter = new this({ vendor, senderGb, sender, receiverGb, receiver, officialNumber, documents, receiveDate, targetDate });
+
+    await Vendor.updateOne(
+        { _id: vendor._id },
+        {
+            $push: {
+                trackingTransmittal: vendorLetter._id
+            }
+        }
+    );
 
     await vendorLetter.save();
 
