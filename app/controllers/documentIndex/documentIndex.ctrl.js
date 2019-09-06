@@ -278,13 +278,15 @@ export const oneDetail = async (ctx) => {
         const statisticsByStatus = await DocumentIndex.statisticsByStatus(id);
         const list = await DocumentIndex.trackingDocument(id, 1);
         const transmittals = await DocumentIndex.trackingTransmittal(id);
+        const statisticsByTransmittal = await DocumentIndex.statisticsByTransmittal(id);
 
         ctx.res.ok({
             data: {
                 overall: overall[0] ? overall[0] : {},
                 statisticsByStatus,
                 list: list[0] ? list[0].documentInfos : [],
-                transmittals: transmittals[0] ? transmittals[0].transmittals : []
+                transmittals: transmittals[0] ? transmittals[0].transmittals : [],
+                statisticsByTransmittal
             },
             message: 'Success - documentIndexCtrl > oneDetail'
         });

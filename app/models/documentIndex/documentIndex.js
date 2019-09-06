@@ -419,6 +419,11 @@ DocumentIndexSchema.statics.statisticsByStatus = function (id) {
             }
         },
         {
+            $sort: {
+                '_id.code': 1
+            }
+        },
+        {
             $project: {
                 _id: 0,
                 statusName: { $ifNull: ['$_id.statusName', '접수대기'] },
@@ -539,6 +544,88 @@ DocumentIndexSchema.statics.trackingTransmittal = function (id) {
             $group: {
                 _id: '$_id',
                 transmittals: { $push: '$transmittals' }
+            }
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 06
+ * @description 업체 공식문서 Receive/Reply 통계
+ * @param       {String} id
+ */
+DocumentIndexSchema.statics.statisticsByTransmittal = function (id) {
+    return this.aggregate([
+        {
+            $match: { _id: Types.ObjectId(id) },
+        },
+        {
+            $project: {
+                vendor: 1
+            }
+        },
+        {
+            $lookup: {
+                from: 'vendors',
+                localField: 'vendor',
+                foreignField: '_id',
+                as: 'vendor'
+            }
+        },
+        {
+            $unwind: '$vendor'
+        },
+        {
+            $unwind: '$vendor.trackingTransmittal'
+        },
+        {
+            $project: {
+                transmittal: '$vendor.trackingTransmittal'
+            }
+        },
+        {
+            $lookup: {
+                from: 'vendorletters',
+                localField: 'transmittal',
+                foreignField: '_id',
+                as: 'transmittal'
+            }
+        },
+        {
+            $unwind: '$transmittal'
+        },
+        {
+            $project: {
+                letterStatus: { $arrayElemAt: [{ $slice: ['$transmittal.letterStatus', -1] }, 0] },
+                receiveDate: { $substr: ['$transmittal.receiveDate', 0, 7] }
+            }
+        },
+        {
+            $group: {
+                _id: { $concat: ['$receiveDate', ' 월'] },
+                letterStatus: { $push: '$letterStatus.status' }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                receiveDate: '$_id',
+                receive: { $size: '$letterStatus' },
+                reply: {
+                    $size: {
+                        $filter: {
+                            input: '$letterStatus',
+                            as: 'status',
+                            cond: { $in: ['$$status', ['90', '91', '92']] }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $sort: {
+                'receiveDate': 1
             }
         }
     ]);
