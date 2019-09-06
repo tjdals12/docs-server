@@ -482,6 +482,12 @@ DocumentIndexSchema.statics.trackingDocument = function (id, page) {
     ]);
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 05
+ * @description 업체 공식문서 목록
+ * @param       {String} id
+ */
 DocumentIndexSchema.statics.trackingTransmittal = function (id) {
     return this.aggregate([
         {
@@ -520,6 +526,7 @@ DocumentIndexSchema.statics.trackingTransmittal = function (id) {
         {
             $project: {
                 transmittals: {
+                    _id: 1,
                     officialNumber: 1,
                     documents: { $size: '$transmittals.documents' },
                     receiveDate: 1,
