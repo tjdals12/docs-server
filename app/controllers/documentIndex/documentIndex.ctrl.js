@@ -267,33 +267,82 @@ export const one = async (ctx) => {
 
 /**
  * @author      minz-logger
- * @date        2019. 08. 22
- * @description 문서목록 개별 조회 Detail
+ * @date        2019. 09. 07
+ * @description 문서목록 Overall
  */
-export const oneDetail = async (ctx) => {
+export const overall = async (ctx) => {
     let { id } = ctx.params;
 
     try {
         const overall = await DocumentIndex.documentIndexOverall(id);
-        const statisticsByStatus = await DocumentIndex.statisticsByStatus(id);
-        const list = await DocumentIndex.trackingDocument(id, 1);
-        const transmittals = await DocumentIndex.trackingTransmittal(id);
-        const statisticsByTransmittal = await DocumentIndex.statisticsByTransmittal(id);
 
         ctx.res.ok({
-            data: {
-                overall: overall[0] ? overall[0] : {},
-                statisticsByStatus,
-                list: list[0] ? list[0].documentInfos : [],
-                transmittals: transmittals[0] ? transmittals[0].transmittals : [],
-                statisticsByTransmittal
-            },
-            message: 'Success - documentIndexCtrl > oneDetail'
+            data: overall[0] ? overall[0] : {},
+            messge: 'Success - documentIndexCtrl > overall'
         });
     } catch (e) {
         ctx.res.internalServerError({
             data: id,
-            message: 'Error - documentIndexCtrl > oneDetail'
+            message: `Error - documentIndexCtrl > overall: ${e.messge}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 07
+ * @description 문서목록 상태별 통계
+ */
+export const statisticsByStatus = async (ctx) => {
+    let { id } = ctx.params;
+
+    try {
+        const statisticsByStatus = await DocumentIndex.statisticsByStatus(id);
+
+        ctx.res.ok({
+            data: statisticsByStatus,
+            message: 'Success - documentIndexCtrl > statisticsByStatus'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: `Error - documentIndexCtrl > statisticsByStatus: ${e.messge}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 08. 22
+ * @description 문서정보 추적
+ */
+export const trackingDocument = async (ctx) => {
+    let { id } = ctx.params;
+    let page = parseInt(ctx.query.page || 1, 10);
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Fail > documentIndexCtrl > trackingDocument'
+        });
+
+        return;
+    }
+
+    try {
+        const list = await DocumentIndex.trackingDocument(id, page);
+        const listCountQuery = await DocumentIndex.trackingDocumentCount(id);
+
+        ctx.set('Last-Page', Math.ceil((listCountQuery[0] ? listCountQuery[0].count : 1) / 5));
+
+        ctx.res.ok({
+            data: list,
+            message: 'Success - documentIndexCtrl > trackingDocument'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: id,
+            message: `Error - documentIndexCtrl > trackingDocument: ${e.message}`
         });
     }
 };

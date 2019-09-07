@@ -464,7 +464,7 @@ DocumentIndexSchema.statics.trackingDocument = function (id, page) {
                     plan: 1,
                     documentNumber: 1,
                     documentTitle: 1,
-                    trackingDocument: { $slice: ['$list.trackingDocument', ((page - 1) * 5), 5] },
+                    trackingDocument: 1,
                     removeYn: 1,
                     timestamp: 1
                 }
@@ -479,72 +479,67 @@ DocumentIndexSchema.statics.trackingDocument = function (id, page) {
             }
         },
         {
-            $group: {
-                _id: '$_id',
-                documentInfos: { $push: '$list' }
+            $skip: (page - 1) * 5
+        },
+        {
+            $limit: 5
+        },
+        {
+            $project: {
+                _id: 0,
+                documentInfo: '$list'
             }
         }
     ]);
 };
 
 /**
- * @author      minz-logger
- * @date        2019. 09. 05
- * @description 업체 공식문서 목록
- * @param       {String} id
+ * @autohr minz-logger
+ * @date 2019. 09. 07
+ * @description 문서정보 추적 카운트
  */
-DocumentIndexSchema.statics.trackingTransmittal = function (id) {
+DocumentIndexSchema.statics.trackingDocumentCount = function (id) {
     return this.aggregate([
         {
             $match: { _id: Types.ObjectId(id) }
         },
         {
-            $lookup: {
-                from: 'vendors',
-                localField: 'vendor',
-                foreignField: '_id',
-                as: 'vendor'
-            }
-        },
-        {
-            $unwind: '$vendor'
-        },
-        {
-            $unwind: '$vendor.trackingTransmittal'
-        },
-        {
-            $project: {
-                transmittals: '$vendor.trackingTransmittal'
-            }
+            $unwind: '$list'
         },
         {
             $lookup: {
-                from: 'vendorletters',
-                localField: 'transmittals',
+                from: 'documentinfos',
+                localField: 'list',
                 foreignField: '_id',
-                as: 'transmittals'
+                as: 'list'
             }
         },
         {
-            $unwind: '$transmittals'
+            $unwind: '$list'
         },
         {
             $project: {
-                transmittals: {
+                list: {
                     _id: 1,
-                    officialNumber: 1,
-                    documents: { $size: '$transmittals.documents' },
-                    receiveDate: 1,
-                    targetDate: 1,
-                    letterStatus: { $arrayElemAt: [{ $slice: ['$transmittals.letterStatus', -1] }, 0] }
+                    plan: 1,
+                    documentNumber: 1,
+                    documentTitle: 1,
+                    trackingDocument: 1,
+                    removeYn: 1,
+                    timestamp: 1
                 }
             }
         },
         {
-            $group: {
-                _id: '$_id',
-                transmittals: { $push: '$transmittals' }
+            $lookup: {
+                from: 'documents',
+                localField: 'list.trackingDocument',
+                foreignField: '_id',
+                as: 'list.trackingDocument'
             }
+        },
+        {
+            $count: 'count'
         }
     ]);
 };

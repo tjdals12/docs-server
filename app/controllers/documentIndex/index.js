@@ -257,6 +257,56 @@ documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
 
 /**
  * @swagger
+ * /api/documentindexes/{id}/overall:
+ *  get:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서목록 Overall
+ *      description: 문서목록 Overall
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ */
+documentIndex.get('/:id/overall', commonCtrl.checkObjectId, documentIndexCtrl.overall);
+
+/**
+ * @swagger
+ * /api/documentindexes/{id}/statisticsbystatus:
+ *  get:
+ *      tags:
+ *          - Document Index
+ *      summary: 문서정보 Status 통계
+ *      description: 문서정보 Status 통계
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: documentindex id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ */
+documentIndex.get('/:id/statisticsbystatus', commonCtrl.checkObjectId, documentIndexCtrl.statisticsByStatus);
+
+/**
+ * @swagger
  * /api/documentindexes/{id}/detail:
  *  get:
  *      tags:
@@ -323,7 +373,7 @@ documentIndex.get('/:id', commonCtrl.checkObjectId, documentIndexCtrl.one);
  *                          items:
  *                              $ref: '#/definitions/documentInfo'
  */
-documentIndex.get('/:id/detail', commonCtrl.checkObjectId, documentIndexCtrl.oneDetail);
+documentIndex.get('/:id/trackingdocument', commonCtrl.checkObjectId, documentIndexCtrl.trackingDocument);
 
 /**
  * @swagger

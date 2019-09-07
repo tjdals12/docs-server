@@ -55,8 +55,7 @@ export const listByVendor = async (ctx) => {
     }
 
     try {
-        const vendorLetters = await VendorLetter
-            .find({ vendor: vendor }, { officialNumber: 1 });
+        const vendorLetters = await VendorLetter.listByVendor(vendor);
 
         ctx.res.ok({
             data: vendorLetters,
@@ -66,6 +65,29 @@ export const listByVendor = async (ctx) => {
         ctx.res.internalServerError({
             data: [],
             message: 'Error - vendorLetterCtrl > listByVendor'
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 07
+ * @description 업체 공식 문서 통계
+ */
+export const statisticsByTransmittal = async (ctx) => {
+    let { vendor } = ctx.params;
+
+    try {
+        const statisticsByTransmittal = await VendorLetter.statisticsByTransmittal(vendor);
+
+        ctx.res.ok({
+            data: statisticsByTransmittal,
+            message: 'Success - vendorLetterCtrl > statisticsByTransmittal'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: vendor,
+            message: `Error - vendorLetterCtrl > statisticsByTransmittal: ${e.message}`
         });
     }
 };

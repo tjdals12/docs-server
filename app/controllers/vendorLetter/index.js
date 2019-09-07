@@ -196,6 +196,31 @@ vendorLetter.get('/:vendor/letters', vendorLetterCtrl.listByVendor);
 
 /**
  * @swagger
+ * /api/vendorletters/{vendor}/statisticsbytransmittal:
+ *  get:
+ *      tags:
+ *          - Vendor Letter
+ *      summary: 업체 공식 문서 통계
+ *      description: 업체 공식 문서 통계
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: vendor
+ *            description: vendor id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ */
+vendorLetter.get('/:vendor/statisticsbytransmittal', vendorLetterCtrl.statisticsByTransmittal);
+
+/**
+ * @swagger
  * /api/vendorletters:
  *  post:
  *      tags:

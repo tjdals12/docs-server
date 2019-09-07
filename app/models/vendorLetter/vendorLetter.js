@@ -59,6 +59,86 @@ const VendorLetterSchema = new Schema({
 VendorLetterSchema.set('toJSON', { getters: true });
 
 /**
+ * @author minz-logger
+ * @date 2019. 09. 07
+ * @description 업체 공식 문서 목록 조회 by Vendor
+ * @param       {String} id
+ */
+VendorLetterSchema.statics.listByVendor = function (id) {
+    return this.aggregate([
+        {
+            $match: { vendor: Types.ObjectId(id) }
+        },
+        {
+            $project: {
+                vendor: 1,
+                senderGb: 1,
+                sender: 1,
+                receiverGb: 1,
+                receiver: 1,
+                officialNumber: 1,
+                documents: 1,
+                receiveDate: 1,
+                targetDate: 1,
+                letterStatus: {
+                    $arrayElemAt: [{
+                        $slice: ['$letterStatus', -1]
+                    }, 0]
+                },
+                cancelYn: 1
+            }
+        }
+    ]);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 07
+ * @description 업체 공식 문서 통계
+ * @param       {String} id
+ */
+VendorLetterSchema.statics.statisticsByTransmittal = function (id) {
+    return this.aggregate([
+        {
+            $match: { vendor: Types.ObjectId(id) },
+        },
+        {
+            $project: {
+                letterStatus: { $arrayElemAt: [{ $slice: ['$letterStatus', -1] }, 0] },
+                receiveDate: { $substr: ['$receiveDate', 0, 7] }
+            }
+        },
+        {
+            $group: {
+                _id: { $concat: ['$receiveDate', ' 월'] },
+                letterStatus: { $push: '$letterStatus.status' }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                receiveDate: '$_id',
+                receive: { $size: '$letterStatus' },
+                reply: {
+                    $size: {
+                        $filter: {
+                            input: '$letterStatus',
+                            as: 'status',
+                            cond: { $in: ['$$status', ['90', '91', '92']] }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $sort: {
+                'receiveDate': 1
+            }
+        }
+    ]);
+};
+
+/**
  * @author      minz-logger
  * @date        2019. 08. 29
  * @description 업체 공식 문서 검색
