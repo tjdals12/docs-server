@@ -15,10 +15,10 @@ module.exports = {
 		sourceType: 'module'
 	},
 	rules: {
-		indent: [ 'error', 4 ],
-		semi: [ 'error', 'always' ],
-		quotes: [ 'error', 'single' ],
-		'no-multiple-empty-lines': [ 'error', { max: 1, maxEOF: 0, maxBOF: 0 } ],
+		indent: ['error', 4, { "SwitchCase": 1 }],
+		semi: ['error', 'always'],
+		quotes: ['error', 'single'],
+		'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0, maxBOF: 0 }],
 		'no-console': 'off'
 	}
 };

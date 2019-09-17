@@ -13,14 +13,15 @@ export const connect = () => {
     return new Promise((resolve, reject) => {
         mongoose.Promise = global.Promise;
 
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'test') {
             const mockgoose = new Mockgoose(mongoose);
 
             mockgoose.prepareStorage().then(() => {
-                mongoose.connect('mongodb://127.0.0.1:27017/admin',
+                mongoose.connect(dbUri,
                     {
                         useNewUrlParser: true,
                         useCreateIndex: true,
+                        useUnifiedTopology: true,
                         useFindAndModify: false
                     })
                     .then((res, err) => {
@@ -34,6 +35,7 @@ export const connect = () => {
                 {
                     useNewUrlParser: true,
                     useCreateIndex: true,
+                    useUnifiedTopology: true,
                     useFindAndModify: false,
                     user: dbUser,
                     pass: dbPass
@@ -53,7 +55,7 @@ export const connect = () => {
  * @description DB 종료
  */
 export const close = () => {
-    if (process.env.NODE_ENV === 'development')
+    if (process.env.NODE_ENV === 'test')
         new Mockgoose(mongoose).helper.reset();
 
     return mongoose.disconnect();

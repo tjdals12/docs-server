@@ -22,14 +22,16 @@ const loggerSetting = (app) => {
                     }
                 }));
 
-        app.use(morgan('combined',
-            {
-                stream: fs.createWriteStream(__dirname + `/logs/error_${moment().format('YYYYMMDD')}.log`, { flags: 'a' }),
-                skip: (req, res) => {
-                    return res.statusCode < 400;
-                }
-            }));
+        return;
     }
+
+    app.use(morgan('combined',
+        {
+            stream: fs.createWriteStream(__dirname + `/logs/error_${moment().format('YYYYMMDD')}.log`, { flags: 'a' }),
+            skip: (req, res) => {
+                return res.statusCode < 400;
+            }
+        }));
 };
 
 export default loggerSetting;

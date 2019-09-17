@@ -370,8 +370,8 @@ export const addPartial = async (ctx) => {
         });
     } catch (e) {
         ctx.res.internalServerError({
-            data: { id, receiveDocuments },
-            message: 'Error - vendorLetterCtrl > addPartial'
+            data: e,
+            message: `Error - vendorLetterCtrl > addPartial: ${e.message}`
         });
     }
 };

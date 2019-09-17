@@ -307,7 +307,7 @@ documentIndex.get('/:id/statisticsbystatus', commonCtrl.checkObjectId, documentI
 
 /**
  * @swagger
- * /api/documentindexes/{id}/detail:
+ * /api/documentindexes/{id}/trackingdocument:
  *  get:
  *      tags:
  *          - Document Index

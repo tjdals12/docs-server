@@ -5,8 +5,11 @@ import convert from 'koa-convert';
 
 const options = {
     swaggerDefinition: {
-        title: 'Docs API',
-        version: '1.0.0'
+        info: {
+            title: 'Docs API',
+            description: 'API for Document Controll System',
+            version: '1.0.0'
+        }
     },
     apisSorter: 'method',
     operationsSorter: 'method',

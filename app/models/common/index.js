@@ -35,34 +35,34 @@ const DEFINE = {
 
     inOutGbConverter: function (code) {
         switch (code) {
-        case DEFINE.IN_OUT_GB.FROM_VENDOR:
-            return '업체로부터 접수';
-        case DEFINE.IN_OUT_GB.FROM_VENDOR_RE:
-            return '업체로부터 재접수';
-        case DEFINE.IN_OUT_GB.TO_INTERNAL:
-            return '내부 검토요청';
-        case DEFINE.IN_OUT_GB.TO_INTERNAL_RE:
-            return '내부 재검토요청';
-        case DEFINE.IN_OUT_GB.FROM_INTERNAL:
-            return '내부 검토완료';
-        case DEFINE.IN_OUT_GB.FROM_INTERNAL_RE:
-            return '내부 재검토완료';
-        case DEFINE.IN_OUT_GB.TO_CLIENT:
-            return '사업주 검토요청';
-        case DEFINE.IN_OUT_GB.TO_CLIENT_RE:
-            return '사업주 재검토요청';
-        case DEFINE.IN_OUT_GB.FROM_CLIENT:
-            return '사업주 검토완료';
-        case DEFINE.IN_OUT_GB.FROM_CLIENT_RE:
-            return '사업주 재검토완료';
-        case DEFINE.IN_OUT_GB.TO_VENDOR:
-            return '업체로 송부';
-        case DEFINE.IN_OUT_GB.TO_VENDOR_RE:
-            return '업체로 재송부';
-        case DEFINE.IN_OUT_GB.NONE:
-            return '회신 필요없음';
-        default:
-            return code;
+            case DEFINE.IN_OUT_GB.FROM_VENDOR:
+                return '업체로부터 접수';
+            case DEFINE.IN_OUT_GB.FROM_VENDOR_RE:
+                return '업체로부터 재접수';
+            case DEFINE.IN_OUT_GB.TO_INTERNAL:
+                return '내부 검토요청';
+            case DEFINE.IN_OUT_GB.TO_INTERNAL_RE:
+                return '내부 재검토요청';
+            case DEFINE.IN_OUT_GB.FROM_INTERNAL:
+                return '내부 검토완료';
+            case DEFINE.IN_OUT_GB.FROM_INTERNAL_RE:
+                return '내부 재검토완료';
+            case DEFINE.IN_OUT_GB.TO_CLIENT:
+                return '사업주 검토요청';
+            case DEFINE.IN_OUT_GB.TO_CLIENT_RE:
+                return '사업주 재검토요청';
+            case DEFINE.IN_OUT_GB.FROM_CLIENT:
+                return '사업주 검토완료';
+            case DEFINE.IN_OUT_GB.FROM_CLIENT_RE:
+                return '사업주 재검토완료';
+            case DEFINE.IN_OUT_GB.TO_VENDOR:
+                return '업체로 송부';
+            case DEFINE.IN_OUT_GB.TO_VENDOR_RE:
+                return '업체로 재송부';
+            case DEFINE.IN_OUT_GB.NONE:
+                return '회신 필요없음';
+            default:
+                return code;
         }
     },
 
@@ -104,52 +104,52 @@ const DEFINE = {
 
     statusConverter: function (code) {
         switch (code) {
-        case DEFINE.STATUS_CD.CODE_01:
-            return '접수';
-        case DEFINE.STATUS_CD.CODE_02:
-            return '재접수';
-        case DEFINE.STATUS_CD.CODE_03:
-            return '접수취소';
-        case DEFINE.STATUS_CD.CODE_10:
-            return '내부 검토중';
-        case DEFINE.STATUS_CD.CODE_11:
-            return '내부 검토완료 - 승인';
-        case DEFINE.STATUS_CD.CODE_12:
-            return '내부 검토완료 - 수정';
-        case DEFINE.STATUS_CD.CODE_13:
-            return '내부 검토완료 - 반송요청';
-        case DEFINE.STATUS_CD.CODE_20:
-            return '사업주 검토중';
-        case DEFINE.STATUS_CD.CODE_21:
-            return '사업주 검토완료 - 승인';
-        case DEFINE.STATUS_CD.CODE_22:
-            return '사업주 검토완료 - 수정';
-        case DEFINE.STATUS_CD.CODE_23:
-            return '사업주 검토완료 - 반송요청';
-        case DEFINE.STATUS_CD.CODE_30:
-            return '내부 재검토중';
-        case DEFINE.STATUS_CD.CODE_31:
-            return '내부 재검토완료 - 승인';
-        case DEFINE.STATUS_CD.CODE_32:
-            return '내부 재검토완료 - 수정';
-        case DEFINE.STATUS_CD.CODE_40:
-            return '사업주 재검토중';
-        case DEFINE.STATUS_CD.CODE_41:
-            return '사업주 재검토완료 - 승인';
-        case DEFINE.STATUS_CD.CODE_42:
-            return '사업주 재검토완료 - 수정';
-        case DEFINE.STATUS_CD.CODE_90:
-            return '회신';
-        case DEFINE.STATUS_CD.CODE_91:
-            return '개별 회신';
-        case DEFINE.STATUS_CD.CODE_92:
-            return '별도 회신';
-        case DEFINE.STATUS_CD.CODE_93:
-            return '재회신';
-        case DEFINE.STATUS_CD.CODE_94:
-            return '회신 필요없음';
-        default:
-            return code;
+            case DEFINE.STATUS_CD.CODE_01:
+                return '접수';
+            case DEFINE.STATUS_CD.CODE_02:
+                return '재접수';
+            case DEFINE.STATUS_CD.CODE_03:
+                return '접수취소';
+            case DEFINE.STATUS_CD.CODE_10:
+                return '내부 검토중';
+            case DEFINE.STATUS_CD.CODE_11:
+                return '내부 검토완료 - 승인';
+            case DEFINE.STATUS_CD.CODE_12:
+                return '내부 검토완료 - 수정';
+            case DEFINE.STATUS_CD.CODE_13:
+                return '내부 검토완료 - 반송요청';
+            case DEFINE.STATUS_CD.CODE_20:
+                return '사업주 검토중';
+            case DEFINE.STATUS_CD.CODE_21:
+                return '사업주 검토완료 - 승인';
+            case DEFINE.STATUS_CD.CODE_22:
+                return '사업주 검토완료 - 수정';
+            case DEFINE.STATUS_CD.CODE_23:
+                return '사업주 검토완료 - 반송요청';
+            case DEFINE.STATUS_CD.CODE_30:
+                return '내부 재검토중';
+            case DEFINE.STATUS_CD.CODE_31:
+                return '내부 재검토완료 - 승인';
+            case DEFINE.STATUS_CD.CODE_32:
+                return '내부 재검토완료 - 수정';
+            case DEFINE.STATUS_CD.CODE_40:
+                return '사업주 재검토중';
+            case DEFINE.STATUS_CD.CODE_41:
+                return '사업주 재검토완료 - 승인';
+            case DEFINE.STATUS_CD.CODE_42:
+                return '사업주 재검토완료 - 수정';
+            case DEFINE.STATUS_CD.CODE_90:
+                return '회신';
+            case DEFINE.STATUS_CD.CODE_91:
+                return '개별 회신';
+            case DEFINE.STATUS_CD.CODE_92:
+                return '별도 회신';
+            case DEFINE.STATUS_CD.CODE_93:
+                return '재회신';
+            case DEFINE.STATUS_CD.CODE_94:
+                return '회신 필요없음';
+            default:
+                return code;
         }
     },
 
@@ -161,14 +161,14 @@ const DEFINE = {
 
     resultCodeConverter: function (code) {
         switch (code) {
-        case DEFINE.RESULT_CD.APPROVED:
-            return 'Approved';
+            case DEFINE.RESULT_CD.APPROVED:
+                return 'Approved';
 
-        case DEFINE.RESULT_CD.WITH_COMMENT:
-            return 'Approved with Comment';
+            case DEFINE.RESULT_CD.WITH_COMMENT:
+                return 'Approved with Comment';
 
-        case DEFINE.RESULT_CD.REJECT:
-            return 'Reject';
+            case DEFINE.RESULT_CD.REJECT:
+                return 'Reject';
         }
     },
 
@@ -181,14 +181,14 @@ const DEFINE = {
 
     replyCodeConverter: function (code) {
         switch (code) {
-        case DEFINE.REPLY_CD.ALL:
-            return '전체';
-        case DEFINE.REPLY_CD.PARTIAL:
-            return '부분';
-        case DEFINE.REPLY_CD.NON_OFFICIAL:
-            return '비공식';
-        case DEFINE.REPLY_CD.NONE:
-            return '회신 필요없음';
+            case DEFINE.REPLY_CD.ALL:
+                return '전체';
+            case DEFINE.REPLY_CD.PARTIAL:
+                return '부분';
+            case DEFINE.REPLY_CD.NON_OFFICIAL:
+                return '비공식';
+            case DEFINE.REPLY_CD.NONE:
+                return '회신 필요없음';
         }
     },
 
@@ -201,14 +201,14 @@ const DEFINE = {
 
     deleyGbConverter: function (code) {
         switch (code) {
-        case DEFINE.DELAY_GB.LAZY:
-            return '여유';
-        case DEFINE.DELAY_GB.NEAR:
-            return '임박';
-        case DEFINE.DELAY_GB.NOW:
-            return '오늘';
-        case DEFINE.DELAY_GB.DELAY:
-            return '지연';
+            case DEFINE.DELAY_GB.LAZY:
+                return '여유';
+            case DEFINE.DELAY_GB.NEAR:
+                return '임박';
+            case DEFINE.DELAY_GB.NOW:
+                return '오늘';
+            case DEFINE.DELAY_GB.DELAY:
+                return '지연';
         }
     },
 
@@ -245,10 +245,10 @@ const DEFINE = {
 
     vendorGbConverter: function (code) {
         switch (code) {
-        case DEFINE.VENDOR_GB.CONTRACTOR:
-            return '계약';
-        case DEFINE.VENDOR_GB.MANAGEMENT:
-            return '관리';
+            case DEFINE.VENDOR_GB.CONTRACTOR:
+                return '계약';
+            case DEFINE.VENDOR_GB.MANAGEMENT:
+                return '관리';
         }
     },
 
@@ -259,11 +259,29 @@ const DEFINE = {
 
     countryCodeConverter: function (code) {
         switch (code) {
-        case DEFINE.COUNTRY_CD.DOMESTIC:
-            return '국내';
+            case DEFINE.COUNTRY_CD.DOMESTIC:
+                return '국내';
 
-        case DEFINE.COUNTRY_CD.FOREIGN:
-            return '해외';
+            case DEFINE.COUNTRY_CD.FOREIGN:
+                return '해외';
+        }
+    },
+
+    LETTER_GB: {
+        EAMIL: '01',
+        TRANSMITTAL: '02'
+    },
+
+    letterGbConverter: function (code) {
+        switch (code) {
+            case DEFINE.LETTER_GB.EAMIL:
+                return 'E-mail';
+
+            case DEFINE.LETTER_GB.TRANSMITTAL:
+                return 'TR';
+
+            default:
+                return code;
         }
     },
 
@@ -275,14 +293,14 @@ const DEFINE = {
 
     senderReceiverGbConverter: function (code) {
         switch (code) {
-        case DEFINE.SENDER_RECEIVER_GB.CLIENT:
-            return 'CLIENT';
+            case DEFINE.SENDER_RECEIVER_GB.CLIENT:
+                return 'CLIENT';
 
-        case DEFINE.SENDER_RECEIVER_GB.CONTRACTOR:
-            return 'CONTRACTOR';
+            case DEFINE.SENDER_RECEIVER_GB.CONTRACTOR:
+                return 'CONTRACTOR';
 
-        case DEFINE.SENDER_RECEIVER_GB.VENDOR:
-            return 'VENDOR';
+            case DEFINE.SENDER_RECEIVER_GB.VENDOR:
+                return 'VENDOR';
         }
     }
 };

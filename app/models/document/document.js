@@ -321,6 +321,15 @@ DocumentSchema.statics.saveDocuments = async function (param) {
                 ]
             });
 
+            const isSaved = await this.findOne({
+                $and: [
+                    { documentNumber: { $eq: documentNumber } },
+                    { documentRev: { $eq: documentRev } }
+                ]
+            });
+
+            if (isSaved) throw new Error();
+
             documentGb = gb;
         } catch (e) {
             fails.push(documentNumber);

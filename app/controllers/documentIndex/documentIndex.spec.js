@@ -380,20 +380,15 @@ describe('  [ Document Index ]', () => {
         });
     });
 
-    describe('GET /documentindexes/:id/detail', () => {
+    describe('GET /documentindexes/:id/trackingdocument', () => {
         it('get documentIndex detail', (done) => {
             request(server)
-                .get(`/api/documentindexes/${id}/detail`)
+                .get(`/api/documentindexes/${id}/trackingdocument`)
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    const indexDetail = ctx.body.data;
-
-                    expect(indexDetail).haveOwnProperty('overall');
-                    expect(indexDetail).haveOwnProperty('statisticsByStatus');
-                    expect(indexDetail).haveOwnProperty('list');
-
+                    expect(ctx.body.data).instanceOf(Array);
                     done();
                 });
         });

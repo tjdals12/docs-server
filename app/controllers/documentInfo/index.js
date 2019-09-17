@@ -55,7 +55,13 @@ const documentInfo = new Router();
  *      description: 문서정보 목록 조회 
  *      produces:
  *          - application/json
- *      responses:
+ *      parameters:
+ *          - in: query
+ *            name: page
+ *            description: page number
+ *            type: string
+ *            example: 1
+ *      ponses:
  *          200:
  *              description: Succeessful operation
  *              schema:
