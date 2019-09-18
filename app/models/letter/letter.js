@@ -36,13 +36,17 @@ const LetterSchema = new Schema({
         type: String,
         default: DEFINE.COMMON.DEFAULT_NO
     },
-    replyDate: {
+    targetDate: {
         type: Date,
         get: DEFINE.dateConverter
     },
     replyYn: {
         type: String,
         default: DEFINE.COMMON.DEFAULT_NO
+    },
+    replyDate: {
+        type: Date,
+        get: DEFINE.dateConverter
     },
     officialNumber: {
         type: String,
@@ -62,7 +66,19 @@ LetterSchema.set('toJSON', { getters: true });
  * @description 공식문서 추가
  */
 LetterSchema.statics.saveLetter = async function (param) {
-    // TODO: officialNumber 부여
+    const nextNum = await this
+        .find({ letterGb: param.letterGb }, { _id: 0, officialNumber: 1 })
+        .sort({ officialNumber: -1 })
+        .then((data) => {
+            if (data.length === 0)
+                return '001';
+
+            let temp = parseInt(data[0].officialNumber.split('-').pop(), 10) + 1 + '';
+            return temp.length < 3 ? new Array(3 - temp.length + 1).join('0') + temp : temp;
+        });
+
+    param.officialNumber = `${param.senderGb === '01' ? 'HTC' : 'HENC'}-${param.receiverGb === '01' ? 'HTC' : 'HENC'}-${param.letterGb === '01' ? 'E' : 'T'}-${nextNum}`;
+
     const letter = new this({ ...param });
 
     await letter.save();

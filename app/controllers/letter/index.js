@@ -108,7 +108,7 @@ letter.get('/', letterCtrl.list);
  *                      example: '이성민 사원'
  *                  receiverGb:
  *                      type: string
- *                      example: '03'
+ *                      example: '01'
  *                  receiver:
  *                      type: string
  *                      example: '김상현 대리'

@@ -57,7 +57,7 @@ export const add = async (ctx) => {
         receiver,
         sendDate,
         replyRequired,
-        replyDate
+        targetDate
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
@@ -70,7 +70,7 @@ export const add = async (ctx) => {
         receiver: Joi.string().required(),
         sendDate: Joi.string().optional(),
         replyRequired: Joi.string().required(),
-        replyDate: Joi.string().optional()
+        targetDate: Joi.string().optional()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -95,7 +95,7 @@ export const add = async (ctx) => {
             receiver,
             sendDate,
             replyRequired,
-            replyDate
+            targetDate
         });
 
         ctx.res.ok({
