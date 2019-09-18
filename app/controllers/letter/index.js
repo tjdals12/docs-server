@@ -224,4 +224,44 @@ letter.get('/:id', commonCtrl.checkObjectId, letterCtrl.one);
  */
 letter.patch('/:id/edit', commonCtrl.checkObjectId, letterCtrl.edit);
 
+/**
+ * @swagger
+ * /api/letters/{id}/cancel:
+ *  patch:
+ *      tags:
+ *          - Letter
+ *      summary: 공식문서 취소
+ *      description: 공식문서 취소
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: letter id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *          - in: body
+ *            name: body
+ *            description: cancel parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  yn:
+ *                      type: string
+ *                      example: 'YES'
+ *                  reason:
+ *                      type: string
+ *                      example: '잘못 작성됨.'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/letter'
+ */
+letter.patch('/:id/cancel', commonCtrl.checkObjectId, letterCtrl.cancel);
+
 export default letter;

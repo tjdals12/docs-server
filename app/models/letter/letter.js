@@ -52,6 +52,20 @@ const LetterSchema = new Schema({
         type: String,
         unique: true
     },
+    cancelYn: {
+        yn: {
+            type: String,
+            default: DEFINE.COMMON.DEFAULT_NO
+        },
+        cancelDt: {
+            type: Date,
+            default: DEFINE.dateNow
+        },
+        reason: {
+            type: String,
+            default: DEFINE.COMMON.DEFAULT_REASON
+        }
+    },
     memo: String,
     timestamp: {
         type: Timestamp.schema,
@@ -121,6 +135,36 @@ LetterSchema.statics.editLetter = function (param) {
                 replyRequired,
                 targetDate,
                 memo,
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    );
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 18
+ * @description 공식문서 취소 
+ */
+LetterSchema.statics.cancelLetter = function (param) {
+    let {
+        id,
+        yn,
+        reason
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                cancelYn: {
+                    yn,
+                    reason,
+                    cancelDt: DEFINE.dateNow()
+                },
                 'timestamp.updDt': DEFINE.dateNow()
             }
         },

@@ -206,3 +206,43 @@ export const edit = async (ctx) => {
         });
     }
 };
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 18
+ * @description 공식문서 취소
+ */
+export const cancel = async (ctx) => {
+    let { id } = ctx.params;
+    let { yn, reason } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        yn: Joi.string().required(),
+        reason: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - letterCtrl > cancel'
+        });
+
+        return;
+    }
+
+    try {
+        const letter = await Letter.cancelLetter({ id, yn, reason });
+
+        ctx.res.ok({
+            data: letter,
+            message: 'Success - letterCtrl > cancel'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - letterCtrl > cancel: ${e.message}`
+        });
+    }
+};

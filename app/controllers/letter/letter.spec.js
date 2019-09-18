@@ -109,4 +109,24 @@ describe('  [ Letter ]', () => {
                 });
         });
     });
+
+    describe('PATCH /letters/:id/cancel', () => {
+        it('delete letter', (done) => {
+            request(server)
+                .patch(`/api/letters/${id}/cancel`)
+                .send({
+                    yn: 'YES',
+                    reason: '잘못 작성됨.'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.cancelYn.yn).to.equal('YES');
+                    expect(ctx.body.data.cancelYn.reason).to.equal('잘못 작성됨.');
+                    done();
+                });
+        });
+    });
 });
