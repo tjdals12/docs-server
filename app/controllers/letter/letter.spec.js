@@ -34,11 +34,11 @@ describe('  [ Letter ]', () => {
             request(server)
                 .post('/api/letters')
                 .send({
-                    letterGb: '01',
+                    letterGb: '02',
                     letterTitle: 'HENC-HTC-T-R-001-001 검토요청의 건',
                     senderGb: '02',
                     sender: '이성민 사원',
-                    receiverGb: '03',
+                    receiverGb: '01',
                     receiver: '김형준 대리',
                     replyRequired: 'NO',
                 })
@@ -77,6 +77,34 @@ describe('  [ Letter ]', () => {
                     if (err) throw err;
 
                     expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /letters/:id/edit', () => {
+        it('edit letter', (done) => {
+            request(server)
+                .patch(`/api/letters/${id}/edit`)
+                .send({
+                    letterGb: '02',
+                    letterTitle: 'HENC-HTC-T-R-001-028 검토요청의 건',
+                    senderGb: '02',
+                    sender: '김미경 사원',
+                    receiverGb: '01',
+                    receiver: '전체',
+                    sendDate: '2019-09-22',
+                    replyRequired: 'NO',
+                })
+                .expect(200)
+
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.letterTitle).to.equal('HENC-HTC-T-R-001-028 검토요청의 건');
+                    expect(ctx.body.data.sender).to.equal('김미경 사원');
+                    expect(ctx.body.data.receiver).to.equal('전체');
+                    expect(ctx.body.data.sendDate.substr(0, 10)).to.equal('2019-09-22');
                     done();
                 });
         });

@@ -52,6 +52,7 @@ const LetterSchema = new Schema({
         type: String,
         unique: true
     },
+    memo: String,
     timestamp: {
         type: Timestamp.schema,
         default: Timestamp
@@ -84,6 +85,49 @@ LetterSchema.statics.saveLetter = async function (param) {
     await letter.save();
 
     return this.findOne({ _id: letter._id });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 18
+ * @description 공식문서 수정
+ */
+LetterSchema.statics.editLetter = function (param) {
+    let {
+        id,
+        letterGb,
+        letterTitle,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        sendDate,
+        replyRequired,
+        targetDate,
+        memo
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                letterGb,
+                letterTitle,
+                senderGb,
+                sender,
+                receiverGb,
+                receiver,
+                sendDate,
+                replyRequired,
+                targetDate,
+                memo,
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    );
 };
 
 export default model('Letter', LetterSchema);

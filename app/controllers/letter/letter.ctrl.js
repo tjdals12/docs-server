@@ -57,7 +57,8 @@ export const add = async (ctx) => {
         receiver,
         sendDate,
         replyRequired,
-        targetDate
+        targetDate,
+        memo
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
@@ -70,7 +71,8 @@ export const add = async (ctx) => {
         receiver: Joi.string().required(),
         sendDate: Joi.string().optional(),
         replyRequired: Joi.string().required(),
-        targetDate: Joi.string().optional()
+        targetDate: Joi.string().optional(),
+        memo: Joi.string().optional()
     });
 
     const result = Joi.validate(ctx.request.body, schema);
@@ -95,7 +97,8 @@ export const add = async (ctx) => {
             receiver,
             sendDate,
             replyRequired,
-            targetDate
+            targetDate,
+            memo
         });
 
         ctx.res.ok({
@@ -129,6 +132,77 @@ export const one = async (ctx) => {
         ctx.res.internalServerError({
             data: id,
             message: `Error - letterCtrl > one: ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 18
+ * @description 공식문서 수정
+ */
+export const edit = async (ctx) => {
+    let { id } = ctx.params;
+    let {
+        letterGb,
+        letterTitle,
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        sendDate,
+        replyRequired,
+        targetDate,
+        memo
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        letterGb: Joi.string().required(),
+        letterTitle: Joi.string().required(),
+        senderGb: Joi.string().required(),
+        sender: Joi.string().required(),
+        receiverGb: Joi.string().required(),
+        receiver: Joi.string().required(),
+        sendDate: Joi.string().required(),
+        replyRequired: Joi.string().required(),
+        targetDate: Joi.string().optional(),
+        memo: Joi.string().optional()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - letterCtrl > edit'
+        });
+
+        return;
+    }
+
+    try {
+        const letter = await Letter.editLetter({
+            id,
+            letterGb,
+            letterTitle,
+            senderGb,
+            sender,
+            receiverGb,
+            receiver,
+            sendDate,
+            replyRequired,
+            targetDate,
+            memo
+        });
+
+        ctx.res.ok({
+            data: letter,
+            message: 'Success - letterCtrl > edit'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - letterCtrl > edit: ${e.message}`
         });
     }
 };

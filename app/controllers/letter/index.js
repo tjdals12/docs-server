@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import * as commonCtrl from 'controllers/common.ctrl';
 import * as letterCtrl from './letter.ctrl';
 
 const letter = new Router();
@@ -46,6 +47,16 @@ const letter = new Router();
  *          replyRequired:
  *              type: string
  *              example: 'NO'
+ *          targetDate:
+ *              type: string
+ *              format: date-time
+ *              example: 2019-10-29 10:11:34
+ *          replyYn:
+ *              type: string
+ *              example: 'YES'
+ *          replyDate:
+ *              type: string
+ *              example: 2019-10-27 10:11:34
  *          timestamp: 
  *              $ref: '#/definitions/timestamp'
  */
@@ -152,6 +163,65 @@ letter.post('/', letterCtrl.add);
  *              schema:
  *                  $ref: '#/definitions/letter'
  */
-letter.get('/:id', letterCtrl.one);
+letter.get('/:id', commonCtrl.checkObjectId, letterCtrl.one);
+
+/**
+ * @swagger
+ * /api/letters/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Letter
+ *      summary: 공식문서 수정
+ *      description: 공식문서 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: letter id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *          - in: body
+ *            name: body
+ *            description: edit parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  letterGb:
+ *                      type: string
+ *                      example: '02'
+ *                  letterTitle:
+ *                      type: string
+ *                      example: 'HENC-HTC-T-R-001-028 검토요청의 건'
+ *                  senderGb:
+ *                      type: string
+ *                      example: '02'
+ *                  sender:
+ *                      type: string
+ *                      example: '김미경 사원'
+ *                  receiverGb:
+ *                      type: string
+ *                      example: '01'
+ *                  receiver:
+ *                      type: string
+ *                      example: '전체'
+ *                  sendDate:
+ *                      type: string
+ *                      format: date
+ *                      example: 2019-09-23
+ *                  replyRequired:
+ *                      type: string
+ *                      example: 'NO'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/letter'
+ */
+letter.patch('/:id/edit', commonCtrl.checkObjectId, letterCtrl.edit);
 
 export default letter;
