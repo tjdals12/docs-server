@@ -63,7 +63,7 @@ export const add = async (ctx) => {
 
     const schema = Joi.object().keys({
         letterGb: Joi.string().required(),
-        reference: Joi.string().optional(),
+        reference: Joi.array().optional(),
         letterTitle: Joi.string().required(),
         senderGb: Joi.string().required(),
         sender: Joi.string().required(),
@@ -114,6 +114,38 @@ export const add = async (ctx) => {
 };
 
 /**
+ * @author minz-logger
+ * @date 2019. 09. 19
+ * @description 참조할 문서 검색
+ */
+export const referenceSearch = async (ctx) => {
+    let { keyword } = ctx.query;
+
+    if (!keyword) {
+        ctx.res.badRequest({
+            data: { keyword: keyword },
+            message: 'Fail - letterCtrl > referenceSearch'
+        });
+
+        return;
+    }
+
+    try {
+        const result = await Letter.referenceSearch(keyword);
+
+        ctx.res.ok({
+            data: result,
+            message: 'Success - letterCtrl > referenceSearch'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - letterCtrl > referenceSearch: ${e.message}`
+        });
+    }
+};
+
+/**
  * @author      minz-logger
  * @date        2019. 09. 16
  * @description 공식문서 조회
@@ -122,10 +154,10 @@ export const one = async (ctx) => {
     let { id } = ctx.params;
 
     try {
-        const letter = await Letter.findOne({ _id: id });
+        const letter = await Letter.letterDetail(id);
 
         ctx.res.ok({
-            data: letter,
+            data: letter[0],
             message: 'Success - letterCtrl > one'
         });
     } catch (e) {

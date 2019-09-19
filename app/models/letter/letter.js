@@ -1,6 +1,8 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
+import Document from 'models/document/document';
+import VendorLetter from 'models/vendorLetter/vendorLetter';
 
 /**
  * @author      minz-logger
@@ -12,10 +14,7 @@ const LetterSchema = new Schema({
         type: String,
         get: DEFINE.letterGbConverter
     },
-    reference: {
-        type: Schema.Types.ObjectId,
-        ref: 'VendorLetter'
-    },
+    reference: [Schema.Types.ObjectId],
     letterTitle: String,
     senderGb: {
         type: String,
@@ -99,6 +98,106 @@ LetterSchema.statics.saveLetter = async function (param) {
     await letter.save();
 
     return this.findOne({ _id: letter._id });
+};
+
+LetterSchema.statics.referenceSearch = async function (keyword) {
+    let documents = await Document.find({
+        $or: [
+            { documentNumber: { $regex: keyword + '.*', $options: 'i' } },
+            { documentTitle: { $regex: keyword + '.*', $options: 'i' } }
+        ]
+    });
+
+    documents = documents.map(({ _id, documentNumber, documentTitle, documentRev, timestamp }) => {
+        return {
+            _id,
+            description: `${documentNumber} ${documentTitle} Rev.${documentRev} / ${timestamp.regDt.substr(0, 10)}`
+        };
+    });
+
+    let vendorLetters = await VendorLetter.find({ officialNumber: { $regex: keyword + '.*', $options: 'i' } }).populate({ path: 'vendor' });
+
+    vendorLetters = vendorLetters.map(({ _id, vendor, officialNumber, timestamp }) => {
+        return {
+            _id,
+            description: `${vendor.itemName}(${vendor.vendorName}) ${officialNumber} / ${timestamp.regDt.substr(0, 10)}`
+        };
+    });
+
+    return documents.concat(vendorLetters);
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 19
+ * @description 공식문서 조회 (for multiple join)
+ */
+LetterSchema.statics.letterDetail = function (id) {
+    return this.aggregate([
+        {
+            $match: {
+                _id: Types.ObjectId(id)
+            }
+        },
+        {
+            $unwind: {
+                path: '$reference',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: 'vendorletters',
+                localField: 'reference',
+                foreignField: '_id',
+                as: 'vendorLetters',
+            }
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'reference',
+                foreignField: '_id',
+                as: 'documents'
+            }
+        },
+        {
+            $unwind: {
+                path: '$vendorLetters',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $unwind: {
+                path: '$documents',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $group: {
+                _id: '$_id',
+                letterGb: { $first: '$letterGb' },
+                officialNumber: { $first: '$officialNumber' },
+                letterTitle: { $first: '$letterTitle' },
+                senderGb: { $first: '$senderGb' },
+                sender: { $first: '$sender' },
+                receiverGb: { $first: '$receiverGb' },
+                receiver: { $first: '$receiver' },
+                sendDate: { $first: '$sendDate' },
+                replyRequired: { $first: '$replyRequired' },
+                targetDate: { $first: '$targetDate' },
+                replyYn: { $first: '$replyYn' },
+                replyDate: { $first: '$replyDate' },
+                memo: { $first: '$memo' },
+                timestamp: { $first: '$timestamp' },
+                vendorLetters: { $push: '$vendorLetters' },
+                documents: { $push: '$documents' }
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
 };
 
 /**

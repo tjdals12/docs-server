@@ -54,6 +54,14 @@ describe('  [ Letter ]', () => {
         });
     });
 
+    describe('GET /letters/ref/search', () => {
+        it('get references', (done) => {
+            request(server)
+                .get('/api/letters/ref/search?keyword=R-001')
+                .expect(200, done());
+        });
+    });
+
     describe('GET /letters', () => {
         it('get letters', (done) => {
             request(server)

@@ -140,6 +140,42 @@ letter.post('/', letterCtrl.add);
 
 /**
  * @swagger
+ * /api/letters/ref/search:
+ *  get:
+ *      tags:
+ *          - Letter
+ *      summary: 참조할 문서 검색
+ *      description: 참조할 문서 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: query
+ *            name: keyword
+ *            description: search keyword
+ *            required: true
+ *            type: string
+ *            example: R-001
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      example: [ { _id: 5d33ef877cceb91244d16fdd, description: 'Boilder Feed Water Pump(성민테크) SMT-HENC-T-R-001-001 / 2019-09-21' } ]
+ *                      properties:
+ *                          _id:
+ *                              type: string
+ *                              format: ObjectId
+ *                          description:
+ *                              type: string
+ */
+letter.get('/ref/search', letterCtrl.referenceSearch);
+
+/**
+ * @swagger
  * /api/letters/{id}:
  *  get:
  *      tags:
