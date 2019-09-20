@@ -87,6 +87,74 @@ letter.get('/', letterCtrl.list);
 
 /**
  * @swagger
+ * /api/letters/search:
+ *  post:
+ *      tags:
+ *          - Letter
+ *      summary: 공식문서 검색
+ *      description: 공식문서 검색
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: query
+ *            name: page
+ *            description: page number
+ *            type: string
+ *            example: 1
+ *          - in: body
+ *            name: body
+ *            description: search parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  senderGb:
+ *                      type: string
+ *                      example: '02'
+ *                  sender:
+ *                      type: string
+ *                      example: '이성민'
+ *                  receiverGb:
+ *                      type: string
+ *                      example: '01'
+ *                  receiver:
+ *                      type: string
+ *                      example: '전체'
+ *                  letterGb:
+ *                      type: string
+ *                      example: '02'
+ *                  officialNumber:
+ *                      type: string
+ *                      example: 'HENC-'
+ *                  letterTitle:
+ *                      type: string
+ *                      example: '요청'
+ *                  replyRequired:
+ *                      type: string
+ *                      example: 'YES'
+ *                  replyYn:
+ *                      type: string
+ *                      example: 'NO'
+ *                  sendDate:
+ *                      type: string
+ *                      format: date-time
+ *                      example: 2019-09-19
+ *                  targetDate:
+ *                      type: string
+ *                      format: date-time
+ *                      example: 2019-09-27
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/letter'
+ */
+letter.post('/search', letterCtrl.search);
+
+/**
+ * @swagger
  * /api/letters:
  *  post:
  *      tags:

@@ -13,7 +13,7 @@ export const list = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - vendorCtrl > list'
+            message: 'Page can\'t be less than 1'
         });
 
         return;

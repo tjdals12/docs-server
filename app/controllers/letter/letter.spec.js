@@ -90,6 +90,23 @@ describe('  [ Letter ]', () => {
         });
     });
 
+    describe('POST /letters/search', () => {
+        it('search letters', (done) => {
+            request(server)
+                .post('/api/letters/search?page=1')
+                .send({
+                    letterGb: '02'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('PATCH /letters/:id/edit', () => {
         it('edit letter', (done) => {
             request(server)

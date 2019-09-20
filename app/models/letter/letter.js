@@ -76,6 +76,93 @@ LetterSchema.set('toJSON', { getters: true });
 
 /**
  * @author      minz-logger
+ * @date        2019. 09. 20
+ * @description 공식문서 검색
+ */
+LetterSchema.statics.searchLetter = function (param, page) {
+    let {
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        letterGb,
+        officialNumber,
+        letterTitle,
+        replyRequired,
+        replyYn,
+        sendDate,
+        targetDate
+    } = param;
+
+    return this.find({
+        $and: [
+            { senderGb: { $regex: senderGb + '.*', $options: 'i' } },
+            { sender: { $regex: sender + '.*', $options: 'i' } },
+            { receiverGb: { $regex: receiverGb + '.*', $options: 'i' } },
+            { receiver: { $regex: receiver + '.*', $options: 'i' } },
+            { letterGb: { $regex: letterGb + '.*', $options: 'i' } },
+            { officialNumber: { $regex: officialNumber + '.*', $options: 'i' } },
+            { letterTitle: { $regex: letterTitle + '.*', $options: 'i' } },
+            { replyRequired: { $regex: replyRequired + '.*', $options: 'i' } },
+            { replyYn: { $regex: replyYn + '.*', $options: 'i' } },
+            { sendDate: { $lte: new Date(sendDate) } },
+            {
+                $or: [
+                    { targetDate: { $exists: true, $lte: new Date(targetDate) } },
+                    { targetDate: { $exists: false } }
+                ]
+            }
+        ]
+    })
+        .skip((page - 1) * 10)
+        .limit(10)
+        .sort({ sendDate: -1 });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 20
+ * @description 공식문서 검색 카운트
+ */
+LetterSchema.statics.searchLetterCount = async function (param) {
+    let {
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        letterGb,
+        officialNumber,
+        letterTitle,
+        replyRequired,
+        replyYn,
+        sendDate,
+        targetDate
+    } = param;
+
+    return this.countDocuments({
+        $and: [
+            { senderGb: { $regex: senderGb + '.*', $options: 'i' } },
+            { sender: { $regex: sender + '.*', $options: 'i' } },
+            { receiverGb: { $regex: receiverGb + '.*', $options: 'i' } },
+            { receiver: { $regex: receiver + '.*', $options: 'i' } },
+            { letterGb: { $regex: letterGb + '.*', $options: 'i' } },
+            { officialNumber: { $regex: officialNumber + '.*', $options: 'i' } },
+            { letterTitle: { $regex: letterTitle + '.*', $options: 'i' } },
+            { replyRequired: { $regex: replyRequired + '.*', $options: 'i' } },
+            { replyYn: { $regex: replyYn + '.*', $options: 'i' } },
+            { sendDate: { $lte: new Date(sendDate) } },
+            {
+                $or: [
+                    { targetDate: { $exists: true, $lte: new Date(targetDate) } },
+                    { targetDate: { $exists: false } }
+                ]
+            }
+        ]
+    });
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 09. 16
  * @description 공식문서 추가
  */

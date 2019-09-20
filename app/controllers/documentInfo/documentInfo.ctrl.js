@@ -45,7 +45,7 @@ export const search = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentInfoCtrl > search'
+            message: 'Page can\'t be less than 1'
         });
 
         return;

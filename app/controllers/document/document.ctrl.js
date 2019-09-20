@@ -59,7 +59,7 @@ export const search = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentCtrl > search'
+            message: 'Page can\'t be less than 1'
         });
 
         return;
@@ -310,7 +310,7 @@ export const deleteMany = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentCtrl > deleteMany'
+            message: 'Page can\'t be less than 1'
         });
 
         return;

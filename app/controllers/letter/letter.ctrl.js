@@ -23,7 +23,7 @@ export const list = async (ctx) => {
             .find()
             .skip((page - 1) * 10)
             .limit(10)
-            .sort({ 'timestamp.regDt': -1 });
+            .sort({ sendDate: -1 });
 
         const count = await Letter.countDocuments();
 
@@ -37,6 +37,70 @@ export const list = async (ctx) => {
         ctx.res.internalServerError({
             data: [],
             message: `Error - letterCtrl > list: ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 20
+ * @description 공식문서 검색
+ */
+export const search = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Page can\'t be less than 1'
+        });
+
+        return;
+    }
+
+    let {
+        senderGb,
+        sender,
+        receiverGb,
+        receiver,
+        letterGb,
+        officialNumber,
+        letterTitle,
+        replyRequired,
+        replyYn,
+        sendDate,
+        targetDate
+    } = ctx.request.body;
+
+    const query = {
+        senderGb: senderGb ? senderGb : '',
+        sender: sender ? sender : '',
+        receiverGb: receiverGb ? receiverGb : '',
+        receiver: receiver ? receiver : '',
+        letterGb: letterGb ? letterGb : '',
+        officialNumber: officialNumber ? officialNumber : '',
+        letterTitle: letterTitle ? letterTitle : '',
+        replyRequired: replyRequired ? replyRequired : '',
+        replyYn: replyYn ? replyYn : '',
+        sendDate: sendDate ? sendDate : '9999-12-31',
+        targetDate: targetDate ? targetDate : '9999-12-31'
+    };
+
+    try {
+        const letters = await Letter.searchLetter(query, page);
+
+        const count = await Letter.searchLetterCount(query);
+
+        ctx.set('Last-Page', Math.ceil(count / 10));
+
+        ctx.res.ok({
+            data: letters,
+            message: 'Success - letterCtrl > search'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - letterCtrl > search: ${e.message}`
         });
     }
 };

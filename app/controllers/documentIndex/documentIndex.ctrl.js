@@ -15,7 +15,7 @@ export const list = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentIndexCtrl > list'
+            message: 'Page can\'t be less than 1'
         });
 
         return;
@@ -81,7 +81,7 @@ export const search = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentIndexCtrl > search'
+            message: 'Page can\'t be less than 1'
         });
 
         return;
@@ -323,7 +323,7 @@ export const trackingDocument = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail > documentIndexCtrl > trackingDocument'
+            message: 'Page can\'t be less than 1'
         });
 
         return;
@@ -412,7 +412,7 @@ export const deleteDocumentIndex = async (ctx) => {
     if (page < 1) {
         ctx.res.badRequest({
             data: page,
-            message: 'Fail - documentIndexCtrl > deleteDocumentIndex'
+            message: 'Page can\'t be less than 1'
         });
 
         return;
