@@ -136,4 +136,46 @@ documentInfo.post('/search', documentInfoCtrl.search);
  */
 documentInfo.get('/:id', commonCtrl.checkObjectId, documentInfoCtrl.one);
 
+/**
+ * @swagger
+ * /api/documentinfos/{vendor}/latest:
+ *  get:
+ *      tags:
+ *          - Document Info
+ *      summary: 최신 문서 목록 조회
+ *      description: 최신 문서 목록 조회
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: vendor
+ *            description: vendor id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
+ *                              format: ObjectId
+ *                              example: 5d33ef877cceb91244d16fdd
+ *                          documentNumber:
+ *                              type: string
+ *                              example: 'VP-NCC-R-001-001'
+ *                          documentTitle:
+ *                              type: string            
+ *                              example: 'Vendor Print Index & Schedule' 
+ *                          latestDocument:
+ *                              $ref: '#/definitions/document'
+ */
+documentInfo.get('/:vendor/latest', documentInfoCtrl.latest);
+
 export default documentInfo;

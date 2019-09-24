@@ -128,4 +128,31 @@ describe('  [ PROJECT ]', () => {
                 });
         });
     });
+
+    describe('PATCH /api/projects/:id/edit', () => {
+        it('patch project', (done) => {
+            request(server)
+                .patch(`/api/projects/${id}/edit`)
+                .send({
+                    projectGb: projectGb,
+                    projectName: 'High Purity N-Heptane Project',
+                    projectCode: 'HPN',
+                    effStaDt: '2016-07-01',
+                    effEndDt: '2017-10-31',
+                    client: '한화토탈',
+                    clientCode: 'HTC',
+                    contractor: '한화건설',
+                    contractorCode: 'HENC',
+                    memo: '고순도 솔벤트 12,600 ton/year 생산 설비 신설'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data._id).to.equal(id);
+                    expect(ctx.body.data.projectName).to.equal('High Purity N-Heptane Project');
+                    done();
+                });
+        });
+    });
 });

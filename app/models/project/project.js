@@ -66,4 +66,48 @@ ProjectSchema.statics.saveProject = async function (param) {
         .populate({ path: 'projectGb' });
 };
 
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 24
+ * @description 프로젝트 수정
+ * @param       {String} id
+ * @param       {Object} param
+ */
+ProjectSchema.statics.editProject = function (id, param) {
+    let {
+        projectGb,
+        projectName,
+        projectCode,
+        effStaDt,
+        effEndDt,
+        client,
+        clientCode,
+        contractor,
+        contractorCode,
+        memo
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                projectGb,
+                projectName,
+                projectCode,
+                effStaDt,
+                effEndDt,
+                client,
+                clientCode,
+                contractor,
+                contractorCode,
+                memo,
+                'timestamp.uptDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'projectGb' });
+};
+
 export default model('Project', ProjectSchema);

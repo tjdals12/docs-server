@@ -135,3 +135,73 @@ export const one = async (ctx) => {
         });
     }
 };
+
+/**
+ * @author minz-logger
+ * @date 2019. 09. 24
+ * @description 프로젝트 수정
+ */
+export const edit = async (ctx) => {
+    let { id } = ctx.params;
+
+    let {
+        projectGb,
+        projectName,
+        projectCode,
+        effStaDt,
+        effEndDt,
+        client,
+        clientCode,
+        contractor,
+        contractorCode,
+        memo
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        projectGb: Joi.string().required(),
+        projectName: Joi.string().required(),
+        projectCode: Joi.string().required(),
+        effStaDt: Joi.string().required(),
+        effEndDt: Joi.string().required(),
+        client: Joi.string().required(),
+        clientCode: Joi.string().required(),
+        contractor: Joi.string().required(),
+        contractorCode: Joi.string().required(),
+        memo: Joi.string().optional()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - projectCtrl > edit'
+        });
+        return;
+    }
+
+    try {
+        const project = await Project.editProject(id, {
+            projectGb,
+            projectName,
+            projectCode,
+            effStaDt,
+            effEndDt,
+            client,
+            clientCode,
+            contractor,
+            contractorCode,
+            memo
+        });
+
+        ctx.res.ok({
+            data: project,
+            message: 'Success - projectCtrl > edit'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - projectCtrl > edit: ${e.message}`
+        });
+    }
+};

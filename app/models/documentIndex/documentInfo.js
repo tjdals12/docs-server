@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, Types } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 import removeYn from 'models/documentIndex/removeYn';
@@ -203,6 +203,60 @@ DocumentInfoSchema.statics.deleteDocumentInfo = function (id, reason) {
             new: true
         }
     ).populate({ path: 'trackingDocument' });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 24
+ * @description 최신 문서 목록 조회
+ * @param       {String} vendor
+ */
+DocumentInfoSchema.statics.latestDocuments = function (vendor) {
+    return this.aggregate([
+        {
+            $match: {
+                vendor: Types.ObjectId(vendor)
+            }
+        },
+        {
+            $project: {
+                documentNumber: 1,
+                documentTitle: 1,
+                latestDocument: {
+                    $arrayElemAt: [{ $slice: ['$trackingDocument', -1] }, -1]
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'latestDocument',
+                foreignField: '_id',
+                as: 'latestDocument'
+            }
+        },
+        {
+            $unwind: {
+                path: '$latestDocument',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $project: {
+                documentNumber: 1,
+                documentTitle: 1,
+                latestDocument: {
+                    documentRev: 1,
+                    documentInOut: {
+                        $arrayElemAt: [{ $slice: ['$latestDocument.documentInOut', 1] }, -1]
+                    },
+                    documentStatus: {
+                        $arrayElemAt: [{ $slice: ['$latestDocument.documentStatus', -1] }, -1]
+                    }
+                }
+            }
+        }
+    ]);
 };
 
 export default model('DocumentInfo', DocumentInfoSchema);

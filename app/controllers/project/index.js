@@ -170,4 +170,70 @@ project.post('/', projectCtrl.add);
  */
 project.get('/:id', commonCtrl.checkObjectId, projectCtrl.one);
 
+/**
+ * @swagger
+ * /api/projects/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Project
+ *      summary: 프로젝트 수정
+ *      description: 프로젝트 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: project id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *          - in: body
+ *            name: body
+ *            description: edit parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  projectGb:
+ *                      type: string
+ *                      example: 5d33ef877cceb91244d16fdd
+ *                  projectName:
+ *                      type: string
+ *                      example: 'High Purity N-Heptane Project'
+ *                  projectCode:
+ *                      type: string
+ *                      example: 'HPN'
+ *                  effStaDt:
+ *                      type: string
+ *                      format: date-time
+ *                      example: '2016-07-01'
+ *                  effEndDt:
+ *                      type: string
+ *                      format: date-time
+ *                      example: '2017-10-31'
+ *                  client:
+ *                      type: string
+ *                      example: '한화토탈'
+ *                  clientCode:
+ *                      type: string
+ *                      example: 'HTC'
+ *                  contractor:
+ *                      type: string
+ *                      example: '한화건설'
+ *                  contractorCode:
+ *                      type: string
+ *                      example: 'HENC'
+ *                  memo:
+ *                      type: string
+ *                      example: '고순도 솔벤트 12,600 ton/year 생산 설비 신설'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/project'
+ */
+project.patch('/:id/edit', commonCtrl.checkObjectId, projectCtrl.edit);
+
 export default project;

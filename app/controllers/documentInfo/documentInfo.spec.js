@@ -251,4 +251,18 @@ describe('  [ Document Info ]', () => {
                 });
         });
     });
+
+    describe('GET /documentinfos/{vendor}/latest', () => {
+        it('get latest documents', (done) => {
+            request(server)
+                .get(`/api/documentinfos/${vendorId}/latest`)
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(3);
+                    done();
+                });
+        });
+    });
 });
