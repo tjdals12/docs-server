@@ -23,7 +23,7 @@ export const list = async (ctx) => {
             .find()
             .skip((page - 1) * 10)
             .limit(10)
-            .sort({ sendDate: -1 });
+            .sort({ officialNumber: -1 });
 
         const count = await Letter.countDocuments();
 
@@ -112,6 +112,7 @@ export const search = async (ctx) => {
  */
 export const add = async (ctx) => {
     let {
+        project,
         letterGb,
         reference,
         letterTitle,
@@ -126,6 +127,7 @@ export const add = async (ctx) => {
     } = ctx.request.body;
 
     const schema = Joi.object().keys({
+        project: Joi.string().required(),
         letterGb: Joi.string().required(),
         reference: Joi.array().optional(),
         letterTitle: Joi.string().required(),
@@ -152,6 +154,7 @@ export const add = async (ctx) => {
 
     try {
         const letter = await Letter.saveLetter({
+            project,
             letterGb,
             reference,
             letterTitle,
@@ -241,6 +244,7 @@ export const edit = async (ctx) => {
     let { id } = ctx.params;
     let {
         letterGb,
+        reference,
         letterTitle,
         senderGb,
         sender,
@@ -254,6 +258,7 @@ export const edit = async (ctx) => {
 
     const schema = Joi.object().keys({
         letterGb: Joi.string().required(),
+        reference: Joi.array().optional(),
         letterTitle: Joi.string().required(),
         senderGb: Joi.string().required(),
         sender: Joi.string().required(),
@@ -280,6 +285,7 @@ export const edit = async (ctx) => {
         const letter = await Letter.editLetter({
             id,
             letterGb,
+            reference,
             letterTitle,
             senderGb,
             sender,
@@ -292,7 +298,7 @@ export const edit = async (ctx) => {
         });
 
         ctx.res.ok({
-            data: letter,
+            data: letter[0],
             message: 'Success - letterCtrl > edit'
         });
     } catch (e) {

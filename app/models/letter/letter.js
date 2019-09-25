@@ -3,6 +3,7 @@ import { Timestamp } from 'models/common/schema';
 import DEFINE from 'models/common';
 import Document from 'models/document/document';
 import VendorLetter from 'models/vendorLetter/vendorLetter';
+import Project from 'models/project/project';
 
 /**
  * @author      minz-logger
@@ -10,6 +11,10 @@ import VendorLetter from 'models/vendorLetter/vendorLetter';
  * @description 공식 문서
  */
 const LetterSchema = new Schema({
+    project: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project'
+    },
     letterGb: {
         type: String,
         get: DEFINE.letterGbConverter
@@ -168,8 +173,15 @@ LetterSchema.statics.searchLetterCount = async function (param) {
  */
 LetterSchema.statics.saveLetter = async function (param) {
     const nextNum = await this
-        .find({ letterGb: param.letterGb }, { _id: 0, officialNumber: 1 })
+        .find({
+            $and: [
+                { project: param.project },
+                { letterGb: param.letterGb }
+            ]
+
+        }, { _id: 0, officialNumber: 1 })
         .sort({ officialNumber: -1 })
+        .limit(1)
         .then((data) => {
             if (data.length === 0)
                 return '001';
@@ -178,7 +190,16 @@ LetterSchema.statics.saveLetter = async function (param) {
             return temp.length < 3 ? new Array(3 - temp.length + 1).join('0') + temp : temp;
         });
 
-    param.officialNumber = `${param.senderGb === '01' ? 'HTC' : 'HENC'}-${param.receiverGb === '01' ? 'HTC' : 'HENC'}-${param.letterGb === '01' ? 'E' : 'T'}-${nextNum}`;
+    const project = await Project.findOne({ _id: param.project });
+
+    const sender = param.senderGb === '01' ? project.clientCode : project.contractorCode;
+    const receiver = param.receiverGb === '01' ? project.clientCode : project.contractorCode;
+
+    if (param.letterGb === '01') {
+        param.officialNumber = `${sender}-${receiver}-E-${nextNum}`;
+    } else {
+        param.officialNumber = `${sender}-${receiver}-T-${nextNum}`;
+    }
 
     const letter = new this({ ...param });
 
@@ -264,6 +285,7 @@ LetterSchema.statics.letterDetail = function (id) {
             $group: {
                 _id: '$_id',
                 letterGb: { $first: '$letterGb' },
+                reference: { $push: '$reference' },
                 officialNumber: { $first: '$officialNumber' },
                 letterTitle: { $first: '$letterTitle' },
                 senderGb: { $first: '$senderGb' },
@@ -275,6 +297,7 @@ LetterSchema.statics.letterDetail = function (id) {
                 targetDate: { $first: '$targetDate' },
                 replyYn: { $first: '$replyYn' },
                 replyDate: { $first: '$replyDate' },
+                cancelYn: { $first: '$cancelYn' },
                 memo: { $first: '$memo' },
                 timestamp: { $first: '$timestamp' },
                 vendorLetters: { $push: '$vendorLetters' },
@@ -292,10 +315,11 @@ LetterSchema.statics.letterDetail = function (id) {
  * @date        2019. 09. 18
  * @description 공식문서 수정
  */
-LetterSchema.statics.editLetter = function (param) {
+LetterSchema.statics.editLetter = async function (param) {
     let {
         id,
         letterGb,
+        reference,
         letterTitle,
         senderGb,
         sender,
@@ -307,11 +331,12 @@ LetterSchema.statics.editLetter = function (param) {
         memo
     } = param;
 
-    return this.findOneAndUpdate(
+    await this.findOneAndUpdate(
         { _id: id },
         {
             $set: {
                 letterGb,
+                reference,
                 letterTitle,
                 senderGb,
                 sender,
@@ -323,11 +348,10 @@ LetterSchema.statics.editLetter = function (param) {
                 memo,
                 'timestamp.updDt': DEFINE.dateNow()
             }
-        },
-        {
-            new: true
         }
     );
+
+    return this.letterDetail(id);
 };
 
 /**

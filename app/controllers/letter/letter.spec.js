@@ -5,6 +5,7 @@ import { expect } from 'chai';
 
 describe('  [ Letter ]', () => {
     let server;
+    let projectId;
     let id;
 
     before((done) => {
@@ -29,11 +30,82 @@ describe('  [ Letter ]', () => {
             });
     });
 
+    describe('project preparation', () => {
+        let projectGb;
+        let major;
+
+        it('add Part', (done) => {
+            request(server)
+                .post('/api/cmcodes')
+                .send({
+                    cdMajor: '0000',
+                    cdFName: '프로젝트 구분'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    major = ctx.body.data._id;
+
+                    expect(ctx.body.data.cdMajor).to.equal('0000');
+                    expect(ctx.body.data.cdFName).to.equal('프로젝트 구분');
+                    done();
+                });
+        });
+
+        it('add cdMinor', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${major}/add`)
+                .send({
+                    cdMinor: '0001',
+                    cdSName: '신규'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    projectGb = ctx.body.data.cdMinors[0];
+
+                    expect(ctx.body.data.cdMinors).have.length(1);
+                    done();
+                });
+        });
+
+        it('add project', (done) => {
+            request(server)
+                .post('/api/projects')
+                .send({
+                    projectGb: projectGb,
+                    projectName: 'Methane Gas Sales & CFU/ARO2 Project',
+                    projectCode: 'NCC',
+                    effStaDt: '2017-03-01',
+                    effEndDt: '2018-10-31',
+                    client: '한화토탈',
+                    clientCode: 'HTC',
+                    contractor: '한화건설',
+                    contractorCode: 'HENC',
+                    memo: '프로젝트 설명'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    projectId = ctx.body.data._id;
+
+                    expect(ctx.body.data.projectGb._id).to.equal(projectGb);
+                    expect(ctx.body.data.projectName).to.equal('Methane Gas Sales & CFU/ARO2 Project');
+                    expect(ctx.body.data.memo).to.equal('프로젝트 설명');
+                    done();
+                });
+        });
+    });
+
     describe('POST /letters', () => {
         it('add letter', (done) => {
             request(server)
                 .post('/api/letters')
                 .send({
+                    project: projectId,
                     letterGb: '02',
                     letterTitle: 'HENC-HTC-T-R-001-001 검토요청의 건',
                     senderGb: '02',
@@ -122,7 +194,6 @@ describe('  [ Letter ]', () => {
                     replyRequired: 'NO',
                 })
                 .expect(200)
-
                 .end((err, ctx) => {
                     if (err) throw err;
 

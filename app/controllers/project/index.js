@@ -84,6 +84,24 @@ project.get('/', projectCtrl.list);
 
 /**
  * @swagger
+ * /api/projects/forselect:
+ *  get:
+ *      tags:
+ *          - Project
+ *      summary: 프로젝트 목록 조회 (For select)
+ *      description: 프로젝트 목록 조회 (For select)    
+ *      produces:
+ *          - application/json
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/project'
+ */
+project.get('/forselect', projectCtrl.listForSelect);
+
+/**
+ * @swagger
  * /api/projects:
  *  post:
  *      tags:

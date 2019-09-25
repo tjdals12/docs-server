@@ -44,6 +44,27 @@ export const list = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 09. 25
+ * @description 프로젝트 목록 조회 (For select)
+ */
+export const listForSelect = async (ctx) => {
+    try {
+        const projects = await Project.find({}, { projectName: 1, projectCode: 1 });
+
+        ctx.res.ok({
+            data: projects,
+            message: 'Success - projectCtrl > listForSelect'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: [],
+            message: `Error - projectCtrl > listForSelect: ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 09. 23
  * @description 프로젝트 추가
  */
