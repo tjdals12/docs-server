@@ -23,4 +23,28 @@ const TemplateSchema = new Schema({
 
 TemplateSchema.set('toJSON', { getters: true });
 
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 26
+ * @description 양식 추가
+ * @param       {Object} param
+ */
+TemplateSchema.statics.saveTemplate = async function (param) {
+    let {
+        templateGb,
+        templateName,
+        templateType,
+        templatePath,
+        templateDescription
+    } = param;
+
+    const template = new this({ templateGb, templateName, templatePath, templateType, templateDescription });
+
+    await template.save();
+
+    return this
+        .findOne({ _id: template._id })
+        .populate({ path: 'templateGb' });
+};
+
 export default model('Template', TemplateSchema);
