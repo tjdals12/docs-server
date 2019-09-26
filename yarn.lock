@@ -1887,6 +1887,13 @@ doctrine@3.0.0, doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
+docxtemplater@^3.14.3:
+  version "3.14.3"
+  resolved "https://registry.yarnpkg.com/docxtemplater/-/docxtemplater-3.14.3.tgz#d0c90c7b3e859531ad875c9cd72763451e2f01d0"
+  integrity sha512-rHOIJ+/QEU71My81F0qG7ACKnjINCcjeYyZXMhbh5jvDmjwlDtBW10Wetjz6PEUja5vTlc1e9WrnkCFt+iEXFw==
+  dependencies:
+    xmldom "^0.1.27"
+
 dont-sniff-mimetype@1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/dont-sniff-mimetype/-/dont-sniff-mimetype-1.1.0.tgz#c7d0427f8bcb095762751252af59d148b0a623b2"
@@ -4403,6 +4410,11 @@ package-json@^4.0.0:
     registry-url "^3.0.3"
     semver "^5.1.0"
 
+pako@~1.0.2:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.10.tgz#4328badb5086a426aa90f541977d4955da5c9732"
+  integrity sha512-0DTvPVU3ed8+HNXOu5Bs+o//Mbdj9VNQMUOe9oKCwh8l0GNwpTDMKCWbRjgtD291AWnkAgkqA/LOnQS8AmS1tw==
+
 parent-module@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/parent-module/-/parent-module-1.0.1.tgz#691d2709e78c79fae3a156622452d00762caaaa2"
@@ -4542,6 +4554,13 @@ pirates@^4.0.0:
   integrity sha512-WuNqLTbMI3tmfef2TKxlQmAiLHKtFhlsCZnPIpuv2Ow0RDVO8lfy1Opf4NUzlMXLjPl+Men7AuVdX6TA+s+uGA==
   dependencies:
     node-modules-regexp "^1.0.0"
+
+pizzip@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/pizzip/-/pizzip-3.0.6.tgz#223485511f9e23abbb2888fd67734e12fc7861a8"
+  integrity sha512-CYmQJQ6ShNhScp2zrpGetRfamQ2CtUdsfcXaauqsQ0h/HVdQTTlHNUaNzMO0i+l8XTNctHJ6PrmFP+YZoF4iZw==
+  dependencies:
+    pako "~1.0.2"
 
 pkg-dir@^3.0.0:
   version "3.0.0"
@@ -5929,6 +5948,11 @@ xlsx@^0.15.0:
     crc-32 "~1.2.0"
     exit-on-epipe "~1.0.1"
     ssf "~0.10.2"
+
+xmldom@^0.1.27:
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
+  integrity sha1-1QH5ezvbQDr4757MIFcxh6rawOk=
 
 xtend@^4.0.0:
   version "4.0.2"
