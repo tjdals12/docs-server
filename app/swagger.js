@@ -13,7 +13,7 @@ const options = {
     },
     apisSorter: 'method',
     operationsSorter: 'method',
-    apis: ['./app/controllers/*/index.js']
+    apis: ['./app/controllers/*/index.js', './app/controllers/index.js']
 };
 
 /**

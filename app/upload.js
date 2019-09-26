@@ -1,5 +1,12 @@
+import path from 'path';
 import multer from 'koa-multer';
+import multerS3 from 'multer-s3';
+import AWS from 'aws-sdk';
 
+AWS.config.loadFromPath(__dirname + '/configs/awsconfig.json');
+const s3 = new AWS.S3();
+
+// Local Storage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'upload/');
@@ -9,6 +16,16 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+// S3 Storage
+const storageS3 = multerS3({
+    s3: s3,
+    bucket: 'docs-server',
+    key: function (req, file, cb) {
+        let extension = path.extname(file.originalname);
+        cb(null, Date.now().toString() + extension);
+    }
+});
+
+const upload = multer({ storage: storageS3 });
 
 export default upload;

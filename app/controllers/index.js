@@ -1,4 +1,5 @@
 import Router from 'koa-router';
+import upload from 'upload';
 import cmcode from 'controllers/cmcode';
 import document from 'controllers/document';
 import vendor from 'controllers/vendor';
@@ -10,6 +11,35 @@ import project from 'controllers/project';
 import template from 'controllers/template';
 
 const api = new Router();
+
+/**
+ * @swagger
+ * /upload:
+ *  post:
+ *      tags: 
+ *          - Upload
+ *      summary: S3에 업로드
+ *      description: S3에 업로드
+ *      consumes:
+ *          - multipart/form-data
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: formData
+ *            name: uploadFile
+ *            description: upload file
+ *            type: file
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: string
+ *                  example: 'uploaded location'
+ */
+api.post('/upload', upload.single('uploadFile'), (ctx) => {
+    let uploadFile = ctx.req.file;
+    ctx.body = uploadFile.location;
+});
 
 api.use('/cmcodes', cmcode.routes());
 api.use('/documents', document.routes());
