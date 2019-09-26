@@ -14,7 +14,7 @@ const api = new Router();
 
 /**
  * @swagger
- * /upload:
+ * /api/upload:
  *  post:
  *      tags: 
  *          - Upload

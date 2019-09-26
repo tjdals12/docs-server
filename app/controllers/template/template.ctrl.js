@@ -22,7 +22,8 @@ export const list = async (ctx) => {
         const templates = await Template
             .find()
             .skip((page - 1) * 10)
-            .limit(10);
+            .limit(10)
+            .populate({ path: 'templateGb' });
 
         const count = await Template.countDocuments();
 
