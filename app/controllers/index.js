@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import upload from 'upload';
+import { s3Uploader } from 'upload';
 import cmcode from 'controllers/cmcode';
 import document from 'controllers/document';
 import vendor from 'controllers/vendor';
@@ -36,7 +36,7 @@ const api = new Router();
  *                  type: string
  *                  example: 'uploaded location'
  */
-api.post('/upload', upload.single('uploadFile'), (ctx) => {
+api.post('/upload', s3Uploader.single('uploadFile'), (ctx) => {
     let uploadFile = ctx.req.file;
     ctx.body = uploadFile.location;
 });

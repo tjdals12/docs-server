@@ -114,3 +114,59 @@ export const one = async (ctx) => {
         });
     }
 };
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 26
+ * @description 양식 수정
+ */
+export const edit = async (ctx) => {
+    let { id } = ctx.params;
+
+    let {
+        templateGb,
+        templateName,
+        templateType,
+        templatePath,
+        templateDescription
+    } = ctx.request.body;
+
+    const schema = Joi.object().keys({
+        templateGb: Joi.string().required(),
+        templateName: Joi.string().required(),
+        templateType: Joi.string().required(),
+        templatePath: Joi.string().required(),
+        templateDescription: Joi.string().required()
+    });
+
+    const result = Joi.validate(ctx.request.body, schema);
+
+    if (result.error) {
+        ctx.res.badRequest({
+            data: result.error,
+            message: 'Fail - templateCtrl > edit'
+        });
+
+        return;
+    }
+
+    try {
+        const template = await Template.editTemplate(id, {
+            templateGb,
+            templateName,
+            templateType,
+            templatePath,
+            templateDescription
+        });
+
+        ctx.res.ok({
+            data: template,
+            message: 'Success - templateCtrl > edit'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: ctx.request.body,
+            message: `Error - templateCtrl > edit: ${e.message}`
+        });
+    }
+};

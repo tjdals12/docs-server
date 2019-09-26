@@ -1,5 +1,5 @@
 import Router from 'koa-router';
-import upload from 'upload';
+import { localUploader } from 'upload';
 import * as commonCtrl from 'controllers/common.ctrl';
 import * as documentIndexCtrl from './documentIndex.ctrl';
 
@@ -141,7 +141,7 @@ documentIndex.get('/forselect', documentIndexCtrl.listForSelect);
  *                          type: date
  *                          example: 2019-09-21
  */
-documentIndex.post('/readexcel', upload.single('indexes'), documentIndexCtrl.readExcel);
+documentIndex.post('/readexcel', localUploader.single('indexes'), documentIndexCtrl.readExcel);
 
 /**
  * @swagger

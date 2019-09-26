@@ -130,4 +130,53 @@ template.post('/', templateCtrl.add);
  */
 template.get('/:id', commonCtrl.checkObjectId, templateCtrl.one);
 
+/**
+ * @swagger
+ * /api/templates/{id}/edit:
+ *  patch:
+ *      tags:
+ *          - Template
+ *      summary: 양식 수정
+ *      description: 양식 수정
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/json
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            description: template id
+ *            required: true
+ *            type: string
+ *            example: 5d33ef877cceb91244d16fdd
+ *          - in: body
+ *            name: body
+ *            description: edit parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  templateGb:
+ *                      type: string
+ *                      example: 5d8c69e07ff3d804e4b569ce
+ *                  templateName:
+ *                      type: string
+ *                      example: '월간보고서 양식'
+ *                  templateType:
+ *                      type: string
+ *                      example: 'xlsx'
+ *                  templatePath:
+ *                      type: string
+ *                      example: 'https://example.storage.com/sample.xlsx'
+ *                  templateDescription:
+ *                      type: string
+ *                      example: '월간회의용 보고서 양식(= 월간진도보고서)'
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  $ref: '#/definitions/template'
+ */
+template.patch('/:id/edit', commonCtrl.checkObjectId, templateCtrl.edit);
+
 export default template;

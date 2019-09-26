@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { Timestamp } from 'models/common/schema';
+import DEFINE from 'models/common';
 
 /**
  * @author      minz-logger
@@ -45,6 +46,40 @@ TemplateSchema.statics.saveTemplate = async function (param) {
     return this
         .findOne({ _id: template._id })
         .populate({ path: 'templateGb' });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 26
+ * @description 양식 수정
+ * @param       {String} id
+ * @param       {Object} param
+ */
+TemplateSchema.statics.editTemplate = async function (id, param) {
+    let {
+        templateGb,
+        templateName,
+        templateType,
+        templatePath,
+        templateDescription
+    } = param;
+
+    return this.findOneAndUpdate(
+        { _id: id },
+        {
+            $set: {
+                templateGb,
+                templateName,
+                templateType,
+                templatePath,
+                templateDescription,
+                'timestamp.updDt': DEFINE.dateNow()
+            }
+        },
+        {
+            new: true
+        }
+    ).populate({ path: 'templateGb' });
 };
 
 export default model('Template', TemplateSchema);

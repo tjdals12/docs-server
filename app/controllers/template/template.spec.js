@@ -5,7 +5,8 @@ import { expect } from 'chai';
 
 describe('  [ Template ]', () => {
     let server;
-    let templateGb;
+    let templateGb1;
+    let templateGb2;
     let id;
 
     before((done) => {
@@ -52,20 +53,38 @@ describe('  [ Template ]', () => {
                 });
         });
 
-        it('add cdMinor', (done) => {
+        it('add cdMinor 1', (done) => {
             request(server)
                 .patch(`/api/cmcodes/${major}/add`)
                 .send({
                     cdMinor: '0001',
-                    cdSName: 'TR'
+                    cdSName: '공문'
                 })
                 .expect(200)
                 .end((err, ctx) => {
                     if (err) throw err;
 
-                    templateGb = ctx.body.data.cdMinors[0];
+                    templateGb1 = ctx.body.data.cdMinors[0];
 
                     expect(ctx.body.data.cdMinors).have.length(1);
+                    done();
+                });
+        });
+
+        it('add cdMinor 2', (done) => {
+            request(server)
+                .patch(`/api/cmcodes/${major}/add`)
+                .send({
+                    cdMinor: '0002',
+                    cdSName: '보고서'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    templateGb2 = ctx.body.data.cdMinors[0];
+
+                    expect(ctx.body.data.cdMinors).have.length(2);
                     done();
                 });
         });
@@ -76,7 +95,7 @@ describe('  [ Template ]', () => {
             request(server)
                 .post('/api/templates')
                 .send({
-                    templateGb: templateGb,
+                    templateGb: templateGb1,
                     templateName: 'Transmittal 양식',
                     templateType: 'docx',
                     templatePath: 'https://example.storage.com/sample.docx',
@@ -120,6 +139,31 @@ describe('  [ Template ]', () => {
                     if (err) throw err;
 
                     expect(ctx.body.data._id).to.equal(id);
+                    done();
+                });
+        });
+    });
+
+    describe('PATCH /templates/:id/edit', () => {
+        it('edit template', (done) => {
+            request(server)
+                .patch(`/api/templates/${id}/edit`)
+                .send({
+                    templateGb: templateGb2,
+                    templateName: '월간보고서 양식',
+                    templateType: 'xlsx',
+                    templatePath: 'https://example.storage/sample.xlsx',
+                    templateDescription: '월간회의용 보고서 양식(= 월간진도보고서)'
+                })
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data.templateGb._id).to.equal(templateGb2);
+                    expect(ctx.body.data.templateName).to.equal('월간보고서 양식');
+                    expect(ctx.body.data.templateType).to.equal('xlsx');
+                    expect(ctx.body.data.templatePath).to.equal('https://example.storage/sample.xlsx');
+                    expect(ctx.body.data.templateDescription).to.equal('월간회의용 보고서 양식(= 월간진도보고서)');
                     done();
                 });
         });
