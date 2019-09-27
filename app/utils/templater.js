@@ -8,9 +8,10 @@ import Docxtemplater from 'docxtemplater';
  * @author      minz-logger
  * @date        2019. 09. 26
  * @description 양식에 데이터 입혀서 반환
+ * @param       {String} template
  * @param       {Object} param
  */
-export const makeFile = (param) => {
+export const makeFile = (template, param) => {
     // ! 파일 경료 변경 해야함. (Template에서 조회)
 
     const doc = new Docxtemplater();
