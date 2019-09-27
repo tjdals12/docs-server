@@ -368,4 +368,6 @@ letter.patch('/:id/edit', commonCtrl.checkObjectId, letterCtrl.edit);
  */
 letter.patch('/:id/cancel', commonCtrl.checkObjectId, letterCtrl.cancel);
 
+letter.get('/:id/template', letterCtrl.templateDownload);
+
 export default letter;
