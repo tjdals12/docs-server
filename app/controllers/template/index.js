@@ -62,6 +62,32 @@ template.get('/', templateCtrl.list);
 
 /**
  * @swagger
+ * /api/templates/forselect:
+ *  get:
+ *      tags:
+ *          - Template
+ *      summary: 양식 목록 조회 (For select)
+ *      description: 양식 목록 조회 (For select)
+ *      produces:
+ *          - application/json
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          templateName:
+ *                              type: string
+ *                              example: 'Transmittal 양식'
+ *                          templateGb:
+ *                              $ref: '#/definitions/cdminor'
+ */
+template.get('/forselect', templateCtrl.listForSelect);
+
+/**
+ * @swagger
  * /api/templates:
  *  post:
  *      tags:

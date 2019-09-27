@@ -130,6 +130,20 @@ describe('  [ Template ]', () => {
         });
     });
 
+    describe('GET /templates/forselect', () => {
+        it('get templates for select', (done) => {
+            request(server)
+                .get('/api/templates/forselect')
+                .expect(200)
+                .end((err, ctx) => {
+                    if (err) throw err;
+
+                    expect(ctx.body.data).have.length(1);
+                    done();
+                });
+        });
+    });
+
     describe('GET /templates/:id', () => {
         it('get template', (done) => {
             request(server)

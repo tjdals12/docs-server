@@ -19,8 +19,7 @@ const cmcode = new Router();
  *              type: string
  *              example: '0001'
  *          cdMinor:
- *              type: string
- *              example: '0001'
+ *              $ref: '#/definitions/cdminor'
  *          cdFName:
  *              type: string
  *              example: 공종
@@ -29,6 +28,18 @@ const cmcode = new Router();
  *              example: 공종
  *          timestamp:
  *              $ref: '#/definitions/timestamp'
+ *  cdminor:
+ *      type: object
+ *      required: true
+ *          - cdMinor
+ *          - cdSName
+ *      properties:
+ *          cdMinor:
+ *              type: string
+ *              example: '0001'
+ *          cdSName:
+ *              type: string
+ *              example: '코드명'
  */
 
 /**

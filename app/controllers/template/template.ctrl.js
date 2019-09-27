@@ -44,6 +44,27 @@ export const list = async (ctx) => {
 
 /**
  * @author      minz-logger
+ * @date        2019. 09. 27
+ * @description 양식 목록 조회 (For select)
+ */
+export const listForSelect = async (ctx) => {
+    try {
+        const templates = await Template.find({}, { templateGb: 1, templateName: 1 }).populate({ path: 'templateGb' });
+
+        ctx.res.ok({
+            data: templates,
+            message: 'Success - templateCtrl > listForSelect'
+        });
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: [],
+            message: `Error - templateCtrl > listForSelect: ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
  * @date        2019. 09. 26
  * @description 양식 추가
  */
