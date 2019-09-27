@@ -16,6 +16,8 @@ const storage = multer.diskStorage({
     }
 });
 
+export const localUploader = multer({ storage: storage });
+
 // S3 Storage
 const storageS3 = multerS3({
     s3: s3,
@@ -26,5 +28,4 @@ const storageS3 = multerS3({
     }
 });
 
-export const localUploader = multer({ storage: storage });
 export const s3Uploader = multer({ storage: storageS3 });
