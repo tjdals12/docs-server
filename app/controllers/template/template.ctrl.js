@@ -1,5 +1,8 @@
 import Template from 'models/template/template';
+import Letter from 'models/letter/letter';
+import VendorLetter from 'models/vendorLetter/vendorLetter';
 import Joi from 'joi';
+import { makeFile } from 'utils/templater';
 
 /**
  * @author      minz-logger
@@ -188,6 +191,62 @@ export const edit = async (ctx) => {
         ctx.res.internalServerError({
             data: ctx.request.body,
             message: `Error - templateCtrl > edit: ${e.message}`
+        });
+    }
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 27
+ * @description 양식 다운로드
+ */
+export const download = async (ctx) => {
+    let { key, target, template } = ctx.request.body;
+
+    try {
+        let param;
+
+        if (key === 'letter') {
+            const letter = await Letter.findOne({ _id: target }, { officialNumber: 1, letterTitle: 1, senderGb: 1, sender: 1, receiverGb: 1, receiver: 1, sendDate: 1, reference: 1 });
+
+            const vendorLetter = await VendorLetter.find(
+                { _id: { $in: letter.reference } },
+                {
+                    officialNumber: 1,
+                    documents: 1
+                })
+                .populate({ path: 'documents' });
+
+            let sendDate = letter.sendDate.substr(0, 10).split('-');
+
+            param = {
+                officialNumber: letter.officialNumber,
+                letterTitle: letter.letterTitle,
+                sender: letter.sender,
+                senderGb: letter.senderGb,
+                receiver: letter.receiver,
+                receiverGb: letter.receiverGb,
+                sendDate: {
+                    year: sendDate[0],
+                    month: sendDate[1],
+                    day: sendDate[2]
+                },
+                vendorLetters: vendorLetter
+            };
+        }
+
+        const { templatePath } = await Template.findOne({ _id: template });
+
+        const file = await makeFile(templatePath, param);
+
+        ctx.set('Content-disposition', 'attachment; filename=text.docx');
+        ctx.set('Content-type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+
+        ctx.body = file;
+    } catch (e) {
+        ctx.res.internalServerError({
+            data: {},
+            message: `Error - letterCtrl > download: ${e.message}`
         });
     }
 };

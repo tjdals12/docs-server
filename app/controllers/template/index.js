@@ -205,4 +205,41 @@ template.get('/:id', commonCtrl.checkObjectId, templateCtrl.one);
  */
 template.patch('/:id/edit', commonCtrl.checkObjectId, templateCtrl.edit);
 
+/**
+ * @swagger
+ * /api/templates/download:
+ *  post:
+ *      tags:
+ *          - Template
+ *      summary: 양식 다운로드
+ *      description: 양식 다운로드
+ *      consumes:
+ *          - application/json
+ *      produces:
+ *          - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+ *      parameters:
+ *          - in: body
+ *            name: body
+ *            description: download parameters
+ *            required: true
+ *            schema:
+ *              type: object
+ *              properties:
+ *                  key:
+ *                      type: string
+ *                      example: 'letter'
+ *                  target:
+ *                      type: string
+ *                      example: 5d8b1f0f82141d53d52fb229
+ *                  template:
+ *                      type: string
+ *                      example: 5d8c6a367ff3d804e4b569d0
+ *      responses:
+ *          200:
+ *              description: Successful operation
+ *              schema:
+ *                  type: file
+ */
+template.post('/download', templateCtrl.download);
+
 export default template;
