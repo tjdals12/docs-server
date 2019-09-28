@@ -215,7 +215,23 @@ export const download = async (ctx) => {
                     officialNumber: 1,
                     documents: 1
                 })
-                .populate({ path: 'documents' });
+                .populate({ path: 'documents' })
+                .then(function (vendorLetters) {
+                    return vendorLetters.map(vendorLetter => {
+                        const documents = vendorLetter.documents.map((document, index) => (
+                            {
+                                index: index + 1,
+                                documentTitle: document.documentTitle,
+                                documentNumber: document.documentNumber,
+                                documentRev: document.documentRev,
+                            }));
+
+                        return {
+                            officialNumber: vendorLetter.officialNumber,
+                            documents: documents
+                        };
+                    });
+                });
 
             let sendDate = letter.sendDate.substr(0, 10).split('-');
 

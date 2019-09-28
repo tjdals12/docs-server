@@ -3,6 +3,10 @@ import fs from 'fs';
 import stream from 'stream';
 import Pizzip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
+import AWS from 'aws-sdk';
+
+AWS.config.loadFromPath('app/configs/awsconfig.json');
+const s3 = new AWS.S3();
 
 /**
  * @author      minz-logger
@@ -12,7 +16,7 @@ import Docxtemplater from 'docxtemplater';
  * @param       {Object} param
  */
 export const makeFile = (template, param) => {
-    // ! 파일 경료 변경 해야함. (Template에서 조회)
+    // ! S3에서 파일 받아와야함.
 
     const doc = new Docxtemplater();
     doc.loadZip(new Pizzip(fs.readFileSync(path.resolve('upload/template.docx'), 'binary')));
