@@ -10,8 +10,7 @@ import DEFINE from 'models/common';
 const StatusSchema = new Schema({
     status: {
         type: String,
-        default: DEFINE.STATUS_CD.CODE_01,
-        get: DEFINE.statusConverter
+        default: DEFINE.STATUS_CD.CODE_01
     },
     statusName: {
         type: String,

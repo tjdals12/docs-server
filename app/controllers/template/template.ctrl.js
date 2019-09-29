@@ -219,12 +219,17 @@ export const download = async (ctx) => {
                 .populate({ path: 'documents' })
                 .then(function (vendorLetters) {
                     return vendorLetters.map((vendorLetter) => {
-                        const documents = vendorLetter.documents.map((document, index) => ({
-                            index: index + 1,
-                            documentTitle: document.documentTitle,
-                            documentNumber: document.documentNumber,
-                            documentRev: document.documentRev
-                        }));
+                        const documents = vendorLetter.documents.map((document, index) => {
+                            const status = document.documentStatus.filter(item => item.status.match(new RegExp(/(^1|^3)/g))).slice(-1)[0];
+
+                            return {
+                                index: index + 1,
+                                documentTitle: document.documentTitle,
+                                documentNumber: document.documentNumber,
+                                documentRev: document.documentRev,
+                                resultCode: status ? status.resultCode : '-'
+                            };
+                        });
 
                         return {
                             officialNumber: vendorLetter.officialNumber,
@@ -265,6 +270,7 @@ export const download = async (ctx) => {
             });
         });
     } catch (e) {
+        console.log(e.message);
         ctx.res.internalServerError({
             data: {},
             message: `Error - letterCtrl > download: ${e.message}`

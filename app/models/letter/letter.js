@@ -284,6 +284,7 @@ LetterSchema.statics.letterDetail = function (id) {
         {
             $group: {
                 _id: '$_id',
+                project: { $first: '$project' },
                 letterGb: { $first: '$letterGb' },
                 reference: { $push: '$reference' },
                 officialNumber: { $first: '$officialNumber' },
@@ -302,6 +303,19 @@ LetterSchema.statics.letterDetail = function (id) {
                 timestamp: { $first: '$timestamp' },
                 vendorLetters: { $push: '$vendorLetters' },
                 documents: { $push: '$documents' }
+            }
+        },
+        {
+            $lookup: {
+                from: 'projects',
+                localField: 'project',
+                foreignField: '_id',
+                as: 'project'
+            }
+        },
+        {
+            $unwind: {
+                path: '$project'
             }
         },
         {
