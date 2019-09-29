@@ -251,9 +251,9 @@ export const download = async (ctx) => {
             };
         }
 
-        const { templatePath } = await Template.findOne({ _id: template });
+        const { templatePath, templateType } = await Template.findOne({ _id: template });
 
-        ctx.set('Content-disposition', 'attachment; filename=text.docx');
+        ctx.set('Content-disposition', `attachment; filename=${param.officialNumber}.${templateType}`);
         ctx.set('Content-type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 
         return new Promise((resolve, reject) => {
