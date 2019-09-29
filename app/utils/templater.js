@@ -1,11 +1,9 @@
-import path from 'path';
-import fs from 'fs';
 import stream from 'stream';
 import Pizzip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import AWS from 'aws-sdk';
 
-AWS.config.loadFromPath('app/configs/awsconfig.json');
+// TODO: upload.js 에서도 s3를 사용함. > 리팩토링 필요
 const s3 = new AWS.S3();
 
 /**
@@ -15,16 +13,24 @@ const s3 = new AWS.S3();
  * @param       {String} template
  * @param       {Object} param
  */
-export const makeFile = (template, param) => {
-    // ! S3에서 파일 받아와야함.
+export const makeFile = async (template, param, callback) => {
+    s3.getObject({ Bucket: 'docs-server', Key: template.split('/').pop() }, (err, data) => {
+        if (err) throw err;
 
-    const doc = new Docxtemplater();
-    doc.loadZip(new Pizzip(fs.readFileSync(path.resolve('upload/template.docx'), 'binary')));
-    doc.setData(param);
-    doc.render();
+        const doc = new Docxtemplater();
 
-    const buf = doc.getZip().generate({ type: 'nodebuffer' });
-    const bufferStream = new stream.PassThrough();
+        /**
+         * Local에서 받아올 경우
+         * doc.loadZip(new Pizzip(fs.readFileSync(path.resolve('upload/template.docx'))));
+         */
 
-    return bufferStream.end(new Buffer.from(buf));
+        doc.loadZip(new Pizzip(data.Body));
+        doc.setData(param);
+        doc.render();
+
+        const buf = doc.getZip().generate({ type: 'nodebuffer' });
+        const bufferStream = new stream.PassThrough();
+
+        callback(bufferStream.end(new Buffer.from(buf)));
+    });
 };

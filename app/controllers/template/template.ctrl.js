@@ -22,11 +22,7 @@ export const list = async (ctx) => {
     }
 
     try {
-        const templates = await Template
-            .find()
-            .skip((page - 1) * 10)
-            .limit(10)
-            .populate({ path: 'templateGb' });
+        const templates = await Template.find().skip((page - 1) * 10).limit(10).populate({ path: 'templateGb' });
 
         const count = await Template.countDocuments();
 
@@ -72,13 +68,7 @@ export const listForSelect = async (ctx) => {
  * @description 양식 추가
  */
 export const add = async (ctx) => {
-    let {
-        templateGb,
-        templateName,
-        templateType,
-        templatePath,
-        templateDescription
-    } = ctx.request.body;
+    let { templateGb, templateName, templateType, templatePath, templateDescription } = ctx.request.body;
 
     const schema = Joi.object().keys({
         templateGb: Joi.string().required(),
@@ -100,7 +90,13 @@ export const add = async (ctx) => {
     }
 
     try {
-        const template = await Template.saveTemplate({ templateGb, templateName, templateType, templatePath, templateDescription });
+        const template = await Template.saveTemplate({
+            templateGb,
+            templateName,
+            templateType,
+            templatePath,
+            templateDescription
+        });
 
         ctx.res.ok({
             data: template,
@@ -123,9 +119,7 @@ export const one = async (ctx) => {
     let { id } = ctx.params;
 
     try {
-        const template = await Template
-            .findOne({ _id: id })
-            .populate({ path: 'templateGb' });
+        const template = await Template.findOne({ _id: id }).populate({ path: 'templateGb' });
 
         ctx.res.ok({
             data: template,
@@ -147,13 +141,7 @@ export const one = async (ctx) => {
 export const edit = async (ctx) => {
     let { id } = ctx.params;
 
-    let {
-        templateGb,
-        templateName,
-        templateType,
-        templatePath,
-        templateDescription
-    } = ctx.request.body;
+    let { templateGb, templateName, templateType, templatePath, templateDescription } = ctx.request.body;
 
     const schema = Joi.object().keys({
         templateGb: Joi.string().required(),
@@ -207,24 +195,36 @@ export const download = async (ctx) => {
         let param;
 
         if (key === 'letter') {
-            const letter = await Letter.findOne({ _id: target }, { officialNumber: 1, letterTitle: 1, senderGb: 1, sender: 1, receiverGb: 1, receiver: 1, sendDate: 1, reference: 1 });
+            const letter = await Letter.findOne(
+                { _id: target },
+                {
+                    officialNumber: 1,
+                    letterTitle: 1,
+                    senderGb: 1,
+                    sender: 1,
+                    receiverGb: 1,
+                    receiver: 1,
+                    sendDate: 1,
+                    reference: 1
+                }
+            );
 
             const vendorLetter = await VendorLetter.find(
                 { _id: { $in: letter.reference } },
                 {
                     officialNumber: 1,
                     documents: 1
-                })
+                }
+            )
                 .populate({ path: 'documents' })
                 .then(function (vendorLetters) {
-                    return vendorLetters.map(vendorLetter => {
-                        const documents = vendorLetter.documents.map((document, index) => (
-                            {
-                                index: index + 1,
-                                documentTitle: document.documentTitle,
-                                documentNumber: document.documentNumber,
-                                documentRev: document.documentRev,
-                            }));
+                    return vendorLetters.map((vendorLetter) => {
+                        const documents = vendorLetter.documents.map((document, index) => ({
+                            index: index + 1,
+                            documentTitle: document.documentTitle,
+                            documentNumber: document.documentNumber,
+                            documentRev: document.documentRev
+                        }));
 
                         return {
                             officialNumber: vendorLetter.officialNumber,
@@ -253,12 +253,17 @@ export const download = async (ctx) => {
 
         const { templatePath } = await Template.findOne({ _id: template });
 
-        const file = await makeFile(templatePath, param);
-
         ctx.set('Content-disposition', 'attachment; filename=text.docx');
         ctx.set('Content-type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 
-        ctx.body = file;
+        return new Promise((resolve, reject) => {
+            makeFile(templatePath, param, (data, err) => {
+                if (err) reject(err);
+
+                ctx.body = data;
+                resolve();
+            });
+        });
     } catch (e) {
         ctx.res.internalServerError({
             data: {},
