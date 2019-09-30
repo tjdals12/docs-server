@@ -119,7 +119,17 @@ export const one = async (ctx) => {
  * @description 최신 문서 목록 조회
  */
 export const latest = async (ctx) => {
+    let page = parseInt(ctx.query.page || 1, 10);
     let { vendor } = ctx.params;
+
+    if (page < 1) {
+        ctx.res.badRequest({
+            data: page,
+            message: 'Page can\'t be less than 1'
+        });
+
+        return;
+    }
 
     if (!Types.ObjectId.isValid(vendor)) {
         ctx.res.badRequest({
@@ -131,7 +141,11 @@ export const latest = async (ctx) => {
     }
 
     try {
-        const latestDocuments = await DocumentInfo.latestDocuments(vendor);
+        const latestDocuments = await DocumentInfo.latestDocuments(vendor, page);
+
+        const countQuery = await DocumentInfo.latestDocumentsCount(vendor);
+
+        ctx.set('Last-Page', Math.ceil((countQuery[0] ? countQuery[0].count : 1) / 30));
 
         ctx.res.ok({
             data: latestDocuments,

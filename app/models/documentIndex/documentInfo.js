@@ -43,7 +43,7 @@ const DocumentInfoSchema = new Schema({
  * @date        2019. 08. 26
  * @description 문서정보 검색
  * @param       {Object} param
- * @param       {String} page
+ * @param       {Number} page
  */
 DocumentInfoSchema.statics.searchDocumentInfos = async function (param, page) {
     let {
@@ -210,8 +210,9 @@ DocumentInfoSchema.statics.deleteDocumentInfo = function (id, reason) {
  * @date        2019. 09. 24
  * @description 최신 문서 목록 조회
  * @param       {String} vendor
+ * @param       {Number} page
  */
-DocumentInfoSchema.statics.latestDocuments = function (vendor) {
+DocumentInfoSchema.statics.latestDocuments = function (vendor, page) {
     return this.aggregate([
         {
             $match: {
@@ -255,6 +256,76 @@ DocumentInfoSchema.statics.latestDocuments = function (vendor) {
                     }
                 }
             }
+        },
+        {
+            $skip: (page - 1) * 30
+        },
+        {
+            $limit: 30
+        }
+    ]).then(documents => {
+        return documents.map((document, index) => {
+            return {
+                ...document,
+                index: (index + 1) + ((page - 1) * 30)
+            };
+        });
+    });
+};
+
+/**
+ * @author      minz-logger
+ * @date        2019. 09. 30
+ * @description 최신 목록 조회 카운트
+ * @param       {String} vendor
+ */
+DocumentInfoSchema.statics.latestDocumentsCount = function (vendor) {
+    return this.aggregate([
+        {
+            $match: {
+                vendor: Types.ObjectId(vendor)
+            }
+        },
+        {
+            $project: {
+                documentNumber: 1,
+                documentTitle: 1,
+                latestDocument: {
+                    $arrayElemAt: [{ $slice: ['$trackingDocument', -1] }, -1]
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'documents',
+                localField: 'latestDocument',
+                foreignField: '_id',
+                as: 'latestDocument'
+            }
+        },
+        {
+            $unwind: {
+                path: '$latestDocument',
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $project: {
+                documentNumber: 1,
+                documentTitle: 1,
+                latestDocument: {
+                    documentRev: 1,
+                    documentInOut: {
+                        $arrayElemAt: [{ $slice: ['$latestDocument.documentInOut', 1] }, -1]
+                    },
+                    documentStatus: {
+                        $arrayElemAt: [{ $slice: ['$latestDocument.documentStatus', -1] }, -1]
+                    }
+                }
+            }
+        },
+        {
+            $count: 'count'
         }
     ]);
 };

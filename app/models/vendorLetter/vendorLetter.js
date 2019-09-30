@@ -58,9 +58,13 @@ const VendorLetterSchema = new Schema({
 
 VendorLetterSchema.set('toJSON', { getters: true });
 
+VendorLetterSchema.virtual('isDelay').get(function () {
+    return DEFINE.isDelay(this.targetDate, this.letterStatus.slice(-1)[0].status);
+});
+
 /**
- * @author minz-logger
- * @date 2019. 09. 07
+ * @author      minz-logger
+ * @date        2019. 09. 07
  * @description 업체 공식 문서 목록 조회 by Vendor
  * @param       {String} id
  */
@@ -502,7 +506,7 @@ VendorLetterSchema.statics.deleteVendorLetter = async function (param) {
  * @param       {String} replyCode
  */
 VendorLetterSchema.statics.inOutVendorLetter = async function (id, inOutGb, officialNumber, status, resultCode, replyCode, date) {
-    const timestamp = new Timestamp({ reegDt: date });
+    const timestamp = new Timestamp({ regDt: date });
     const newInOut = new InOut({ inOutGb, officialNumber, timestamp });
     const newStatus = new Status({ _id: newInOut._id, status, statusName: status, resultCode, replyCode, timestamp });
 
@@ -547,6 +551,13 @@ VendorLetterSchema.statics.inOutVendorLetter = async function (id, inOutGb, offi
 VendorLetterSchema.statics.deleteInOut = async function (id, targetId) {
 
     const vendorLetter = await this.findOne({ _id: id });
+
+    /** '접수' 상태는 삭제할 수 없음. */
+    if (vendorLetter.letterStatus[0]._id == targetId) {
+        return this.findOne({ _id: id })
+            .populate({ path: 'vendor', populate: { path: 'part' } })
+            .populate({ path: 'documents', populate: { path: 'part documentGb' } });
+    }
 
     await Document.updateMany(
         { _id: { $in: vendorLetter.documents } },

@@ -217,6 +217,7 @@ export const edit = async (ctx) => {
         documentTitle,
         documentGb,
         documentRev,
+        level,
         officialNumber,
         memo
     } = ctx.request.body;
@@ -228,6 +229,7 @@ export const edit = async (ctx) => {
         documentTitle: Joi.string().required(),
         documentGb: Joi.string().required(),
         documentRev: Joi.string().required(),
+        level: Joi.number().required(),
         officialNumber: Joi.string().required(),
         memo: Joi.string().required()
     });
@@ -244,7 +246,7 @@ export const edit = async (ctx) => {
     }
 
     try {
-        const document = await Document.editDocument({ id, vendor, part, documentNumber, documentTitle, documentGb, documentRev, officialNumber, memo });
+        const document = await Document.editDocument({ id, vendor, part, documentNumber, documentTitle, documentGb, documentRev, level, officialNumber, memo });
 
         ctx.res.ok({
             data: document,

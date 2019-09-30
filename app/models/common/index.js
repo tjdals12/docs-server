@@ -199,7 +199,7 @@ const DEFINE = {
         DELAY: '04'
     },
 
-    deleyGbConverter: function (code) {
+    delayGbConverter: function (code) {
         switch (code) {
             case DEFINE.DELAY_GB.LAZY:
                 return '여유';
@@ -210,6 +210,26 @@ const DEFINE = {
             case DEFINE.DELAY_GB.DELAY:
                 return '지연';
         }
+    },
+
+    isDelay: function (target, lastStatus) {
+        if (lastStatus.match(new RegExp(/^9/g))) {
+            return {
+                remain: '-',
+                delayGb: '회신'
+            };
+        }
+
+        const targetDt = moment(target, 'YYYY-MM-DD');
+        const today = this.dateNow();
+        const remain = Math.ceil(targetDt.diff(today, 'hours') / 24);
+
+        const delayGb = remain === 0 ? '03' : (remain < 0 ? '04' : remain > 3 ? '01' : '02');
+
+        return {
+            remain,
+            delayGb: DEFINE.delayGbConverter(delayGb)
+        };
     },
 
     dateNow: function () {
@@ -301,6 +321,40 @@ const DEFINE = {
 
             case DEFINE.SENDER_RECEIVER_GB.VENDOR:
                 return 'VENDOR';
+        }
+    },
+
+    levelConverter: function (level) {
+        switch (level) {
+            case 1:
+                return {
+                    number: level,
+                    description: '낮음'
+                };
+
+            case 2:
+                return {
+                    number: level,
+                    description: '다소 낮음'
+                };
+
+            case 3:
+                return {
+                    number: level,
+                    description: '보통'
+                };
+
+            case 4:
+                return {
+                    number: level,
+                    description: '다소 높음'
+                };
+
+            case 5:
+                return {
+                    number: level,
+                    description: '높음'
+                };
         }
     }
 };

@@ -33,8 +33,9 @@ const DocumentSchema = new Schema({
     },
     documentRev: String,
     level: {
-        type: Number,
-        default: 0
+        type: Schema.Types.Mixed,
+        default: 1,
+        get: DEFINE.levelConverter
     },
     memo: String,
     holdYn: {
@@ -44,10 +45,6 @@ const DocumentSchema = new Schema({
     deleteYn: {
         type: deleteYn.schema,
         default: deleteYn
-    },
-    delayGb: {
-        type: String,
-        default: DEFINE.DELAY_GB.LAZY
     },
     chainingDocument: {
         type: [Schema.Types.ObjectId],
@@ -380,6 +377,7 @@ DocumentSchema.statics.editDocument = function (param) {
         documentTitle,
         documentGb,
         documentRev,
+        level,
         officialNumber,
         memo
     } = param;
@@ -394,6 +392,7 @@ DocumentSchema.statics.editDocument = function (param) {
                 documentTitle,
                 documentGb,
                 documentRev,
+                level,
                 officialNumber,
                 memo,
                 'timestamp.updDt': DEFINE.dateNow()

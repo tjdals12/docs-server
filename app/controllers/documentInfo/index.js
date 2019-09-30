@@ -149,6 +149,11 @@ documentInfo.get('/:id', commonCtrl.checkObjectId, documentInfoCtrl.one);
  *      produces:
  *          - application/json
  *      parameters:
+ *          - in: query
+ *            name: page
+ *            description: page number
+ *            type: string
+ *            example: 1
  *          - in: path
  *            name: vendor
  *            description: vendor id
