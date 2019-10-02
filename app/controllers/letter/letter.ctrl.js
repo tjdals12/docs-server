@@ -137,7 +137,7 @@ export const add = async (ctx) => {
         receiver: Joi.string().required(),
         sendDate: Joi.string().optional(),
         replyRequired: Joi.string().required(),
-        targetDate: Joi.string().optional(),
+        targetDate: replyRequired === 'YES' ? Joi.string().required() : Joi.string().optional(),
         memo: Joi.string().optional()
     });
 
