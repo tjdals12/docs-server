@@ -451,7 +451,7 @@ export const inOut = async (ctx) => {
         ctx.res.ok({
             data: vendorLetter,
             message: 'Success - vendorLetterCtrl > inOut'
-        })
+        });
     } catch (e) {
         ctx.res.internalServerError({
             data: { id, ...ctx.requesst.body },
